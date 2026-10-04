@@ -55,8 +55,9 @@ describe("path helpers", () => {
     ]);
   });
 
-  it.failing("ignores a trailing slash", () => {
+  it("ignores a trailing slash", () => {
     expect(getParentPath("/users/u1/")).toBe("/users");
+    expect(getParentPath("/users/")).toBe("/");
   });
 });
 

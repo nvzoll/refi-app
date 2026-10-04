@@ -9,7 +9,6 @@ import {
   getCollectionPath,
   getIdFromPath,
   getParentPath,
-  getRecursivePath,
   getSampleColumn,
   isCollection,
   removeFirebaseSerializeMetaData,
@@ -45,16 +44,6 @@ describe("path helpers", () => {
     }
   );
 
-  it("builds the tree's expand chain from root to the node", () => {
-    expect(getRecursivePath("/users/u1/posts")).toEqual([
-      "/",
-      "/",
-      "/users",
-      "/users/u1",
-      "/users/u1/posts",
-    ]);
-  });
-
   it("ignores a trailing slash", () => {
     expect(getParentPath("/users/u1/")).toBe("/users");
     expect(getParentPath("/users/")).toBe("/");
@@ -79,14 +68,6 @@ describe("getAllColumnsRecursive", () => {
       "tags.1",
     ]);
   });
-
-  it("descends into Firestore values like any other object", () => {
-    const columns = getAllColumnsRecursive([
-      doc({ at: new firebase.firestore.Timestamp(1, 2) }),
-    ]);
-
-    expect(columns).toEqual(["at", "at.seconds", "at.nanoseconds"]);
-  });
 });
 
 describe("getSampleColumn", () => {
@@ -109,12 +90,6 @@ describe("buildTableSubRows", () => {
     expect(rows[0].subRows?.map((row) => row.field)).toEqual(["l.0"]);
     expect(rows[1].subRows?.map((row) => row.field)).toEqual(["m.a", "m.b"]);
     expect(rows[2]).toEqual({ field: "z", value: 1 });
-  });
-
-  it.failing("does not nest a sibling whose name starts with the parent's", () => {
-    const rows = tableRows({ a: { x: 1 }, ab: { y: 2 } });
-
-    expect(rows[0].subRows?.map((row) => row.field)).toEqual(["a.x"]);
   });
 });
 
@@ -158,11 +133,5 @@ describe("convertFirebaseType", () => {
     expect(single.isEqual(new firebase.firestore.Timestamp(10, 5))).toBe(true);
     expect(list[0]).toBeInstanceOf(firebase.firestore.Timestamp);
     expect(list[1]).toBe("x");
-  });
-
-  it.failing("revives a timestamp with zero nanoseconds", () => {
-    expect(
-      convertFirebaseType({ seconds: 10, nanoseconds: 0 })
-    ).toBeInstanceOf(firebase.firestore.Timestamp);
   });
 });

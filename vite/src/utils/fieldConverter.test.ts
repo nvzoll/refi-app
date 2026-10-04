@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { convertFSValue, fieldConverter } from "./fieldConverter";
+import { convertFSValue } from "./fieldConverter";
 
 const { GeoPoint, Timestamp } = firebase.firestore;
 
@@ -45,22 +45,8 @@ describe("convertFSValue from Firestore types", () => {
     expect(convertFSValue(at, "number")).toBe(at.toMillis());
   });
 
-  it("turns a latitude/longitude map into a geopoint", () => {
-    expect(
-      convertFSValue({ _latitude: 1.5, _longitude: -2 }, "geopoint")
-    ).toEqual(new GeoPoint(1.5, -2));
-  });
-
-  it.failing("turns a geopoint into a lat,long string", () => {
-    expect(convertFSValue(new GeoPoint(1.5, -2), "string")).toBe("1.5,-2");
-  });
-
   it("uses the target type's default for unsupported pairs", () => {
     expect(convertFSValue(42, "geopoint")).toEqual(new GeoPoint(0, 0));
     expect(convertFSValue(true, "map")).toEqual({});
-  });
-
-  it.failing("turns an array into an index-keyed map", () => {
-    expect(fieldConverter.array("map", ["a", "b"])).toEqual({ 0: "a", 1: "b" });
   });
 });

@@ -1,8 +1,5 @@
 name: Build
-on:
-  push:
-    branches:
-      - main
+on: workflow_dispatch
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}

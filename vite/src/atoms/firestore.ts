@@ -10,13 +10,13 @@ import { atom, atomFamily, selector, selectorFamily } from "recoil";
 import { queryVersionAtom } from "./navigator";
 import { setRecoilExternalState } from "./RecoilExternalStatePortal";
 
-type IFireStorePath = string;
+type IFirestorePath = string;
 interface IPathDetail {
   path: string;
   field: string;
 }
 
-export const buildFSUrl = ({ path, field }: IPathDetail): IFireStorePath => {
+export const buildFSUrl = ({ path, field }: IPathDetail): IFirestorePath => {
   return `${path}:${field}`;
 };
 
@@ -39,7 +39,7 @@ export const deletedDocsAtom = atom<ClientDocumentSnapshot[]>({
   default: [],
 });
 
-export const docsLibraryAtom = atom<IFireStorePath[]>({
+export const docsLibraryAtom = atom<IFirestorePath[]>({
   key: "FireStore_docs_library",
   default: [],
   // TODO: Clean up function for this library
@@ -47,7 +47,7 @@ export const docsLibraryAtom = atom<IFireStorePath[]>({
 
 export const docAtom = atomFamily<
   ClientDocumentSnapshot | null,
-  IFireStorePath
+  IFirestorePath
 >({
   key: "FireStore_doc",
   default: null,
@@ -73,7 +73,7 @@ export const docAtom = atomFamily<
 // NOTICE: This atom is impact your performance
 export const collectionAtom = selectorFamily<
   ClientDocumentSnapshot[],
-  IFireStorePath
+  IFirestorePath
 >({
   key: "FireStore_collection",
   get: (path) => ({ get }) => {
@@ -95,7 +95,7 @@ export const queryDocOrder = atomFamily<string[], number>({
 // NOTICE: This atom is impact your performance
 export const collectionWithQueryAtom = selectorFamily<
   ClientDocumentSnapshot[],
-  IFireStorePath
+  IFirestorePath
 >({
   key: "FireStore_collection",
   get: (path) => ({ get }) => {
@@ -120,7 +120,7 @@ export const collectionWithQueryAtom = selectorFamily<
 });
 
 // NOTICE: This atom is impact your performance
-export const totalDocsWithQueryAtom = selectorFamily<number, IFireStorePath>({
+export const totalDocsWithQueryAtom = selectorFamily<number, IFirestorePath>({
   key: "FireStore_collection",
   get: (path) => ({ get }) => {
     const docs = get(collectionWithQueryAtom(path));

@@ -8,7 +8,7 @@ import SelectComboBox from "@/components/SelectComboBox";
 import { isArrayOp, isNumeric } from "@/utils/common";
 import { convertFSValue } from "@/utils/fieldConverter";
 import { operatorOptions } from "@/utils/searcher";
-import { getFireStoreType } from "@/utils/simplifr";
+import { getFirestoreType } from "@/utils/simplifr";
 import { Button, IconButton } from "@zendeskgarden/react-buttons";
 import { Input } from "@zendeskgarden/react-forms";
 import classNames from "classnames";
@@ -184,11 +184,11 @@ const FilterItem = ({ id }: { id: string }) => {
                     className="p-1 font-mono text-xs text-red-700 hover:bg-white hover:border hover:border-gray-300"
                     tabIndex={-1}
                   >
-                    {getFireStoreType(value)}
+                    {getFirestoreType(value)}
                   </button>
                 </DropdownMenu>
               </div>
-              {getFireStoreType(value) === "timestamp" ? (
+              {getFirestoreType(value) === "timestamp" ? (
                 <div className="h-8 pl-20 pr-5 border border-gray-300">
                   <DateTimePicker
                     value={value as firebase.firestore.Timestamp}
@@ -265,7 +265,7 @@ const FilterItem = ({ id }: { id: string }) => {
       );
     }
 
-    const inputType = getFireStoreType(filter.operator.values);
+    const inputType = getFirestoreType(filter.operator.values);
 
     return (
       <div className="relative">

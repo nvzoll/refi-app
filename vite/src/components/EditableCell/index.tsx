@@ -4,7 +4,7 @@ import { actionGoTo } from "@/atoms/navigator.action";
 import { useContextMenu } from "@/hooks/contextMenu";
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
 import { getPathEntities, isNumeric } from "@/utils/common";
-import { getFireStoreType } from "@/utils/simplifr";
+import { getFirestoreType } from "@/utils/simplifr";
 import { Checkbox, Field, Label } from "@zendeskgarden/react-forms";
 import { Tooltip } from "@zendeskgarden/react-tooltips";
 import classNames from "classnames";
@@ -46,7 +46,7 @@ const EditableCell = ({
   const inputEl = useRef<HTMLTextAreaElement>(null);
 
   const fieldType = useMemo(() => {
-    return getFireStoreType(value);
+    return getFirestoreType(value);
   }, [value]);
 
   const onChange = (newInstanceValue) => {

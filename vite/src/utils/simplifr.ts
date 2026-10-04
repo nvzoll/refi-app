@@ -11,7 +11,7 @@ function defaults() {
   };
 }
 
-export function getFireStoreType(object: any): RefiFS.IFieldType {
+export function getFirestoreType(object: any): RefiFS.IFieldType {
   switch (true) {
     case itemIsDocumentReference(object):
       return "reference";
@@ -104,7 +104,7 @@ function simplifyNode(
         dive(obj[i], path + dilimiter + i);
       }
     } else if (isObject(obj)) {
-      data[path].type = getFireStoreType(obj);
+      data[path].type = getFirestoreType(obj);
       for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
           data[path].childs.push(key);

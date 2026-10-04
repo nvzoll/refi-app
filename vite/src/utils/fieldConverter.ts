@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { DocRef } from "firestore-serializers";
-import { getFireStoreType } from "./simplifr";
+import { getFirestoreType } from "./simplifr";
 import firebase from "firebase/app";
 import { isNumeric } from "@/utils/common";
 
@@ -169,6 +169,6 @@ function getDefaultValueByType(type: RefiFS.IFieldType) {
 }
 
 export const convertFSValue = (value: any, to: RefiFS.IFieldType): any => {
-  const currentType = getFireStoreType(value);
+  const currentType = getFirestoreType(value);
   return fieldConverter[currentType](to, value) || getDefaultValueByType(to);
 };

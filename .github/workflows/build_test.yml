@@ -30,10 +30,7 @@ jobs:
     needs: build-vite
     runs-on: macos-latest
     env:
-      CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-      CSC_LINK: ${{ secrets.CSC_LINK }}
-      APPLEID: ${{ secrets.APPLEID }}
-      APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
+      CSC_IDENTITY_AUTO_DISCOVERY: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -50,7 +47,7 @@ jobs:
           name: vite
           path: server/build
       - name: Build app
-        run: bun run --cwd server release
+        run: bun run --cwd server release -p never
 
   release-windows:
     needs: build-vite
@@ -71,7 +68,7 @@ jobs:
           name: vite
           path: server/build
       - name: Build app
-        run: bun run --cwd server release --win
+        run: bun run --cwd server release --win -p never
 
   release-linux:
     needs: build-vite
@@ -92,4 +89,4 @@ jobs:
           name: vite
           path: server/build
       - name: Build app
-        run: bun run --cwd server release --linux
+        run: bun run --cwd server release --linux -p never

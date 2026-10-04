@@ -10,6 +10,9 @@ let socketPromise = new Promise(resolve => {
   resolveSocketPromise = resolve
 })
 
+// Electron 12 dev mode on Windows stops polling the renderer's libuv loop, stranding node-ipc replies; a live timer keeps it polling.
+require('timers').setInterval(() => {}, 100)
+
 ipcRenderer.on('set-socket', (event, { name }) => {
   resolveSocketPromise(name)
 })

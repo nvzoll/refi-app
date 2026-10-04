@@ -14,65 +14,46 @@ Backend
 
 ## Setup development
 
-Make sure you are using Node v14 or Node v16
+Requirements:
 
-### Build tree components
+- Node 22 (see `.nvmrc`)
+- Bun 1.4.2 (see `packageManager` in `package.json`)
 
-`tree` is customized libary based on `rc-tree`
-
-```sh
-cd tree
-yarn
-yarn compile
-```
-
-### Install node module for client and server
-
-Client
+The repo is a Bun workspace (`vite`, `server`, `firestore-serializers`) with a single `bun.lock`. Install everything from the root:
 
 ```
-cd vite
-yarn
-```
-
-Server
-
-```
-cd server
-yarn
+bun install
 ```
 
 ## Start development
 
+Run each in its own terminal, from the root.
+
 ### Start client
 
 ```
-cd vite
-yarn dev
+bun run dev:client
 ```
 
 ### Start server & electron
 
 ```
-cd server
-yarn dev
+bun run dev:server
 ```
 
 ## Build app
 
-### Build frontend
+### Build frontend and server
 
 ```
-cd vite
-yarn build
+bun run build
 ```
 
-### Build electron app
+This runs the Vite build, copies `vite/dist` into `server/build`, and compiles the server TypeScript.
+
+### Package electron app
 
 ```
-cd server
-yarn build
-yarn prepare
-yarn package-{mac,linux,window}
-yarn make-{mac,linux,window}
+bun run --cwd server package
+bun run --cwd server release
 ```

@@ -6,21 +6,21 @@ env:
 
 jobs:
   build-vite:
-    # needs: build-packages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "14"
-          cache: "yarn"
-          cache-dependency-path: vite/yarn.lock
-      - name: Install Vite package
-        run: cd vite && yarn
+          node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
       - name: Build Vite
-        run: cd vite && yarn run build
-      - name: "Upload Artifact"
-        uses: actions/upload-artifact@v2
+        run: bun run --cwd vite build
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: vite
           path: vite/dist
@@ -35,43 +35,61 @@ jobs:
       APPLEID: ${{ secrets.APPLEID }}
       APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@master
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 14
-      - name: Install Server package
-        run: cd server && yarn
+          node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
       - name: Download built Vite files
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: vite
           path: server/build
       - name: Build app
-        run: cd server && yarn release
-      # - name: "Upload Artifact"
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: Upload build file
-      #     path: server/dist
-      #     retention-days: 1
-  release-linux-window:
+        run: bun run --cwd server release
+
+  release-windows:
     needs: build-vite
-    runs-on: ubuntu-18.04
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install wine
-        run: |
-          sudo dpkg --add-architecture i386
-          wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-          sudo add-apt-repository ppa:cybermax-dexter/sdl2-backport
-          sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu $(lsb_release -cs) main"
-          sudo apt install --install-recommends winehq-stable
-      - name: Install Server package
-        run: cd server && yarn
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
       - name: Download built Vite files
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: vite
           path: server/build
       - name: Build app
-        run: cd server && yarn release-wl
+        run: bun run --cwd server release --win
+
+  release-linux:
+    needs: build-vite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Download built Vite files
+        uses: actions/download-artifact@v4
+        with:
+          name: vite
+          path: server/build
+      - name: Build app
+        run: bun run --cwd server release --linux

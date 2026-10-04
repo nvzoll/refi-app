@@ -1,0 +1,26 @@
+{
+  "name": "refi-app-workspace",
+  "private": true,
+  "workspaces": [
+    "vite",
+    "server",
+    "firestore-serializers"
+  ],
+  "packageManager": "bun@1.4.2",
+  "engines": {
+    "node": ">=22"
+  },
+  "trustedDependencies": [
+    "electron",
+    "esbuild"
+  ],
+  "resolutions": {
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "scripts": {
+    "dev:client": "bun run --cwd vite dev",
+    "dev:server": "bun run --cwd server dev",
+    "build": "bun run --cwd vite build && bun run --cwd server copy-fe && bun run --cwd server build-ts"
+  }
+}

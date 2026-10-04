@@ -17,13 +17,7 @@ jobs:
         with:
           node-version: "14"
           cache: "yarn"
-          cache-dependency-path: |
-            vite/yarn.lock
-            tree/yarn.lock
-      - name: Install lib tree
-        run: cd tree && yarn
-      - name: Build lib tree
-        run: cd tree && yarn run compile
+          cache-dependency-path: vite/yarn.lock
       - name: Install Vite package
         run: cd vite && yarn
       - name: Build Vite

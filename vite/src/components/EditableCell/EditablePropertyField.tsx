@@ -105,8 +105,8 @@ export const EditablePropertyField = ({
       className={classNames("relative w-full outline-none", {
         [`border-gray-400 border-l-${Math.min(depth * 2, 8)}`]: depth > 0,
       })}
-      cm-template="propertyName"
-      cm-id={fieldPath}
+      data-cm-template="propertyName"
+      data-cm-id={fieldPath}
     >
       {canExpand && (
         <div

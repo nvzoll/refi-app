@@ -202,11 +202,11 @@ function TableWrapper({
               <div
                 {...cell.getCellProps()}
                 className="border-r border-gray-200 dark:border-gray-600 last:border-r-0 group-hover:border-gray-300"
-                cm-template="rowContext"
-                cm-id="rowContext"
-                cm-payload-id={rowOrigin.id}
-                cm-payload-path={rowOrigin.ref.path}
-                cm-payload-column={cell.column.id}
+                data-cm-template="rowContext"
+                data-cm-id="rowContext"
+                data-cm-payload-id={rowOrigin.id}
+                data-cm-payload-path={rowOrigin.ref.path}
+                data-cm-payload-column={cell.column.id}
               >
                 {cell.render("Cell")}
               </div>
@@ -387,9 +387,9 @@ function ColumnHeader({
   return (
     <div
       className="flex flex-row items-center justify-between p-1.5"
-      cm-template={isIdColumn ? undefined : "columnHeaderContext"}
-      cm-payload-column={fieldPath}
-      cm-id={fieldPath}
+      data-cm-template={isIdColumn ? undefined : "columnHeaderContext"}
+      data-cm-payload-column={fieldPath}
+      data-cm-id={fieldPath}
     >
       <div className="font-semibold dark:text-gray-200 truncate dark:text-gray-100">
         {fieldPath}

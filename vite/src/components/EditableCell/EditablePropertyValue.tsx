@@ -275,8 +275,8 @@ export const EditablePropertyValue = ({
       ref={wrapperEl}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      cm-template="propertyValue"
-      cm-id={fieldPath}
+      data-cm-template="propertyValue"
+      data-cm-id={fieldPath}
     >
       <div
         className={classNames(

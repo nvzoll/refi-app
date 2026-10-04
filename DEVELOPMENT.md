@@ -16,16 +16,6 @@ Backend
 
 Make sure you are using Node v14 or Node v16
 
-### Build tree components
-
-`tree` is customized libary based on `rc-tree`
-
-```sh
-cd tree
-yarn
-yarn compile
-```
-
 ### Install node module for client and server
 
 Client

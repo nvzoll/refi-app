@@ -1,9 +1,9 @@
 import { cloneDeep } from "lodash";
 
 const defaultOptions = {
-  templateAttributeName: "cm-template",
-  payloadAttributeName: "cm-payload",
-  idAttributeName: "cm-id"
+  templateAttributeName: "data-cm-template",
+  payloadAttributeName: "data-cm-payload",
+  idAttributeName: "data-cm-id"
 };
 
 // Electron-specific; must match between main/renderer ipc

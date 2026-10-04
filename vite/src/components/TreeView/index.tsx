@@ -55,7 +55,11 @@ interface IFSDataNode extends DataNode {
   name: string;
 }
 
-const NodeComponent = ({ path, name, isCollection }: IFSDataNode) => {
+const NodeComponent = ({
+  path,
+  name,
+  isCollection,
+}: Pick<IFSDataNode, "path" | "name" | "isCollection">) => {
   const doc = useRecoilValue(docAtom(path));
 
   return (
@@ -94,24 +98,22 @@ function buildTree(
       key: [parent, key].join("/"),
       path: [parent, key].join("/"),
       name: key,
-      title: (props) => <NodeComponent {...props} />,
+      title: () => (
+        <NodeComponent
+          path={[parent, key].join("/")}
+          name={key}
+          isCollection={isCollection}
+        />
+      ),
       children: [],
       isCollection: isCollection,
       className:
         "hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-800 dark:text-white",
-      props: {
-        onClick: (e) => {
-          if (e.target?.getAttribute("role") !== "expander") {
-            // Ignore if user click on the expander icon
-            actionGoTo([parent, key].join("/"));
-          }
-        },
-        "cm-template": isCollection
-          ? "treeCollectionContext"
-          : "treeDocContext",
-        "cm-payload-path": [parent, key].join("/"),
-        "cm-id": "tree",
-      },
+      "data-cm-template": isCollection
+        ? "treeCollectionContext"
+        : "treeDocContext",
+      "data-cm-payload-path": [parent, key].join("/"),
+      "data-cm-id": "tree",
       icon: ({ expanded }: { expanded: boolean }) => {
         return (
           <div className="w-5">
@@ -337,9 +339,21 @@ function TreeView({ allDocs, deletedDocs, pathAvailable }: ITreeViewProps) {
     }
   }, []);
 
-  const handleExpandData = useCallback(async (node: EventDataNode) => {
-    actionPathExpand(node.key.toString());
-  }, []);
+  const handleClickNode = useCallback(
+    (_: React.MouseEvent, node: EventDataNode<IFSDataNode>) => {
+      if (node.selectable !== false) {
+        actionGoTo(node.key.toString());
+      }
+    },
+    []
+  );
+
+  const handleExpandData = useCallback(
+    async (node: EventDataNode<IFSDataNode>) => {
+      actionPathExpand(node.key.toString());
+    },
+    []
+  );
 
   const handleOnAddCollection = useCallback(
     (path: string | null): void => {
@@ -527,6 +541,7 @@ function TreeView({ allDocs, deletedDocs, pathAvailable }: ITreeViewProps) {
                 // showLine
                 treeData={treeData as any}
                 onSelect={handleSelectTree}
+                onClick={handleClickNode}
                 loadData={handleExpandData}
                 height={height}
                 itemHeight={30}

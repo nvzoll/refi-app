@@ -49,7 +49,6 @@
     "@todesktop/runtime": "^0.6.5",
     "@types/lowdb": "^1.0.9",
     "axios": "^0.21.1",
-    "electron-installer-debian": "^3.1.0",
     "electron-is-dev": "^1.2.0",
     "electron-log": "^4.3.2",
     "electron-serve": "^1.1.0",

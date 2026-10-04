@@ -17,6 +17,8 @@ jobs:
           bun-version-file: package.json
       - name: Install dependencies
         run: bun install --frozen-lockfile
+      - name: Test
+        run: bun run test
       - name: Build Vite
         run: bun run --cwd vite build
       - name: Upload Artifact

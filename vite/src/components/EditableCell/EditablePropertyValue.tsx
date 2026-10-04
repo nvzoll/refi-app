@@ -8,7 +8,7 @@ import DropdownMenu from "@/components/DropdownMenu";
 import { useContextMenu } from "@/hooks/contextMenu";
 import { isNumeric } from "@/utils/common";
 import { convertFSValue } from "@/utils/fieldConverter";
-import { getFireStoreType } from "@/utils/simplifr";
+import { getFirestoreType } from "@/utils/simplifr";
 import { Tooltip } from "@zendeskgarden/react-tooltips";
 import classNames from "classnames";
 import { DocRef } from "firestore-serializers";
@@ -57,7 +57,7 @@ export const EditablePropertyValue = ({
   const onChange = useCallback(
     (newInstanceValue) => {
       if (
-        getFireStoreType(instanceValue) === "number" &&
+        getFirestoreType(instanceValue) === "number" &&
         isNumeric(newInstanceValue)
       ) {
         // Respect current type
@@ -121,7 +121,7 @@ export const EditablePropertyValue = ({
   );
 
   const fieldType = useMemo(() => {
-    return getFireStoreType(instanceValue);
+    return getFirestoreType(instanceValue);
   }, [instanceValue]);
 
   // console.log(fieldPath, fieldType, instanceValue);

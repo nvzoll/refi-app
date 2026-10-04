@@ -15,7 +15,7 @@ export const prettifyPath = (path: string): string => {
   // A Good path is: Start with `/` and end without `/`
   let prettiedPath = path;
   if (prettiedPath.endsWith("/")) {
-    prettiedPath.slice(0, -1);
+    prettiedPath = prettiedPath.slice(0, -1);
   }
 
   if (!prettiedPath.startsWith("/")) {

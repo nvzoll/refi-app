@@ -7,7 +7,8 @@
     "serve": "vite preview",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "build:css": "cross-env NODE_ENV=production postcss src/styles/tailwind.css -o src/styles/index.css",
-    "watch:css": "cross-env NODE_ENV=development postcss src/styles/tailwind.css -o src/styles/index.css --watch"
+    "watch:css": "cross-env NODE_ENV=development postcss src/styles/tailwind.css -o src/styles/index.css --watch",
+    "test": "bun test"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.0.10",
@@ -66,6 +67,7 @@
     "@tailwindcss/forms": "^0.2.1",
     "@tailwindcss/typography": "^0.4.0",
     "@testing-library/react": "^11.2.5",
+    "@types/bun": "^1.4.2",
     "@types/deep-diff": "^1.0.0",
     "@types/jest": "^26.0.20",
     "@types/lodash": "^4.14.168",

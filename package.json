@@ -21,6 +21,7 @@
   "scripts": {
     "dev:client": "bun run --cwd vite dev",
     "dev:server": "bun run --cwd server dev",
-    "build": "bun run --cwd vite build && bun run --cwd server copy-fe && bun run --cwd server build-ts"
+    "build": "bun run --cwd vite build && bun run --cwd server copy-fe && bun run --cwd server build-ts",
+    "test": "bun run --cwd vite test"
   }
 }

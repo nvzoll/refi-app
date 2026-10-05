@@ -6,6 +6,10 @@ import {
   addFirebaseDocSerializeMetaData,
   removeFirebaseSerializeMetaData,
 } from "@/utils/common";
+import {
+  decodeSpecialValues,
+  encodeSpecialValues,
+} from "@/utils/legacySpecialValues";
 import Editor, { Monaco, OnValidate, useMonaco } from "@monaco-editor/react";
 import { diff } from "deep-diff";
 import firebase from "firebase/app";
@@ -45,7 +49,7 @@ const monacoOption = {
 
 const serializeData = (doc: ClientDocumentSnapshot) => {
   return removeFirebaseSerializeMetaData(
-    JSON.stringify(JSON.parse(serializeDocumentSnapshot(doc)))
+    encodeSpecialValues(serializeDocumentSnapshot(doc))
   );
 };
 
@@ -56,7 +60,7 @@ const deserializeData = (
   return originalDoc.clone(
     deserializeDocumentSnapshot(
       addFirebaseDocSerializeMetaData(
-        data,
+        decodeSpecialValues(data),
         originalDoc.id,
         originalDoc.ref.path
       ),

@@ -23,6 +23,6 @@
     "dev:client": "bun run build:serializers && bun run --cwd vite dev",
     "dev:server": "bun run build:serializers && bun run --cwd server dev",
     "build": "bun run build:serializers && bun run --cwd vite build && bun run --cwd server copy-fe && bun run --cwd server build-ts",
-    "test": "bun run build:serializers && bun run --cwd vite test"
+    "test": "bun run build:serializers && bun run --cwd firestore-serializers test && bun run --cwd vite test"
   }
 }

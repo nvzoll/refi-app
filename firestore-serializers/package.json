@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "test": "ts-mocha tests/**/*.test.ts --timeout 10000 --exit",
+    "test": "bun test",
     "coverage": "nyc --reporter=lcov npm run test",
     "build": "rm -rf dist && tsc && cp src/index.d.ts dist/index.d.ts"
   },

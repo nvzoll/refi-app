@@ -1,20 +1,30 @@
 import { mapDeepWithArrays } from "./map-deep-with-arrays";
 import { itemIsDocumentReference, itemIsGeoPoint, itemIsTimestamp } from "./firestore-identifiers";
 import { DocumentSnapshot, QuerySnapshot } from './index.d';
+import { SerializedFirestoreValue } from "./types";
 
-function stringifyDocumentProperty(item: any): string {
-    let modifiedItem: string = item;
+function stringifyDocumentProperty(item: any): any {
+    let modifiedItem: any = item;
 
     if (itemIsDocumentReference(item)) {
-        modifiedItem = '__DocumentReference__' + item.path;
+        const value: SerializedFirestoreValue = {
+            __fsSerializer__: 'special', type: 'DocumentReference', path: item.path
+        };
+        modifiedItem = value;
     }
 
     if (itemIsGeoPoint(item)) {
-        modifiedItem = '__GeoPoint__' + item.latitude + '###' + item.longitude;
+        const value: SerializedFirestoreValue = {
+            __fsSerializer__: 'special', type: 'GeoPoint', latitude: item.latitude, longitude: item.longitude
+        };
+        modifiedItem = value;
     }
 
     if (itemIsTimestamp(item)) {
-        modifiedItem = '__Timestamp__' + item.toDate().toISOString();
+        const value: SerializedFirestoreValue = {
+            __fsSerializer__: 'special', type: 'Timestamp', iso8601: item.toDate().toISOString()
+        };
+        modifiedItem = value;
     }
 
     return modifiedItem;

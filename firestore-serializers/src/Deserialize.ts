@@ -1,46 +1,43 @@
 import firebase from "firebase";
 import { SimpleJsonType } from "./types";
+import { serialItemIsSpecial } from "./firestore-identifiers";
 import { mapDeepWithArrays } from "./map-deep-with-arrays";
 import { omit } from "lodash";
 import { DocRef } from "./DocRef";
 import { DocumentSnapshot, QuerySnapshot } from './index.d';
 
 function objectifyDocumentProperty(
-    item: string,
+    item: any,
     geoPoint: typeof firebase.firestore.GeoPoint,
     timestamp: typeof firebase.firestore.Timestamp,
     firestore?: (path: string) => any
 ): any {
-    let modifiedItem: any = item;
-
-    if (modifiedItem === null) {
-        return modifiedItem;
+    if (!serialItemIsSpecial(item)) {
+        return item;
     }
 
-    if (item.startsWith && typeof item === 'string') {
-        if (item.startsWith('__DocumentReference__')) {
-            const path = item.split('__DocumentReference__')[1];
-            modifiedItem = firestore ? firestore(path) : new DocRef(path);
-        }
-
-        if (item.startsWith('__Timestamp__')) {
-            const dateString = item.split('__Timestamp__')[1];
-
-            if (isNaN(new Date(dateString).getTime())) {
-                modifiedItem = String(item);
-            } else {
-                modifiedItem = timestamp.fromDate(new Date(dateString));
+    switch (item.type) {
+        case 'DocumentReference':
+            if (typeof item.path !== 'string') {
+                throw new Error('DocumentReference "path" must be a string');
             }
+            return firestore ? firestore(item.path) : new DocRef(item.path);
+        case 'GeoPoint':
+            if (!isFinite(item.latitude) || !isFinite(item.longitude)
+                || typeof item.latitude !== 'number' || typeof item.longitude !== 'number') {
+                throw new Error('GeoPoint "latitude" and "longitude" must be finite numbers');
+            }
+            return new geoPoint(item.latitude, item.longitude);
+        case 'Timestamp': {
+            const date = new Date(item.iso8601);
+            if (typeof item.iso8601 !== 'string' || isNaN(date.getTime())) {
+                throw new Error('Timestamp "iso8601" must be a valid date string');
+            }
+            return timestamp.fromDate(date);
         }
-
-        if (item.startsWith('__GeoPoint__')) {
-            const geoSection = item.split('__GeoPoint__')[1];
-            const [latitude, longitude] = geoSection.split('###');
-            modifiedItem = new geoPoint(parseFloat(latitude), parseFloat(longitude));
-        }
+        default:
+            throw new Error('Unknown special value type: ' + String(item.type));
     }
-
-    return modifiedItem;
 }
 function objectifyDocument(
     partialObject: {
@@ -50,7 +47,7 @@ function objectifyDocument(
     timestamp: typeof firebase.firestore.Timestamp,
     firestore?: (path: string) => any
 ): DocumentSnapshot {
-    const mappedObject = mapDeepWithArrays(partialObject, (item: string) => {
+    const mappedObject = mapDeepWithArrays(partialObject, (item: any) => {
         return objectifyDocumentProperty(item, geoPoint, timestamp, firestore);
     });
     const id = partialObject.__id__ as string;

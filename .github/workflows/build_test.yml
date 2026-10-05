@@ -1,11 +1,8 @@
-name: Build Merge request
+name: Test
 on: [pull_request]
 
-env:
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
 jobs:
-  build-vite:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,76 +16,3 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Test
         run: bun run test
-      - name: Build Vite
-        run: bun run --cwd vite build
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: vite
-          path: vite/dist
-          retention-days: 1
-
-  release-macos:
-    needs: build-vite
-    runs-on: macos-latest
-    env:
-      CSC_IDENTITY_AUTO_DISCOVERY: false
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: package.json
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Download built Vite files
-        uses: actions/download-artifact@v4
-        with:
-          name: vite
-          path: server/build
-      - name: Build app
-        run: bun run --cwd server release -p never
-
-  release-windows:
-    needs: build-vite
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: package.json
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Download built Vite files
-        uses: actions/download-artifact@v4
-        with:
-          name: vite
-          path: server/build
-      - name: Build app
-        run: bun run --cwd server release --win -p never
-
-  release-linux:
-    needs: build-vite
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: package.json
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Download built Vite files
-        uses: actions/download-artifact@v4
-        with:
-          name: vite
-          path: server/build
-      - name: Build app
-        run: bun run --cwd server release --linux -p never

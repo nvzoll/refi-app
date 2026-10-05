@@ -25,6 +25,8 @@ The repo is a Bun workspace (`vite`, `server`, `firestore-serializers`) with a s
 bun install
 ```
 
+`firestore-serializers` is a workspace package that `vite` and `server` consume from its built `dist/`. The root `dev:*`, `build` and `test` scripts build it first; after editing it during `dev:*`, run `bun run build:serializers`.
+
 ## Start development
 
 Run each in its own terminal, from the root.

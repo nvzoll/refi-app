@@ -19,9 +19,10 @@
     "react-dom": "17.0.2"
   },
   "scripts": {
-    "dev:client": "bun run --cwd vite dev",
-    "dev:server": "bun run --cwd server dev",
-    "build": "bun run --cwd vite build && bun run --cwd server copy-fe && bun run --cwd server build-ts",
-    "test": "bun run --cwd vite test"
+    "build:serializers": "bun run --cwd firestore-serializers build",
+    "dev:client": "bun run build:serializers && bun run --cwd vite dev",
+    "dev:server": "bun run build:serializers && bun run --cwd server dev",
+    "build": "bun run build:serializers && bun run --cwd vite build && bun run --cwd server copy-fe && bun run --cwd server build-ts",
+    "test": "bun run build:serializers && bun run --cwd vite test"
   }
 }

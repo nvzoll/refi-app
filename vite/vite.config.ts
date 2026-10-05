@@ -11,11 +11,13 @@ export default defineConfig({
   plugins: [reactRefresh()],
   optimizeDeps: {
     entries: ["index.html", "tabs.html"],
+    include: ["firestore-serializers"],
   },
   build: {
     minify: false,
     brotliSize: false,
     target: "chrome89",
+    commonjsOptions: { include: [/firestore-serializers/, /node_modules/] },
     polyfillDynamicImport: false,
     // sourcemap: "inline",
     rollupOptions: {

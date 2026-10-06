@@ -1,5 +1,6 @@
 import { prettifyPath, removeFirebaseSerializeMetaData } from "@/utils/common";
 import { FILTER_PREFIX } from "@/utils/contant";
+import { encodeSpecialValues } from "@/utils/legacySpecialValues";
 import exportFromJSON from "export-from-json";
 import {
   serializeDocumentSnapshot,
@@ -154,7 +155,10 @@ export const actionExportCollectionJSON = async (collectionPath: string) => {
       path: collectionPath,
     })
     .then(({ docs }: { docs: string }) => {
-      const docsAsString = removeFirebaseSerializeMetaData(docs, ["__path__"]);
+      const docsAsString = removeFirebaseSerializeMetaData(
+        encodeSpecialValues(docs),
+        ["__path__"]
+      );
       exportFromJSON({
         data: JSON.parse(docsAsString),
         fileName: collectionPath.replaceAll("/", "_"),
@@ -172,7 +176,10 @@ export const actionExportCollectionCSV = async (collectionPath: string) => {
       path: collectionPath,
     })
     .then(({ docs }: { docs: string }) => {
-      const docsAsString = removeFirebaseSerializeMetaData(docs, ["__path__"]);
+      const docsAsString = removeFirebaseSerializeMetaData(
+        encodeSpecialValues(docs),
+        ["__path__"]
+      );
       exportFromJSON({
         data: JSON.parse(docsAsString),
         fileName: collectionPath.replaceAll("/", "_"),
@@ -195,9 +202,11 @@ export const actionExportViewJSON = async (
   ).toPromise();
 
   const docsAsString = removeFirebaseSerializeMetaData(
-    serializeQuerySnapshot({
-      docs,
-    }),
+    encodeSpecialValues(
+      serializeQuerySnapshot({
+        docs,
+      })
+    ),
     ["__path__"]
   );
 
@@ -221,9 +230,11 @@ export const actionExportViewCSV = async (
   ).toPromise();
 
   const docsAsString = removeFirebaseSerializeMetaData(
-    serializeQuerySnapshot({
-      docs,
-    }),
+    encodeSpecialValues(
+      serializeQuerySnapshot({
+        docs,
+      })
+    ),
     ["__path__"]
   );
 
@@ -249,7 +260,7 @@ export const actionExportDocJSON = async (
   }
 
   const docsAsString = removeFirebaseSerializeMetaData(
-    serializeDocumentSnapshot(doc),
+    encodeSpecialValues(serializeDocumentSnapshot(doc)),
     ["__path__"]
   );
 
@@ -272,7 +283,7 @@ export const actionExportDocCSV = async (docPath: string): Promise<boolean> => {
   }
 
   const docsAsString = removeFirebaseSerializeMetaData(
-    serializeDocumentSnapshot(doc),
+    encodeSpecialValues(serializeDocumentSnapshot(doc)),
     ["__path__"]
   );
 

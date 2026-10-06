@@ -1,6 +1,6 @@
 import { cloneDeep, get, isArray, set, isObject, flattenDeep } from "lodash";
 import firebase from "firebase";
-import {itemIsDocumentReference, itemIsGeoPoint, itemIsTimestamp} from "./firestore-identifiers";
+import {itemIsDocumentReference, itemIsGeoPoint, itemIsTimestamp, serialItemIsSpecial} from "./firestore-identifiers";
 
 type DataMappedValue = string | number | boolean | MappedData | DataMappedValue[];
 
@@ -17,6 +17,13 @@ export type MappedData = {
 
 type RecursiveStringArray = string | RecursiveStringArray[];
 
+function isLeafValue(item: any): boolean {
+    return itemIsDocumentReference(item)
+        || itemIsTimestamp(item)
+        || itemIsGeoPoint(item)
+        || serialItemIsSpecial(item);
+}
+
 function getDeepListOfKeysWithoutInvadingFirebaseProperties(
     object: {
         [key: string]: any
@@ -31,11 +38,7 @@ function getDeepListOfKeysWithoutInvadingFirebaseProperties(
             const prefixKeyWith = prefix === '' ? '' : prefix + '.';
 
             if(isObject(item)) {
-                // don't dive further into the object if it's an important Firestore type
-                if(!itemIsDocumentReference(item)
-                    && !itemIsTimestamp(item)
-                    && !itemIsGeoPoint(item)
-                ) {
+                if(!isLeafValue(item)) {
                     keysList.push(
                         getDeepListOfKeysWithoutInvadingFirebaseProperties(
                             item,

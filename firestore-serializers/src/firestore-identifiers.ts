@@ -3,18 +3,11 @@ import { hasIn } from "lodash";
 import { DocRef } from "./DocRef";
 
 export function itemIsInternalDocumentReference(item: any): item is DocRef {
-    return [
-        hasIn(item, 'path'),
-    ].every(e => e === true);
+    return item instanceof DocRef;
 }
 
 export function itemIsFSDocumentReference(item: any): item is firebase.firestore.DocumentReference {
-    return [
-        hasIn(item, 'id'),
-        hasIn(item, 'parent'),
-        hasIn(item, 'path'),
-        hasIn(item, 'get'),
-    ].every(e => e === true);
+    return typeof item?.path === 'string' && typeof item.get === 'function';
 }
 
 export function itemIsDocumentReference(item: any): item is firebase.firestore.DocumentReference | DocRef {
@@ -24,7 +17,8 @@ export function itemIsDocumentReference(item: any): item is firebase.firestore.D
 export function itemIsGeoPoint(item: any): item is firebase.firestore.GeoPoint {
     return [
         hasIn(item, 'latitude'),
-        hasIn(item, 'longitude')
+        hasIn(item, 'longitude'),
+        typeof item?.isEqual === 'function'
     ].every(e => e === true);
 }
 
@@ -34,4 +28,8 @@ export function itemIsTimestamp(item: any): item is firebase.firestore.Timestamp
         hasIn(item, 'nanoseconds'),
         hasIn(item, 'toDate')
     ].every(e => e === true)
+}
+
+export function serialItemIsSpecial(item: any): boolean {
+    return item?.__fsSerializer__ === 'special';
 }

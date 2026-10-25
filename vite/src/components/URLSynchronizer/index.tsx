@@ -2,11 +2,11 @@ import { navigatorPathAtom } from "@/atoms/navigator";
 import { getProjectId } from "@/utils/common";
 import { useEffect } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useAtom } from "jotai";
 
 const URLSynchronizer = () => {
   const params = useParams() as any;
-  const [path, setPath] = useRecoilState(navigatorPathAtom);
+  const [path, setPath] = useAtom(navigatorPathAtom);
   const history = useHistory();
   const location = useLocation();
 

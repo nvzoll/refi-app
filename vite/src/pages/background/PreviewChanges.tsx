@@ -24,16 +24,16 @@ import classNames from "classnames";
 import { Tag } from "@zendeskgarden/react-tags";
 import { groupBy } from "lodash";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
 import EscExit from "@/components/EscExit";
 import { actionGoTo } from "@/atoms/navigator.action";
 
 const PreviewChanges = () => {
-  const setShowChangeModal = useSetRecoilState(isShowPreviewChangeModalAtom);
-  const changedDocs = useRecoilValue(changedDocAtom);
-  const newDocs = useRecoilValue(newDocsAtom);
-  const deletedDocs = useRecoilValue(deletedDocsAtom);
-  const deletedCollections = useRecoilValue(collectionHasBeenDeleteAtom);
+  const setShowChangeModal = useSetAtom(isShowPreviewChangeModalAtom);
+  const changedDocs = useAtomValue(changedDocAtom);
+  const newDocs = useAtomValue(newDocsAtom);
+  const deletedDocs = useAtomValue(deletedDocsAtom);
+  const deletedCollections = useAtomValue(collectionHasBeenDeleteAtom);
 
   const changes = useMemo(() => {
     return [...changedDocs, ...newDocs, ...deletedDocs];

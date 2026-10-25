@@ -15,7 +15,7 @@ import React, {
   useState,
 } from "react";
 import { getApplicationKeyMap } from "react-hotkeys";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useAtom, useSetAtom } from "jotai";
 
 interface ICommand {
   name: string;
@@ -60,7 +60,7 @@ const CommandOption = ({
 );
 
 const Commander = () => {
-  const setShowModalCommand = useSetRecoilState(isModalCommandAtom);
+  const setShowModalCommand = useSetAtom(isModalCommandAtom);
   const [keyword, setKeyword] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const [activeOption, setActive] = useState<number>(1);

@@ -20,7 +20,7 @@ import {
 } from "firestore-serializers";
 import { debounce } from "lodash";
 import React, { useEffect, useRef, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
 import "./monaco.css";
 
@@ -76,8 +76,8 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
     serializeData(doc)
   );
   const editorView = useRef<any>();
-  const setError = useSetRecoilState(monacoDataErrorAtom(doc.ref.path));
-  const appTheme = useRecoilValue(appThemeAtom);
+  const setError = useSetAtom(monacoDataErrorAtom(doc.ref.path));
+  const appTheme = useAtomValue(appThemeAtom);
 
   const monaco = useMonaco();
 
@@ -166,7 +166,7 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
 };
 
 export const MonacoPropertyError = ({ path }: { path: string }) => {
-  const error = useRecoilValue(monacoDataErrorAtom(path));
+  const error = useAtomValue(monacoDataErrorAtom(path));
 
   return (
     <div

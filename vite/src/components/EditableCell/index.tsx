@@ -22,7 +22,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useAtom, useAtomValue } from "jotai";
 import CopyIcon from "@/components/CopyIcon";
 import DateTimePicker from "@/components/DataInput/DateTimePicker";
 
@@ -41,8 +41,8 @@ const EditableCell = ({
   tabIndex,
 }: IEditableCell): React.ReactElement => {
   const fieldPath = buildFSUrl({ path: row.ref.path, field: id });
-  const [value, setValue] = useRecoilState(fieldAtom(fieldPath));
-  const isFieldChanged = useRecoilValue(fieldChangedAtom(fieldPath));
+  const [value, setValue] = useAtom(fieldAtom(fieldPath));
+  const isFieldChanged = useAtomValue(fieldChangedAtom(fieldPath));
   const [instanceValue, setInstanceValue] = useState(value);
   const [isHighlight, toggleHighlight] = useState(false);
   const wrapperEl = useRef(null);
@@ -261,7 +261,7 @@ export const IDReadOnlyField = ({
   children,
   isNew = false,
 }: IIDReadonlyCell) => {
-  const currentPath = useRecoilValue(navigatorPathAtom);
+  const currentPath = useAtomValue(navigatorPathAtom);
   const isActive = value === getPathEntities(currentPath).pop();
 
   if (children) {

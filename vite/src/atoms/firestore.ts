@@ -6,9 +6,10 @@ import { getParentPath } from "@/utils/common";
 import "firebase/firestore";
 import { difference, isObject, isUndefined } from "lodash";
 import * as immutable from "object-path-immutable";
-import { atom, atomFamily, selector, selectorFamily } from "recoil";
+import { atom, SetStateAction } from "jotai";
+import { atomFamily } from "jotai-family";
 import { queryVersionAtom } from "./navigator";
-import { setRecoilExternalState } from "./RecoilExternalStatePortal";
+import { resolveUpdate } from "./store";
 
 type IFirestorePath = string;
 interface IPathDetail {
@@ -29,54 +30,35 @@ export const parseFSUrl = (url: string): IPathDetail => {
   };
 };
 
-export const projectIdAtom = atom<string>({
-  key: "FireStore_project_id",
-  default: "",
-});
+export const projectIdAtom = atom<string>("");
 
-export const deletedDocsAtom = atom<ClientDocumentSnapshot[]>({
-  key: "FireStore_docs_deleted",
-  default: [],
-});
+export const deletedDocsAtom = atom<ClientDocumentSnapshot[]>([]);
 
-export const docsLibraryAtom = atom<IFirestorePath[]>({
-  key: "FireStore_docs_library",
-  default: [],
-  // TODO: Clean up function for this library
-});
+// TODO: Clean up function for this library
+export const docsLibraryAtom = atom<IFirestorePath[]>([]);
 
-export const docAtom = atomFamily<
-  ClientDocumentSnapshot | null,
-  IFirestorePath
->({
-  key: "FireStore_doc",
-  default: null,
-  effects_UNSTABLE: () => [
-    ({ onSet }) => {
-      // Synchronize data with docsLibraryAtom
-      onSet((newDoc) => {
-        // TODO: Sync the case doc is deleted
-        if (newDoc instanceof ClientDocumentSnapshot) {
-          setRecoilExternalState(docsLibraryAtom, (currVal) => {
-            if (!currVal.includes(newDoc.ref.path)) {
-              return [...currVal, newDoc.ref.path];
-            }
-
-            return currVal;
-          });
-        }
-      });
-    },
-  ],
+export const docAtom = atomFamily((path: IFirestorePath) => {
+  const anAtom = atom(
+    null as ClientDocumentSnapshot | null,
+    (get, set, update: SetStateAction<ClientDocumentSnapshot | null>) => {
+      const newDoc = resolveUpdate(update, get(anAtom));
+      set(anAtom, newDoc);
+      // TODO: Sync the case doc is deleted
+      if (newDoc instanceof ClientDocumentSnapshot) {
+        set(docsLibraryAtom, (docsLibrary) =>
+          docsLibrary.includes(newDoc.ref.path)
+            ? docsLibrary
+            : [...docsLibrary, newDoc.ref.path]
+        );
+      }
+    }
+  );
+  return anAtom;
 });
 
 // NOTICE: This atom is impact your performance
-export const collectionAtom = selectorFamily<
-  ClientDocumentSnapshot[],
-  IFirestorePath
->({
-  key: "FireStore_collection",
-  get: (path) => ({ get }) => {
+export const collectionAtom = atomFamily((path: IFirestorePath) =>
+  atom<ClientDocumentSnapshot[]>((get) => {
     const docsLibrary = get(docsLibraryAtom);
     return docsLibrary
       .filter((docPath) => getParentPath(docPath) === path)
@@ -84,21 +66,16 @@ export const collectionAtom = selectorFamily<
       .filter(
         (docValue): docValue is ClientDocumentSnapshot => docValue !== null
       );
-  },
-});
+  })
+);
 
-export const queryDocOrder = atomFamily<string[], number>({
-  key: "FireStore_queryDocOrder",
-  default: () => [],
-});
+export const queryDocOrder = atomFamily((queryVersion: number) =>
+  atom<string[]>([])
+);
 
 // NOTICE: This atom is impact your performance
-export const collectionWithQueryAtom = selectorFamily<
-  ClientDocumentSnapshot[],
-  IFirestorePath
->({
-  key: "FireStore_collection",
-  get: (path) => ({ get }) => {
+export const collectionWithQueryAtom = atomFamily((path: IFirestorePath) =>
+  atom<ClientDocumentSnapshot[]>((get) => {
     const { queryVersion } = get(queryVersionAtom);
     const docsOrder = get(queryDocOrder(queryVersion));
 
@@ -116,70 +93,68 @@ export const collectionWithQueryAtom = selectorFamily<
           docsOrder.findIndex((orderPath) => orderPath === b.ref.path)
         );
       });
-  },
-});
+  })
+);
 
 // NOTICE: This atom is impact your performance
-export const totalDocsWithQueryAtom = selectorFamily<number, IFirestorePath>({
-  key: "FireStore_collection",
-  get: (path) => ({ get }) => {
+export const totalDocsWithQueryAtom = atomFamily((path: IFirestorePath) =>
+  atom<number>((get) => {
     const docs = get(collectionWithQueryAtom(path));
     return docs.length;
-  },
-});
+  })
+);
 
 // NOTICE: This atom is impact your performance
-export const allDocsAtom = selector<ClientDocumentSnapshot[]>({
-  key: "FireStore_all_docs",
-  get: ({ get }) => {
-    const docsLibrary = get(docsLibraryAtom);
-    return docsLibrary
-      .map((docPath) => get(docAtom(docPath)))
-      .filter(
-        (docValue): docValue is ClientDocumentSnapshot => docValue !== null
-      );
-  },
+export const allDocsAtom = atom<ClientDocumentSnapshot[]>((get) => {
+  const docsLibrary = get(docsLibraryAtom);
+  return docsLibrary
+    .map((docPath) => get(docAtom(docPath)))
+    .filter(
+      (docValue): docValue is ClientDocumentSnapshot => docValue !== null
+    );
 });
 
-export const fieldAtom = selectorFamily<IFieldValue | undefined, string>({
-  key: "FireStore_doc_field",
-  get: (url) => ({ get }) => {
-    const { path, field } = parseFSUrl(url);
-    const doc = get(docAtom(path));
+export const fieldAtom = atomFamily((url: string) => {
+  const anAtom = atom(
+    (get) => {
+      const { path, field } = parseFSUrl(url);
+      const doc = get(docAtom(path));
 
-    if (doc) {
-      return (immutable.get(doc.data(), field) as unknown) as IFieldValue;
-    }
-
-    return undefined;
-  },
-  set: (url) => ({ set, get }, newValue) => {
-    if (isUndefined(newValue)) {
-      return;
-    }
-
-    const { path, field } = parseFSUrl(url);
-    const doc = get(docAtom(path));
-    if (doc) {
-      const newDoc = doc.clone().setField(field, newValue);
-      const oldValue = immutable.get(doc.data(), field);
-      if (newValue && isObject(oldValue) && isObject(oldValue)) {
-        // Add changes if the object inside changed
-        // TODO: Use immer to store field patch
-        newDoc.addChange(
-          difference(Object.keys(newValue), Object.keys(oldValue)).map(
-            (key) => `${field}.${key}`
-          )
-        );
+      if (doc) {
+        return immutable.get(doc.data(), field) as unknown as IFieldValue;
       }
-      set(docAtom(path), newDoc);
+
+      return undefined;
+    },
+    (get, set, update: SetStateAction<IFieldValue | undefined>) => {
+      const newValue = resolveUpdate(update, get(anAtom));
+      if (isUndefined(newValue)) {
+        return;
+      }
+
+      const { path, field } = parseFSUrl(url);
+      const doc = get(docAtom(path));
+      if (doc) {
+        const newDoc = doc.clone().setField(field, newValue);
+        const oldValue = immutable.get(doc.data(), field);
+        if (newValue && isObject(oldValue) && isObject(oldValue)) {
+          // Add changes if the object inside changed
+          // TODO: Use immer to store field patch
+          newDoc.addChange(
+            difference(Object.keys(newValue), Object.keys(oldValue)).map(
+              (key) => `${field}.${key}`
+            )
+          );
+        }
+        set(docAtom(path), newDoc);
+      }
     }
-  },
+  );
+  return anAtom;
 });
 
-export const fieldChangedAtom = selectorFamily<boolean, string>({
-  key: "FireStore_doc_field",
-  get: (url) => ({ get }) => {
+export const fieldChangedAtom = atomFamily((url: string) =>
+  atom<boolean>((get) => {
     const { path, field } = parseFSUrl(url);
     const doc = get(docAtom(path));
 
@@ -188,41 +163,30 @@ export const fieldChangedAtom = selectorFamily<boolean, string>({
     }
 
     return false;
-  },
-});
+  })
+);
 
 // NOTICE: This atom is impact your performance
-export const changedDocAtom = selector<ClientDocumentSnapshot[]>({
-  key: "FireStore_docs_changed",
-  get: ({ get }) => {
-    const docs = get(docsLibraryAtom);
+export const changedDocAtom = atom<ClientDocumentSnapshot[]>((get) => {
+  const docs = get(docsLibraryAtom);
 
-    return docs
-      .map((docPath) => get(docAtom(docPath)))
-      .filter(
-        (docValue): docValue is ClientDocumentSnapshot => docValue !== null
-      )
-      .filter((doc) => doc.isChanged());
-  },
+  return docs
+    .map((docPath) => get(docAtom(docPath)))
+    .filter((docValue): docValue is ClientDocumentSnapshot => docValue !== null)
+    .filter((doc) => doc.isChanged());
 });
 
-export const newDocsAtom = selector<ClientDocumentSnapshot[]>({
-  key: "FireStore_docs_new",
-  get: ({ get }) => {
-    const docs = get(docsLibraryAtom);
+export const newDocsAtom = atom<ClientDocumentSnapshot[]>((get) => {
+  const docs = get(docsLibraryAtom);
 
-    return docs
-      .map((docPath) => get(docAtom(docPath)))
-      .filter(
-        (docValue): docValue is ClientDocumentSnapshot => docValue !== null
-      )
-      .filter((doc) => doc.isNew);
-  },
+  return docs
+    .map((docPath) => get(docAtom(docPath)))
+    .filter((docValue): docValue is ClientDocumentSnapshot => docValue !== null)
+    .filter((doc) => doc.isNew);
 });
 
-export const hasNewDocAtom = selectorFamily<boolean, string>({
-  key: "FireStore_collection_new",
-  get: (path) => ({ get }) => {
+export const hasNewDocAtom = atomFamily((path: string) =>
+  atom<boolean>((get) => {
     const newDocs = get(newDocsAtom);
 
     for (let i = 0; i < newDocs.length; i++) {
@@ -233,37 +197,27 @@ export const hasNewDocAtom = selectorFamily<boolean, string>({
     }
 
     return false;
-  },
-});
+  })
+);
 
 // NOTICE: This atom is impact your performance
-export const hasModifiedDocAtom = selectorFamily<boolean, string>({
-  key: "FireStore_collection_modified",
-  get: (path) => ({ get }) => {
+export const hasModifiedDocAtom = atomFamily((path: string) =>
+  atom<boolean>((get) => {
     const docsChange = get(changedDocAtom);
 
     return docsChange.some((doc) => doc.ref.path.startsWith(path));
-  },
-});
+  })
+);
 
-export const collectionHasBeenDeleteAtom = atom<string[]>({
-  key: "FireStore_collection_deleted",
-  default: [],
-});
+export const collectionHasBeenDeleteAtom = atom<string[]>([]);
 
-export const pathExpanderPureAtom = atom<string[]>({
-  key: "FireStore_path_expander",
-  default: [],
-});
+export const pathExpanderPureAtom = atom<string[]>([]);
 
-export const pathExpanderAtom = selector<string[]>({
-  key: "FireStore_path_expander_without_deleted",
-  get: ({ get }) => {
-    const deletedCollections = get(collectionHasBeenDeleteAtom);
+export const pathExpanderAtom = atom<string[]>((get) => {
+  const deletedCollections = get(collectionHasBeenDeleteAtom);
 
-    return get(pathExpanderPureAtom).filter(
-      (path) =>
-        !deletedCollections.find((collection) => path.startsWith(collection))
-    );
-  },
+  return get(pathExpanderPureAtom).filter(
+    (path) =>
+      !deletedCollections.find((collection) => path.startsWith(collection))
+  );
 });

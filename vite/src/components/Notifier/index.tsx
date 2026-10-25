@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { Title, Notification, Close } from "@zendeskgarden/react-notifications";
 import ReactDOM from "react-dom";
-import { useRecoilState } from "recoil";
+import { useAtom } from "jotai";
 import { notifierAtom } from "@/atoms/ui";
 import { actionSendNotification } from "@/atoms/ui.action";
 import Linkify from "react-linkify";
 
 const Notifier = () => {
-  const [notifications, setNotification] = useRecoilState(notifierAtom);
+  const [notifications, setNotification] = useAtom(notifierAtom);
 
   const handleCloseNotification = (id: string) => {
     setNotification((list) => list.filter((notif) => notif.id !== id));

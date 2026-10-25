@@ -1,19 +1,17 @@
-import { atom, selector } from "recoil";
+import { atom } from "jotai";
 
 interface ICertificateData {
   projectId: string;
 }
 
-export const certsQueryID = atom({
-  key: "certs_query_id",
-  default: 0,
-});
+export const certsQueryID = atom(0);
 
-export const certs = selector({
-  key: "certs",
-  get: async ({ get }): Promise<ICertificateData[]> => {
-    get(certsQueryID);
-    const response = await window.send("cert.getKeys");
-    return response;
-  },
+export const certs = atom(async (get): Promise<ICertificateData[]> => {
+  get(certsQueryID);
+  try {
+    return await window.send("cert.getKeys");
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 });

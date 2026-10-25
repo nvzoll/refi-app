@@ -1,3 +1,5 @@
+Discalimer: this is a detached fork. See the original repo here: https://github.com/thanhlmm/refi-app
+
 ## Refi App
 
 It's a tool to give developers lesser pain when developing applications with Firestore. Save more time to focus on building applications instead of playing with Firebase's poor UI

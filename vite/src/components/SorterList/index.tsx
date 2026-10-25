@@ -16,7 +16,7 @@ import {
 } from "react-beautiful-dnd";
 import ReactDOM from "react-dom";
 import { Controller, useForm } from "react-hook-form";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useAtom, useAtomValue } from "jotai";
 import FieldFinderInput from "../FieldFinderInput";
 
 interface IPropertyItemProps {
@@ -91,10 +91,8 @@ const SorterItem = ({
 };
 
 const SorterList = () => {
-  const collectionPath = useRecoilValue(navigatorCollectionPathAtom);
-  const [sorterList, setSorterList] = useRecoilState(
-    sorterAtom(collectionPath)
-  );
+  const collectionPath = useAtomValue(navigatorCollectionPathAtom);
+  const [sorterList, setSorterList] = useAtom(sorterAtom(collectionPath));
   const { handleSubmit, reset, control, register } = useForm({
     defaultValues: { property: "" },
   });

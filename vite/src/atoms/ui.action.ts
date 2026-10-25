@@ -1,7 +1,6 @@
 import { uniqueId } from "lodash";
-import { atom } from "recoil";
-import { userPersistAtom } from "./persistAtom";
-import { setRecoilExternalState } from "./RecoilExternalStatePortal";
+import { atomWithBucketStorage, USER_SETTINGS_BUCKET } from "./persistence";
+import { store } from "./store";
 import {
   importCollectionPathAtom,
   isImportModalAtom,
@@ -11,7 +10,7 @@ import {
 } from "./ui";
 
 export const actionToggleModalPickProperty = (status?: boolean): void => {
-  setRecoilExternalState(isModalPickProperty, (curStatus) =>
+  store.set(isModalPickProperty, (curStatus) =>
     status === undefined ? !curStatus : status
   );
 };
@@ -20,14 +19,14 @@ export const actionToggleImportModal = (
   path: string,
   status?: boolean
 ): void => {
-  setRecoilExternalState(importCollectionPathAtom, path);
-  setRecoilExternalState(isImportModalAtom, (curStatus) =>
+  store.set(importCollectionPathAtom, path);
+  store.set(isImportModalAtom, (curStatus) =>
     status === undefined ? !curStatus : status
   );
 };
 
 export const actionTriggerLoadData = (totalDocs: number): void => {
-  setRecoilExternalState(isParsingLargeDataAtom, { totalDocs }); // AUTO Trigger loading suspense
+  store.set(isParsingLargeDataAtom, { totalDocs }); // AUTO Trigger loading suspense
 };
 
 export const actionSendNotification = (
@@ -35,15 +34,18 @@ export const actionSendNotification = (
   message: string,
   showTime = 6000
 ): void => {
-  setRecoilExternalState(notifierAtom, (notifications) => [
-    ...notifications,
-    {
-      id: uniqueId("notification_"),
-      type,
-      message,
-      showTime,
-    },
-  ]);
+  const notification = {
+    id: uniqueId("notification_"),
+    type,
+    message,
+    showTime,
+  };
+  store.set(notifierAtom, (notifications) => [...notifications, notification]);
+  setTimeout(() => {
+    store.set(notifierAtom, (notifications) =>
+      notifications.filter(({ id }) => id !== notification.id)
+    );
+  }, showTime);
 };
 
 window.notification = actionSendNotification;
@@ -51,8 +53,8 @@ export const notifyErrorPromise = (error: Error) => {
   actionSendNotification("error", error.message);
 };
 
-export const appThemeAtom = atom({
-  key: "ui/appTheme",
-  default: true,
-  effects_UNSTABLE: [userPersistAtom],
-});
+export const appThemeAtom = atomWithBucketStorage(
+  USER_SETTINGS_BUCKET,
+  "ui/appTheme",
+  true
+);

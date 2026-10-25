@@ -1,6 +1,6 @@
 import { projectIdAtom } from "@/atoms/firestore";
 import { actionAddPathExpander } from "@/atoms/firestore.action";
-import { setRecoilExternalState } from "@/atoms/RecoilExternalStatePortal";
+import { store } from "@/atoms/store";
 import { notifyErrorPromise } from "@/atoms/ui.action";
 import DataSubscriber from "@/components/DataSubscriber";
 import NavBar from "@/components/NavBar";
@@ -67,7 +67,7 @@ function MainLayout({ size }: IMainLayoutProps): ReactElement {
   }, [size.height]);
 
   useEffect(() => {
-    setRecoilExternalState(projectIdAtom, projectId);
+    store.set(projectIdAtom, projectId);
     window
       .send("fs.init", { projectId })
       .then((response: string[]) => {

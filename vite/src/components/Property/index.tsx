@@ -2,10 +2,7 @@ import { docAtom } from "@/atoms/firestore";
 import { actionNewDocument } from "@/atoms/firestore.action";
 import { navigatorPathAtom } from "@/atoms/navigator";
 import { actionGoTo } from "@/atoms/navigator.action";
-import {
-  resetRecoilExternalState,
-  setRecoilExternalState,
-} from "@/atoms/RecoilExternalStatePortal";
+import { store } from "@/atoms/store";
 import { defaultEditorAtom } from "@/atoms/ui";
 import { getPathEntities, isCollection } from "@/utils/common";
 import { Button } from "@zendeskgarden/react-buttons";
@@ -13,17 +10,17 @@ import { Input, InputGroup } from "@zendeskgarden/react-forms";
 import { Tooltip } from "@zendeskgarden/react-tooltips";
 import classNames from "classnames";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useAtom, useAtomValue } from "jotai";
 import CopyIcon from "../CopyIcon";
 import EmptyBox from "./EmptyBox.png";
 import MonacoProperty from "./MonacoProperty";
 import PropertyTable from "./PropertyTable";
 
 const Property = () => {
-  const currentPath = useRecoilValue(navigatorPathAtom);
-  const doc = useRecoilValue(docAtom(currentPath));
+  const currentPath = useAtomValue(navigatorPathAtom);
+  const doc = useAtomValue(docAtom(currentPath));
   const [searchInput, setSearchInput] = useState("");
-  const [editorType, setEditorType] = useRecoilState(defaultEditorAtom);
+  const [editorType, setEditorType] = useAtom(defaultEditorAtom);
   const idInputRef = useRef<HTMLInputElement>(null);
 
   const handleCreateDocument = useCallback(() => {
@@ -109,9 +106,9 @@ const Property = () => {
     }
     const newDoc = doc.clone(undefined, id);
     const letOldPath = currentPath;
-    setRecoilExternalState(docAtom(newDoc.ref.path), newDoc);
+    store.set(docAtom(newDoc.ref.path), newDoc);
     actionGoTo(newDoc.ref.path);
-    resetRecoilExternalState(docAtom(letOldPath));
+    store.set(docAtom(letOldPath), null);
   };
 
   return (

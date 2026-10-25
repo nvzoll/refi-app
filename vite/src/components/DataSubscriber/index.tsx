@@ -8,7 +8,7 @@ import {
   sorterAtom,
 } from "@/atoms/navigator";
 import { actionSubmitQuery } from "@/atoms/navigator.action";
-import { setRecoilExternalState } from "@/atoms/RecoilExternalStatePortal";
+import { store } from "@/atoms/store";
 import { notifyErrorPromise } from "@/atoms/ui.action";
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
 import { getCollectionPath, isCollection } from "@/utils/common";
@@ -16,7 +16,7 @@ import firebase from "firebase/app";
 import { deserializeDocumentSnapshotArray } from "firestore-serializers";
 import { uniq } from "lodash";
 import { useEffect, useRef } from "react";
-import { useRecoilValue } from "recoil";
+import { useAtomValue } from "jotai";
 interface ISubscribeResponse {
   addedData: string;
   modifiedData: string;
@@ -31,17 +31,17 @@ interface IDataBackgroundResponse {
 }
 
 const DataSubscriber = () => {
-  const path = useRecoilValue(navigatorPathAtom);
-  const collectionPath = useRecoilValue(navigatorCollectionPathAtom);
+  const path = useAtomValue(navigatorPathAtom);
+  const collectionPath = useAtomValue(navigatorCollectionPathAtom);
   const {
     queryVersion,
     withQuerier,
     startAfter,
     endBefore,
     collectionPath: queryCollectionPath,
-  } = useRecoilValue(queryVersionAtom);
-  const queryOptions = useRecoilValue(querierAtom(collectionPath));
-  const sortOptions = useRecoilValue(sorterAtom(collectionPath));
+  } = useAtomValue(queryVersionAtom);
+  const queryOptions = useAtomValue(querierAtom(collectionPath));
+  const sortOptions = useAtomValue(sorterAtom(collectionPath));
   const listener = useRef<Function>();
   const subscribeId = useRef<string>("");
 
@@ -107,12 +107,12 @@ const DataSubscriber = () => {
 
         // Save list of collection to respect the order
         if (isInitResult) {
-          setRecoilExternalState(
+          store.set(
             queryDocOrder(queryVersion),
             addedDocs.map((doc) => doc.ref.path)
           );
         } else {
-          setRecoilExternalState(queryDocOrder(queryVersion), (paths) =>
+          store.set(queryDocOrder(queryVersion), (paths) =>
             uniq([...paths, ...addedDocs.map((doc) => doc.ref.path)])
           );
         }

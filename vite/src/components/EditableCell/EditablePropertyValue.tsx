@@ -21,7 +21,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useAtom, useAtomValue } from "jotai";
 import ArrayInput from "../DataInput/ArrayInput";
 import BooleanInput from "../DataInput/BooleanInput";
 import GeopointPicker from "../DataInput/GeopointPicker";
@@ -45,8 +45,8 @@ export const EditablePropertyValue = ({
   toggleExpand,
 }: IEditableCell): React.ReactElement => {
   const fieldPath = buildFSUrl({ path: docPath, field: id });
-  const [value, setValue] = useRecoilState(fieldAtom(fieldPath));
-  const isFieldChanged = useRecoilValue(fieldChangedAtom(fieldPath));
+  const [value, setValue] = useAtom(fieldAtom(fieldPath));
+  const isFieldChanged = useAtomValue(fieldChangedAtom(fieldPath));
   const [instanceValue, setInstanceValue] = useState(value);
   const [isHighlight, toggleHighlight] = useState(false);
   const [isHovered, setHovered] = useState(false);

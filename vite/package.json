@@ -36,6 +36,8 @@
     "firebase": "^8.2.9",
     "firestore-serializers": "workspace:*",
     "immer": "^9.0.1",
+    "jotai": "^2.20.3",
+    "jotai-family": "^1.1.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "monaco-editor": "^0.23.0",
@@ -58,9 +60,6 @@
     "react-use": "^17.1.1",
     "react-virtualized-auto-sizer": "^1.0.5",
     "react-window": "^1.8.6",
-    "recoil": "0.7.2",
-    "recoil-custom-persist": "^2.6.1",
-    "rxjs": "^6.6.6",
     "styled-components": "^5.2.1"
   },
   "devDependencies": {

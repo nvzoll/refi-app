@@ -5,7 +5,7 @@ import {
 } from "@/atoms/navigator";
 import { uniq } from "lodash";
 import React, { ReactElement } from "react";
-import { useRecoilValue } from "recoil";
+import { useAtomValue } from "jotai";
 import InputComboBox from "../InputComboBox";
 
 interface IFieldFinderInputProps {
@@ -23,9 +23,9 @@ const FieldFinderInput = ({
   inputRef,
   placeholder,
 }: IFieldFinderInputProps): ReactElement => {
-  const collectionPath = useRecoilValue(navigatorCollectionPathAtom);
-  const allColumnsRecursive = useRecoilValue(allColumnsRecursiveAtom);
-  const propertyList = useRecoilValue(propertyListAtom(collectionPath));
+  const collectionPath = useAtomValue(navigatorCollectionPathAtom);
+  const allColumnsRecursive = useAtomValue(allColumnsRecursiveAtom);
+  const propertyList = useAtomValue(propertyListAtom(collectionPath));
 
   const items = uniq([...allColumnsRecursive, ...propertyList]);
 

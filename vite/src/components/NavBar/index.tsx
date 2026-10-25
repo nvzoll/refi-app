@@ -9,33 +9,32 @@ import {
   actionReverseChange,
 } from "@/atoms/firestore.action";
 import { globalHotKeys } from "@/atoms/hotkeys";
+import { store } from "@/atoms/store";
 import { isShowPreviewChangeModalAtom } from "@/atoms/ui";
 import PathInput from "@/components/PathInput";
 import { Button, IconButton } from "@zendeskgarden/react-buttons";
 import { Tooltip } from "@zendeskgarden/react-tooltips";
 import React, { useEffect, useState } from "react";
-import { useRecoilCallback, useSetRecoilState } from "recoil";
+import { useSetAtom } from "jotai";
 import ShortcutKey from "../ShortcutKey";
 
 const NavBar = () => {
-  const setShowChangeModal = useSetRecoilState(isShowPreviewChangeModalAtom);
-  // const isCommittable = useRecoilValue(isCommittableAtom);
+  const setShowChangeModal = useSetAtom(isShowPreviewChangeModalAtom);
+  // const isCommittable = useAtomValue(isCommittableAtom);
   const [isCommittable, setCommittable] = useState(false);
 
-  const checkCommittable = useRecoilCallback(({ snapshot }) => async () => {
-    const changedDocs = await snapshot.getPromise(changedDocAtom);
-    const newDocs = await snapshot.getPromise(newDocsAtom);
-    const deletedDocs = await snapshot.getPromise(deletedDocsAtom);
-    const deletedCollections = await snapshot.getPromise(
-      collectionHasBeenDeleteAtom
-    );
+  const checkCommittable = () => {
+    const changedDocs = store.get(changedDocAtom);
+    const newDocs = store.get(newDocsAtom);
+    const deletedDocs = store.get(deletedDocsAtom);
+    const deletedCollections = store.get(collectionHasBeenDeleteAtom);
     setCommittable(
       changedDocs.length > 0 ||
         newDocs.length > 0 ||
         deletedDocs.length > 0 ||
         deletedCollections.length > 0
     );
-  });
+  };
 
   useEffect(() => {
     const id = setInterval(() => {

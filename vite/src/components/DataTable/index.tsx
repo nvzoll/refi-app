@@ -21,11 +21,7 @@ import {
   actionSetProperty,
   actionSubmitQuery,
 } from "@/atoms/navigator.action";
-import {
-  atomObservable,
-  getRecoilExternalLoadable,
-  setRecoilExternalState,
-} from "@/atoms/RecoilExternalStatePortal";
+import { store } from "@/atoms/store";
 import { largeDataAtom } from "@/atoms/ui";
 import { actionToggleModalPickProperty } from "@/atoms/ui.action";
 import { useContextMenu } from "@/hooks/contextMenu";
@@ -50,7 +46,7 @@ import {
 import { useAsync, useCustomCompareEffect } from "react-use";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useAtomValue, useSetAtom } from "jotai";
 import EditableCell, { IDReadOnlyField } from "../EditableCell";
 
 const EASY_SCROLL_COLUMN_COUNT = 5;
@@ -116,21 +112,12 @@ function TableWrapper({
   }, [tableState.sortBy]);
 
   useEffect(() => {
-    const pathObserver = atomObservable(navigatorPathAtom).subscribe({
-      next: (path) => {
-        const docId = getIdFromPath(path);
-        if (docId) {
-          scrollToDocId(docId);
-        }
-      },
-      error: (error) => {
-        console.log(error);
-      },
+    return store.sub(navigatorPathAtom, () => {
+      const docId = getIdFromPath(store.get(navigatorPathAtom));
+      if (docId) {
+        scrollToDocId(docId);
+      }
     });
-
-    return () => {
-      return pathObserver.unsubscribe();
-    };
   }, [data]);
 
   // Hook to auto scroll to newest doc
@@ -455,16 +442,16 @@ interface IRowContextPayload {
 }
 
 function DataTable() {
-  const collectionPath = useRecoilValue(navigatorCollectionPathAtom);
-  const setPath = useSetRecoilState(navigatorPathAtom);
-  const data = useRecoilValue(collectionWithQueryAtom(collectionPath));
-  const properties = useRecoilValue(propertyListAtom(collectionPath));
+  const collectionPath = useAtomValue(navigatorCollectionPathAtom);
+  const setPath = useSetAtom(navigatorPathAtom);
+  const data = useAtomValue(collectionWithQueryAtom(collectionPath));
+  const properties = useAtomValue(propertyListAtom(collectionPath));
 
   useAsync(async () => {
     // Auto set property if it haven't set
-    const propertiesCore = await getRecoilExternalLoadable(
+    const propertiesCore = await store.get(
       propertyListCoreAtom(collectionPath)
-    ).toPromise();
+    );
     if (!propertiesCore && properties.length === 0 && data.length > 0) {
       actionSetProperty(collectionPath, getSampleColumn(data));
     }
@@ -682,7 +669,7 @@ function DataTable() {
 
   const handleSortColumn = useCallback(
     (sortBy: { id: string; desc: boolean }[]) => {
-      setRecoilExternalState(
+      store.set(
         sorterAtom(collectionPath),
         sortBy.map((sorter) => ({
           id: uniqueId("sorter_"),
@@ -709,7 +696,7 @@ function DataTable() {
 }
 
 const DataTableLoader = () => {
-  const isLoaded = useRecoilValue(largeDataAtom); // Make parent suspense
+  const isLoaded = useAtomValue(largeDataAtom); // Make parent suspense
 
   if (isLoaded) {
     return <DataTable />;

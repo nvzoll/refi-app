@@ -22,14 +22,14 @@ import { TooltipModal } from "@zendeskgarden/react-modals";
 import { Tooltip } from "@zendeskgarden/react-tooltips";
 import classNames from "classnames";
 import React, { useCallback, useMemo, useRef } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useAtom, useAtomValue } from "jotai";
 import ShortcutKey from "../ShortcutKey";
 import SorterList from "../SorterList";
 import FilterItem from "./FilterItem";
 
 const NextButton = () => {
-  const queryVersionData = useRecoilValue(queryVersionAtom);
-  const docs = useRecoilValue(
+  const queryVersionData = useAtomValue(queryVersionAtom);
+  const docs = useAtomValue(
     collectionWithQueryAtom(queryVersionData.collectionPath)
   );
   const handleClickNext = useCallback(() => {
@@ -72,8 +72,8 @@ const NextButton = () => {
 };
 
 const PreviousButton = () => {
-  const queryVersionData = useRecoilValue(queryVersionAtom);
-  const docs = useRecoilValue(
+  const queryVersionData = useAtomValue(queryVersionAtom);
+  const docs = useAtomValue(
     collectionWithQueryAtom(queryVersionData.collectionPath)
   );
   const handleClickPrevious = useCallback(() => {
@@ -116,15 +116,15 @@ const PreviousButton = () => {
 };
 
 const Filters = () => {
-  const collectionPath = useRecoilValue(navigatorCollectionPathAtom);
-  const queryOptions = useRecoilValue(querierAtom(collectionPath));
-  const [isShowPropertyList, setShowPropertyList] = useRecoilState(
+  const collectionPath = useAtomValue(navigatorCollectionPathAtom);
+  const queryOptions = useAtomValue(querierAtom(collectionPath));
+  const [isShowPropertyList, setShowPropertyList] = useAtom(
     isModalPickProperty
   );
 
-  const totalDocs = useRecoilValue(totalDocsWithQueryAtom(collectionPath));
+  const totalDocs = useAtomValue(totalDocsWithQueryAtom(collectionPath));
 
-  const [isShowSorterList, setShowSorterList] = useRecoilState(isModalSorter);
+  const [isShowSorterList, setShowSorterList] = useAtom(isModalSorter);
   const propertyBtnRef = useRef<HTMLButtonElement>(null);
   const sorterBtnRef = useRef<HTMLButtonElement>(null);
 

@@ -8,13 +8,13 @@ import {
   serializeQuerySnapshot,
 } from "firestore-serializers";
 import firebase from "firebase/app";
+import { atom } from "jotai";
 import { differenceBy, uniq, uniqBy, uniqueId } from "lodash";
 import {
   changedDocAtom,
   collectionAtom,
   deletedDocsAtom,
   docAtom,
-  docsLibraryAtom,
   collectionHasBeenDeleteAtom,
   newDocsAtom,
   parseFSUrl,
@@ -22,18 +22,46 @@ import {
   fieldAtom,
   buildFSUrl,
 } from "./firestore";
-import {
-  getRecoilExternalLoadable,
-  IRecoilUpdateCommand,
-  resetRecoilExternalState,
-  setRecoilBatchUpdate,
-  setRecoilExternalState,
-} from "./RecoilExternalStatePortal";
+import { store } from "./store";
 import * as immutable from "object-path-immutable";
 import { navigatorPathAtom, queryVersionAtom } from "./navigator";
 import { actionGoTo } from "./navigator.action";
 import { notifyErrorPromise } from "./ui.action";
 import { convertFSValue } from "@/utils/fieldConverter";
+
+interface IStoreDocsUpdate {
+  added: ClientDocumentSnapshot[];
+  modified: ClientDocumentSnapshot[];
+  removed: ClientDocumentSnapshot[];
+  override: boolean;
+}
+
+const storeDocsAtom = atom(
+  null,
+  (get, set, { added, modified, removed, override }: IStoreDocsUpdate) => {
+    added.forEach((doc) => {
+      if (override) {
+        set(docAtom(doc.ref.path), doc);
+      } else {
+        set(docAtom(doc.ref.path), (curDoc) => {
+          if (curDoc?.isChanged()) {
+            return curDoc;
+          }
+
+          return doc;
+        });
+      }
+    });
+
+    modified.forEach((doc) => {
+      set(docAtom(doc.ref.path), doc);
+    });
+
+    removed.forEach((doc) => {
+      set(docAtom(doc.ref.path), null);
+    });
+  }
+);
 
 export const actionStoreDocs = (
   {
@@ -47,61 +75,19 @@ export const actionStoreDocs = (
   },
   override = false
 ): void => {
-  const batches: any[] = [];
-  added.forEach((doc) => {
-    if (override) {
-      batches.push({
-        atom: docAtom(doc.ref.path),
-        valOrUpdater: doc,
-      });
-    } else {
-      batches.push({
-        atom: docAtom(doc.ref.path),
-        valOrUpdater: (curDoc: ClientDocumentSnapshot | null) => {
-          if (curDoc?.isChanged()) {
-            return curDoc;
-          }
-
-          return doc;
-        },
-      });
-    }
-  });
-
-  modified.forEach((doc) => {
-    batches.push({
-      atom: docAtom(doc.ref.path),
-      valOrUpdater: doc,
-    });
-  });
-
-  batches.push({
-    // Synchronize data with docsLibraryAtom. Why I need to do it manually ?_?
-    atom: docsLibraryAtom,
-    valOrUpdater: (curPath: string[]) =>
-      uniq([...curPath, ...[...added, ...modified].map((doc) => doc.ref.path)]),
-  });
-
-  removed.forEach((doc) => {
-    batches.push({
-      atom: docAtom(doc.ref.path),
-      valOrUpdater: null,
-    });
-  });
-
-  setRecoilBatchUpdate(batches);
+  store.set(storeDocsAtom, { added, modified, removed, override });
 };
 
 // This is trigger from user
 export const actionDeleteDoc = async (docPath: string) => {
-  const doc = await getRecoilExternalLoadable(docAtom(docPath)).toPromise();
+  const doc = await store.get(docAtom(docPath));
   if (doc) {
-    resetRecoilExternalState(docAtom(docPath));
+    store.set(docAtom(docPath), null);
     if (doc.isNew) {
       // Ignore if the doc is new and haven't commit to db
       return true;
     }
-    setRecoilExternalState(deletedDocsAtom, (docs) =>
+    store.set(deletedDocsAtom, (docs) =>
       uniqBy([...docs, doc], (doc) => doc.ref.path)
     );
   }
@@ -116,44 +102,46 @@ export const actionRemoveDocs = (
 ): void => {
   docs.forEach(async (doc) => {
     // TODO: What if user already modified the deleted one
-    resetRecoilExternalState(docAtom(doc.ref.path));
-    setRecoilExternalState(deletedDocsAtom, (deletedDocs) =>
+    store.set(docAtom(doc.ref.path), null);
+    store.set(deletedDocsAtom, (deletedDocs) =>
       differenceBy(deletedDocs, docs, (doc) => doc.ref.path)
     );
   });
 };
 
+const deleteCollectionAtom = atom(
+  null,
+  (
+    get,
+    set,
+    {
+      path,
+      docsInCollection,
+    }: { path: string; docsInCollection: ClientDocumentSnapshot[] }
+  ) => {
+    docsInCollection.forEach((doc) => {
+      set(docAtom(doc.ref.path), null);
+    });
+    set(deletedDocsAtom, (docs) =>
+      uniqBy([...docs, ...docsInCollection], (doc) => doc.ref.path)
+    );
+    set(collectionHasBeenDeleteAtom, (paths) => uniq([...paths, path]));
+  }
+);
+
 // This is trigger from user
 export const actionDeleteCollection = async (path: string): Promise<void> => {
   console.log(`start delete collection ${path}`);
   // Marks all docs as delete
-  const docsInCollection = await getRecoilExternalLoadable(
-    collectionAtom(path)
-  ).toPromise();
-
-  const updater: any[] = docsInCollection.map((doc) => ({
-    atom: docAtom(doc.ref.path),
-    valOrUpdater: null,
-  }));
-
-  updater.push({
-    atom: deletedDocsAtom,
-    valOrUpdater: (docs: ClientDocumentSnapshot[]) =>
-      uniqBy([...docs, ...docsInCollection], (doc) => doc.ref.path),
-  });
-
-  updater.push({
-    atom: collectionHasBeenDeleteAtom,
-    valOrUpdater: (paths: string[]) => uniq([...paths, path]),
-  });
+  const docsInCollection = await store.get(collectionAtom(path));
 
   requestAnimationFrame(() => {
-    setRecoilBatchUpdate(updater);
+    store.set(deleteCollectionAtom, { path, docsInCollection });
   });
 };
 
 export const actionUpdateDoc = (doc: ClientDocumentSnapshot): void => {
-  setRecoilExternalState(docAtom(doc.ref.path), doc);
+  store.set(docAtom(doc.ref.path), doc);
 };
 
 export const actionUpdateFieldKey = async (
@@ -162,7 +150,7 @@ export const actionUpdateFieldKey = async (
 ): Promise<void> => {
   const { path, field: oldField } = parseFSUrl(oldPath);
   const curDocAtom = docAtom(path);
-  const doc = await getRecoilExternalLoadable(curDocAtom).toPromise();
+  const doc = await store.get(curDocAtom);
   if (doc) {
     const docData = immutable.wrap(doc.data());
     const oldFieldData = immutable.get(doc.data(), oldField);
@@ -170,33 +158,27 @@ export const actionUpdateFieldKey = async (
 
     const newDoc = doc.clone(newData.value());
     newDoc.addChange([oldField, newField]);
-    setRecoilExternalState(docAtom(path), newDoc);
+    store.set(docAtom(path), newDoc);
   }
 };
 
 export const actionRemoveFieldKey = async (oldPath: string): Promise<void> => {
   const { path, field: oldField } = parseFSUrl(oldPath);
   const curDocAtom = docAtom(path);
-  const doc = await getRecoilExternalLoadable(curDocAtom).toPromise();
+  const doc = await store.get(curDocAtom);
   if (doc) {
     const newDoc = doc.clone().removeField(oldField);
-    setRecoilExternalState(docAtom(path), newDoc);
+    store.set(docAtom(path), newDoc);
   }
 };
 
 export const actionCommitChange = async (): Promise<boolean> => {
-  const docsChange = await getRecoilExternalLoadable(
-    changedDocAtom
-  ).toPromise();
+  const docsChange = await store.get(changedDocAtom);
 
-  const newDocs = await getRecoilExternalLoadable(newDocsAtom).toPromise();
-  const allDeletedDocs = await getRecoilExternalLoadable(
-    deletedDocsAtom
-  ).toPromise();
+  const newDocs = await store.get(newDocsAtom);
+  const allDeletedDocs = await store.get(deletedDocsAtom);
 
-  const deletedCollections = await getRecoilExternalLoadable(
-    collectionHasBeenDeleteAtom
-  ).toPromise();
+  const deletedCollections = await store.get(collectionHasBeenDeleteAtom);
 
   const deletedDocs = allDeletedDocs.filter(
     (doc) =>
@@ -222,7 +204,7 @@ export const actionCommitChange = async (): Promise<boolean> => {
       docs: deletedDocs.map((doc) => doc.ref.path),
     })
     .then(() => {
-      resetRecoilExternalState(deletedDocsAtom);
+      store.set(deletedDocsAtom, []);
     })
     .catch(notifyErrorPromise);
 
@@ -231,8 +213,8 @@ export const actionCommitChange = async (): Promise<boolean> => {
       collections: deletedCollections,
     })
     .then(() => {
-      resetRecoilExternalState(collectionHasBeenDeleteAtom);
-      setRecoilExternalState(pathExpanderPureAtom, (paths) =>
+      store.set(collectionHasBeenDeleteAtom, []);
+      store.set(pathExpanderPureAtom, (paths) =>
         paths.filter(
           (path) =>
             !deletedCollections.find((collection) =>
@@ -248,9 +230,8 @@ export const actionCommitChange = async (): Promise<boolean> => {
 export const actionReverseChange = async (): Promise<any> => {
   // TODO: Confirm box to reload
   window.location.reload();
-  // const docsChange = await getRecoilExternalLoadable(
-  //   changedDocAtom
-  // ).toPromise();
+  // const docsChange = await store.get(//   changedDocAtom
+  //);
 
   // return window
   //   .send("fs.getDocs", {
@@ -271,13 +252,11 @@ export const actionReverseDocChange = async (
   docPath: string,
   type: "new" | "modified" | "deleted"
 ): Promise<any> => {
-  const { queryVersion } = await getRecoilExternalLoadable(
-    queryVersionAtom
-  ).toPromise();
+  const { queryVersion } = await store.get(queryVersionAtom);
   // TODO: Do we really need to fetch the data again?
 
   if (type === "new") {
-    resetRecoilExternalState(docAtom(docPath));
+    store.set(docAtom(docPath), null);
     return;
   }
 
@@ -302,7 +281,7 @@ export const actionReverseDocChange = async (
         true
       );
 
-      setRecoilExternalState(deletedDocsAtom, (docs) =>
+      store.set(deletedDocsAtom, (docs) =>
         docs.filter((doc) => doc.ref.path !== docPath)
       );
     })
@@ -310,9 +289,7 @@ export const actionReverseDocChange = async (
 };
 
 export const actionGetDocs = async (paths: string[]) => {
-  const { queryVersion } = await getRecoilExternalLoadable(
-    queryVersionAtom
-  ).toPromise();
+  const { queryVersion } = await store.get(queryVersionAtom);
 
   return window
     .send("fs.getDocs", {
@@ -338,13 +315,13 @@ export const actionGetDocs = async (paths: string[]) => {
 };
 
 export const actionAddPathExpander = (paths: string[]) => {
-  setRecoilExternalState(pathExpanderPureAtom, (currentValue) =>
+  store.set(pathExpanderPureAtom, (currentValue) =>
     uniq([...currentValue, ...paths.map((path) => prettifyPath(path))])
   );
 };
 
 export const actionDuplicateDoc = async (path: string) => {
-  const doc = await getRecoilExternalLoadable(docAtom(path)).toPromise();
+  const doc = await store.get(docAtom(path));
 
   if (!doc) {
     // TODO: Throw error here
@@ -353,7 +330,7 @@ export const actionDuplicateDoc = async (path: string) => {
 
   const newDocId = newId();
   const newDoc = doc.clone(doc.data(), newDocId);
-  setRecoilExternalState(docAtom(newDoc.ref.path), newDoc);
+  store.set(docAtom(newDoc.ref.path), newDoc);
   actionGoTo(newDoc.ref.path);
 };
 
@@ -389,15 +366,13 @@ export const actionNewDocument = async (
   const newDocId = id || newId();
   const newPath = prettifyPath(`${collectionPath}/${newDocId}`);
 
-  const { queryVersion } = await getRecoilExternalLoadable(
-    queryVersionAtom
-  ).toPromise();
-  setRecoilExternalState(
+  const { queryVersion } = await store.get(queryVersionAtom);
+  store.set(
     docAtom(newPath),
     new ClientDocumentSnapshot({}, newDocId, newPath, queryVersion, true)
   );
 
-  setRecoilExternalState(navigatorPathAtom, newPath);
+  store.set(navigatorPathAtom, newPath);
 };
 
 export const actionSetFieldValue = async (
@@ -406,9 +381,7 @@ export const actionSetFieldValue = async (
   fieldType: RefiFS.IFieldType
 ) => {
   const fieldPath = buildFSUrl({ path: docPath, field });
-  const instanceValue = await getRecoilExternalLoadable(
-    fieldAtom(fieldPath)
-  ).toPromise();
+  const instanceValue = await store.get(fieldAtom(fieldPath));
   const newValue = convertFSValue(instanceValue, fieldType);
-  setRecoilExternalState(fieldAtom(fieldPath), newValue);
+  store.set(fieldAtom(fieldPath), newValue);
 };

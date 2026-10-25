@@ -4,7 +4,6 @@ import "./styles/tailwind.css";
 import * as serviceWorker from "./serviceWorker";
 import { ThemeProvider } from "@zendeskgarden/react-theming";
 import { lightTheme } from "./styles/theme";
-// import { RecoilExternalStatePortal } from "./atoms/RecoilExternalStatePortal";
 import TabsPage from "./pages/Tabs";
 
 ReactDOM.render(

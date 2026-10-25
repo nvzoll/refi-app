@@ -1,6 +1,5 @@
 import { atom, SetStateAction } from "jotai";
 import { atomFamily } from "jotai-family";
-import { atom as recoilAtom } from "recoil";
 import { changedDocAtom, deletedDocsAtom, newDocsAtom } from "./firestore";
 import { atomWithBucketStorage, USER_SETTINGS_BUCKET } from "./persistence";
 import { resolveUpdate } from "./store";
@@ -85,11 +84,6 @@ export interface INotificationMessages {
 }
 
 export const notifierAtom = atom<INotificationMessages[]>([]);
-
-export const dummyAtom = recoilAtom({
-  key: "ui/dummy",
-  default: null,
-});
 
 export const emulatorProjectId = atomWithBucketStorage(
   USER_SETTINGS_BUCKET,

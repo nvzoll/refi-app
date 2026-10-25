@@ -130,30 +130,6 @@ export const sorterAtom = atomFamily((path: string) =>
   atom<ISorterEntity[]>([])
 );
 
-export const sorterItemAtom = atomFamily(
-  ({ id, path }: { id: string; path: string }) => {
-    const anAtom = atom(
-      (get) => get(sorterAtom(path)).find((query) => query.id === id),
-      (get, set, update: SetStateAction<ISorterEntity | undefined>) => {
-        const newValue = resolveUpdate(update, get(anAtom));
-        const optionIndex = get(sorterAtom(path)).findIndex(
-          (query) => query.id === id
-        );
-        if (optionIndex >= 0) {
-          set(
-            sorterAtom(path),
-            produce((sorter) => {
-              sorter[optionIndex] = newValue as ISorterEntity;
-            })
-          );
-        }
-      }
-    );
-    return anAtom;
-  },
-  isEqual
-);
-
 export interface IQueryVersion {
   queryVersion: number;
   withQuerier: boolean;

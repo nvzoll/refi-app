@@ -1,7 +1,7 @@
 import { atomWithStorage } from "jotai/utils";
 
 export const USER_SETTINGS_BUCKET = "user-settings";
-// Existing data lives here: Recoil read window.projectId before anything set it.
+// Every project's saved settings were written under this key, read before window.projectId was set.
 export const PROJECT_SETTINGS_BUCKET = "undefined";
 
 interface IEntryCodec<T> {
@@ -53,7 +53,7 @@ const bucketStorage = <T>(bucket: string, codec?: IEntryCodec<T>) => ({
   },
 });
 
-// Recoil's atomFamily key format, which the stored entries use.
+// The stored entries use this `<key>__<JSON param>` format.
 export const familyKey = (key: string, param: string): string =>
   `${key}__${JSON.stringify(param)}`;
 

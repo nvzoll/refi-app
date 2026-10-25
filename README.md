@@ -1,4 +1,4 @@
-Discalimer: this is a detached fork. See the original repo here: https://github.com/thanhlmm/refi-app
+Disclaimer: this is a detached fork. See the original repo here: https://github.com/thanhlmm/refi-app
 
 ## Refi App
 

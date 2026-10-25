@@ -19,11 +19,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useRecoilState } from "recoil";
+import { useAtom } from "jotai";
 
 function PathInput() {
-  const [path, setPath] = useRecoilState(navigatorPathAtom);
-  const [isViewMode, toggleViewMode] = useRecoilState(viewModePathInputAtom);
+  const [path, setPath] = useAtom(navigatorPathAtom);
+  const [isViewMode, toggleViewMode] = useAtom(viewModePathInputAtom);
   const [pathInput, setPathInput] = useState(path);
   const inputRef = useRef<HTMLInputElement>(null);
 

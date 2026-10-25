@@ -6,7 +6,7 @@ import {
 } from "@zendeskgarden/react-theming";
 
 import React, { useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useAtom } from "jotai";
 
 export const lightTheme = {
   name: "light",
@@ -79,7 +79,7 @@ export const setTheme = (theme: boolean) => {
 };
 
 const AppTheme: React.FC = ({ children }) => {
-  const [appTheme, setAppTheme] = useRecoilState(appThemeAtom);
+  const [appTheme, setAppTheme] = useAtom(appThemeAtom);
 
   useEffect(() => {
     setTheme(appTheme);

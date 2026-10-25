@@ -5,9 +5,17 @@ import {
   getCollectionPath,
 } from "@/utils/common";
 import produce from "immer";
-import { atom, atomFamily, selector, selectorFamily } from "recoil";
+import { atom, SetStateAction } from "jotai";
+import { atomWithDefault } from "jotai/utils";
+import { atomFamily } from "jotai-family";
+import { isEqual } from "lodash";
 import { collectionAtom } from "./firestore";
-import persistAtom from "./persistAtom";
+import {
+  atomWithBucketStorage,
+  familyKey,
+  PROJECT_SETTINGS_BUCKET,
+} from "./persistence";
+import { resolveUpdate } from "./store";
 
 export const FIELD_TYPES: RefiFS.IFieldType[] = [
   "string",
@@ -22,17 +30,11 @@ export const FIELD_TYPES: RefiFS.IFieldType[] = [
 ];
 
 // TODO: Check if the path exist
-export const navigatorPathAtom = atom<string>({
-  key: "navigator.path",
-  default: "/",
-});
+export const navigatorPathAtom = atom<string>("/");
 
-export const navigatorCollectionPathAtom = selector<string>({
-  key: "navigator.collectionPath",
-  get: ({ get }) => {
-    const path = get(navigatorPathAtom);
-    return getCollectionPath(path);
-  },
+export const navigatorCollectionPathAtom = atom<string>((get) => {
+  const path = get(navigatorPathAtom);
+  return getCollectionPath(path);
 });
 
 export type WhereFilterOp =
@@ -65,11 +67,12 @@ interface IQueryEntity {
   isActive: boolean;
 }
 
-export const querierAtom = atomFamily<IQueryEntity[], string>({
-  key: "fs.querier",
-  default: () => [],
-  effects_UNSTABLE: [
-    persistAtom({
+export const querierAtom = atomFamily((path: string) =>
+  atomWithBucketStorage<IQueryEntity[]>(
+    PROJECT_SETTINGS_BUCKET,
+    familyKey("fs.querier", path),
+    [],
+    {
       serialize(input) {
         return JSON.stringify(input);
       },
@@ -89,32 +92,33 @@ export const querierAtom = atomFamily<IQueryEntity[], string>({
 
         return data;
       },
-    }).persistAtom,
-  ],
-});
-
-export const querierOptionAtom = selectorFamily<
-  IQueryEntity | undefined,
-  { id: string; path: string }
->({
-  key: "fs.querierOption",
-  get: ({ id, path }) => ({ get }) => {
-    return get(querierAtom(path)).find((query) => query.id === id);
-  },
-  set: ({ id, path }) => ({ get, set }, newValue) => {
-    const optionIndex = get(querierAtom(path)).findIndex(
-      (query) => query.id === id
-    );
-    if (optionIndex >= 0) {
-      set(
-        querierAtom(path),
-        produce((querier) => {
-          querier[optionIndex] = newValue;
-        })
-      );
     }
+  )
+);
+
+export const querierOptionAtom = atomFamily(
+  ({ id, path }: { id: string; path: string }) => {
+    const anAtom = atom(
+      (get) => get(querierAtom(path)).find((query) => query.id === id),
+      (get, set, update: SetStateAction<IQueryEntity | undefined>) => {
+        const newValue = resolveUpdate(update, get(anAtom));
+        const optionIndex = get(querierAtom(path)).findIndex(
+          (query) => query.id === id
+        );
+        if (optionIndex >= 0) {
+          set(
+            querierAtom(path),
+            produce((querier) => {
+              querier[optionIndex] = newValue;
+            })
+          );
+        }
+      }
+    );
+    return anAtom;
   },
-});
+  isEqual
+);
 
 export interface ISorterEntity {
   id: string;
@@ -122,34 +126,33 @@ export interface ISorterEntity {
   sort: "asc" | "desc";
 }
 
-export const sorterAtom = atomFamily<ISorterEntity[], string>({
-  key: "fs.sorter",
-  default: () => [],
-  // effects_UNSTABLE: [persistAtom],
-});
+export const sorterAtom = atomFamily((path: string) =>
+  atom<ISorterEntity[]>([])
+);
 
-export const sorterItemAtom = selectorFamily<
-  ISorterEntity | undefined,
-  { id: string; path: string }
->({
-  key: "fs.sorterItem",
-  get: ({ id, path }) => ({ get }) => {
-    return get(sorterAtom(path)).find((query) => query.id === id);
-  },
-  set: ({ id, path }) => ({ get, set }, newValue) => {
-    const optionIndex = get(sorterAtom(path)).findIndex(
-      (query) => query.id === id
+export const sorterItemAtom = atomFamily(
+  ({ id, path }: { id: string; path: string }) => {
+    const anAtom = atom(
+      (get) => get(sorterAtom(path)).find((query) => query.id === id),
+      (get, set, update: SetStateAction<ISorterEntity | undefined>) => {
+        const newValue = resolveUpdate(update, get(anAtom));
+        const optionIndex = get(sorterAtom(path)).findIndex(
+          (query) => query.id === id
+        );
+        if (optionIndex >= 0) {
+          set(
+            sorterAtom(path),
+            produce((sorter) => {
+              sorter[optionIndex] = newValue as ISorterEntity;
+            })
+          );
+        }
+      }
     );
-    if (optionIndex >= 0) {
-      set(
-        sorterAtom(path),
-        produce((sorter) => {
-          sorter[optionIndex] = newValue;
-        })
-      );
-    }
+    return anAtom;
   },
-});
+  isEqual
+);
 
 export interface IQueryVersion {
   queryVersion: number;
@@ -163,21 +166,18 @@ export interface IQueryVersion {
 
 export const queryHistory: IQueryVersion[] = [];
 
-export const queryVersionAtom = atom<IQueryVersion>({
-  key: "navigator.queryVersion",
-  default: {
+export const queryVersionAtom = atom(
+  {
     collectionPath: "/",
     queryVersion: 0,
     withQuerier: true,
-  },
-  effects_UNSTABLE: [
-    ({ onSet }) => {
-      onSet((newDoc) => {
-        queryHistory.push(newDoc as any);
-      });
-    },
-  ],
-});
+  } as IQueryVersion,
+  (get, set, update: SetStateAction<IQueryVersion>) => {
+    const queryVersion = resolveUpdate(update, get(queryVersionAtom));
+    set(queryVersionAtom, queryVersion);
+    queryHistory.push(queryVersion);
+  }
+);
 
 export interface IQueryResult {
   start?: string;
@@ -185,45 +185,40 @@ export interface IQueryResult {
   collectionPath: string;
 }
 
-export const queryResultAtom = atomFamily<IQueryResult, number>({
-  key: "navigator.queryResultNavigator",
-  default: selectorFamily({
-    key: "navigator.queryResultNavigatorSelector",
-    get: () => ({ get }) => ({
-      collectionPath: get(navigatorCollectionPathAtom),
-    }),
-  }),
+export const queryResultAtom = atomFamily((queryVersion: number) =>
+  atomWithDefault<IQueryResult>((get) => ({
+    collectionPath: get(navigatorCollectionPathAtom),
+  }))
+);
+
+export const allColumnsAtom = atom<string[]>((get) => {
+  const collectionPath = get(navigatorCollectionPathAtom);
+  const collections = get(collectionAtom(collectionPath));
+
+  return getAllColumns(collections);
 });
 
-export const allColumnsAtom = selector<string[]>({
-  key: "fs.allColumns",
-  get: ({ get }) => {
-    const collectionPath = get(navigatorCollectionPathAtom);
-    const collections = get(collectionAtom(collectionPath));
+export const allColumnsRecursiveAtom = atom<string[]>((get) => {
+  const collectionPath = get(navigatorCollectionPathAtom);
+  const collections = get(collectionAtom(collectionPath));
 
-    return getAllColumns(collections);
-  },
+  return getAllColumnsRecursive(collections);
 });
 
-export const allColumnsRecursiveAtom = selector<string[]>({
-  key: "fs.allColumnsRecursive",
-  get: ({ get }) => {
-    const collectionPath = get(navigatorCollectionPathAtom);
-    const collections = get(collectionAtom(collectionPath));
+export const propertyListCoreAtom = atomFamily((path: string) =>
+  atomWithBucketStorage<string[] | null>(
+    PROJECT_SETTINGS_BUCKET,
+    familyKey("fs/propertyList", path),
+    null
+  )
+);
 
-    return getAllColumnsRecursive(collections);
-  },
-});
-
-export const propertyListCoreAtom = atomFamily<string[] | null, string>({
-  key: "fs/propertyList",
-  default: null,
-  effects_UNSTABLE: [persistAtom().persistAtom],
-});
-
-export const propertyListAtom = selectorFamily<string[], string>({
-  key: "fs/propertyList",
-  get: (path) => ({ get }) => get(propertyListCoreAtom(path)) || [],
-  set: (path) => ({ set }, newValue) =>
-    set(propertyListCoreAtom(path), newValue),
+export const propertyListAtom = atomFamily((path: string) => {
+  const anAtom = atom(
+    (get): string[] => get(propertyListCoreAtom(path)) || [],
+    (get, set, update: SetStateAction<string[]>) => {
+      set(propertyListCoreAtom(path), resolveUpdate(update, get(anAtom)));
+    }
+  );
+  return anAtom;
 });

@@ -6,7 +6,7 @@ import EditablePropertyValue from "../EditableCell/EditablePropertyValue";
 import { simplify } from "@/utils/simplifr";
 import { buildTableSubRows } from "@/utils/common";
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
-import { setRecoilExternalState } from "@/atoms/RecoilExternalStatePortal";
+import { store } from "@/atoms/store";
 import { buildFSUrl, fieldAtom } from "@/atoms/firestore";
 import { uniqueId } from "lodash";
 import { FIELD_KEY_PREFIX } from "@/utils/contant";
@@ -114,11 +114,11 @@ const PropertyTable = ({ searchInput, doc }: IPropertyTableProps) => {
       buildFSUrl({ path: doc.ref.path, field: "" })
     );
     const newFieldName = uniqueId(FIELD_KEY_PREFIX);
-    setRecoilExternalState(fieldAtomInstance, (value: any) => ({
+    store.set(fieldAtomInstance, (value: any) => ({
       ...value,
       [newFieldName]: "",
     }));
-    setRecoilExternalState(newFieldAtom(doc.ref.path), newFieldName);
+    store.set(newFieldAtom(doc.ref.path), newFieldName);
   }, [doc]);
 
   return (

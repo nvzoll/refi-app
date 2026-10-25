@@ -16,7 +16,7 @@ import { Input } from "@zendeskgarden/react-forms";
 import classNames from "classnames";
 import immer from "immer";
 import React, { useLayoutEffect, useMemo, useRef } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import DateTimePicker from "../DataInput/DateTimePicker";
 import DropdownMenu from "../DropdownMenu";
 
@@ -25,10 +25,10 @@ type IOperatorValue = IArrayOperator["values"][number];
 const arrayInput = ["in", "not-in", "array-contains"];
 
 const FilterItem = ({ id }: { id: string }) => {
-  const collectionPath = useRecoilValue(navigatorCollectionPathAtom);
-  const setQueryOptions = useSetRecoilState(querierAtom(collectionPath));
+  const collectionPath = useAtomValue(navigatorCollectionPathAtom);
+  const setQueryOptions = useSetAtom(querierAtom(collectionPath));
   const inputRef = useRef<HTMLInputElement>();
-  const [filter, setFilter] = useRecoilState(
+  const [filter, setFilter] = useAtom(
     querierOptionAtom({ id, path: collectionPath })
   );
 

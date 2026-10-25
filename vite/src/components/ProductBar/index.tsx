@@ -10,16 +10,16 @@ import {
 } from "@zendeskgarden/react-modals";
 import React, { ReactElement, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
+import { useAtom } from "jotai";
 import classNames from "classnames";
 import firebase from "firebase/app";
 import EscExit from "../EscExit";
 import { appThemeAtom } from "@/atoms/ui.action";
 
 const ProductBar = (): ReactElement => {
-  const [isShowNews, setShowNews] = useRecoilState(isModalNewsAtom);
-  const [isShowFeedback, setShowFeedback] = useRecoilState(isModalFeedbackAtom);
-  const [appTheme, setAppTheme] = useRecoilState(appThemeAtom);
+  const [isShowNews, setShowNews] = useAtom(isModalNewsAtom);
+  const [isShowFeedback, setShowFeedback] = useAtom(isModalFeedbackAtom);
+  const [appTheme, setAppTheme] = useAtom(appThemeAtom);
   const { register, handleSubmit, setValue, watch, getValues } = useForm();
   useEffect(() => {
     register("emotion", { required: true });

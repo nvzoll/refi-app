@@ -21,7 +21,7 @@ import {
 } from "react-beautiful-dnd";
 import ReactDOM from "react-dom";
 import { Controller, useForm } from "react-hook-form";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useAtom, useAtomValue } from "jotai";
 import FieldFinderInput from "../FieldFinderInput";
 
 interface IPropertyItemProps {
@@ -101,8 +101,8 @@ const PropertyItem = ({
 };
 
 const PropertyList = () => {
-  const collectionPath = useRecoilValue(navigatorCollectionPathAtom);
-  const [propertyList, setPropertyList] = useRecoilState(
+  const collectionPath = useAtomValue(navigatorCollectionPathAtom);
+  const [propertyList, setPropertyList] = useAtom(
     propertyListAtom(collectionPath)
   );
   const { handleSubmit, reset, control } = useForm({

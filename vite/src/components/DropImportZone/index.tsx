@@ -2,7 +2,7 @@ import React from "react";
 import { useDropArea } from "react-use";
 import classNames from "classnames";
 import { actionToggleImportModal } from "@/atoms/ui.action";
-import { useSetRecoilState } from "recoil";
+import { useSetAtom } from "jotai";
 import { importFileAtom } from "@/atoms/ui";
 
 interface IDropImportZoneProps {
@@ -10,7 +10,7 @@ interface IDropImportZoneProps {
 }
 
 const DropImportZone = ({ isOver }: IDropImportZoneProps) => {
-  const setFile = useSetRecoilState(importFileAtom);
+  const setFile = useSetAtom(importFileAtom);
   const handleOnFileDrop = (files: File[]) => {
     setFile(files[0]);
     actionToggleImportModal("", true);

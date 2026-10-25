@@ -1,6 +1,6 @@
 import React from "react";
 import { fieldAtom, parseFSUrl } from "@/atoms/firestore";
-import { setRecoilExternalState } from "@/atoms/RecoilExternalStatePortal";
+import { store } from "@/atoms/store";
 import { uniqueId } from "lodash";
 import { FIELD_KEY_PREFIX } from "@/utils/contant";
 import { newFieldAtom } from "@/atoms/ui";
@@ -15,12 +15,12 @@ const ObjectInput = ({ fieldPath, toggleExpand }: IObjectInputProps) => {
     const fieldAtomInstance = fieldAtom(fieldPath);
     const { path, field } = parseFSUrl(fieldPath);
     const newFieldName = uniqueId(FIELD_KEY_PREFIX);
-    setRecoilExternalState(fieldAtomInstance, (value: any) => ({
+    store.set(fieldAtomInstance, (value: any) => ({
       ...value,
       [newFieldName]: "",
     }));
     toggleExpand(true);
-    setRecoilExternalState(newFieldAtom(path), field + "." + newFieldName);
+    store.set(newFieldAtom(path), field + "." + newFieldName);
   };
 
   return (

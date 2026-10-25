@@ -15,10 +15,7 @@ import {
   actionSetProperty,
   actionSubmitQuery,
 } from "./navigator.action";
-import {
-  getRecoilExternalLoadable,
-  setRecoilExternalState,
-} from "./RecoilExternalStatePortal";
+import { store } from "./store";
 import {
   isModalCommandAtom,
   isModalFeedbackAtom,
@@ -43,14 +40,13 @@ export const globalHotKeys: IGlobalHotKeys = {
     name: "Go to documents, collections by path",
     group: "navigator",
     sequences: mapHotKeys("command+p"),
-    handler: () => setRecoilExternalState(viewModePathInputAtom, false),
+    handler: () => store.set(viewModePathInputAtom, false),
   },
   OPEN_COMMAND_LIST: {
     name: "Open command list",
     group: "navigator",
     sequences: mapHotKeys(["command+shift+p", "command+/"]),
-    handler: () =>
-      setRecoilExternalState(isModalCommandAtom, (value) => !value),
+    handler: () => store.set(isModalCommandAtom, (value) => !value),
   },
   COMMIT_CHANGES: {
     name: "Commit changes",
@@ -65,7 +61,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys("command+shift+s"), // TODO: Check the right key
     handler: () => {
-      setRecoilExternalState(isShowPreviewChangeModalAtom, (value) => !value);
+      store.set(isShowPreviewChangeModalAtom, (value) => !value);
     },
   },
   REVERT_CHANGES: {
@@ -81,7 +77,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "general",
     sequences: mapHotKeys(""),
     handler: () => {
-      setRecoilExternalState(isModalNewsAtom, (value) => !value);
+      store.set(isModalNewsAtom, (value) => !value);
     },
   },
   LEAVE_FEEDBACK: {
@@ -89,7 +85,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "general",
     sequences: mapHotKeys(""),
     handler: () => {
-      setRecoilExternalState(isModalFeedbackAtom, (value) => !value);
+      store.set(isModalFeedbackAtom, (value) => !value);
     },
   },
   SEND_QUERY: {
@@ -129,12 +125,8 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys(""),
     handler: async () => {
-      const collectionPath = await getRecoilExternalLoadable(
-        navigatorCollectionPathAtom
-      ).toPromise();
-      const data = await getRecoilExternalLoadable(
-        collectionWithQueryAtom(collectionPath)
-      ).toPromise();
+      const collectionPath = await store.get(navigatorCollectionPathAtom);
+      const data = await store.get(collectionWithQueryAtom(collectionPath));
 
       actionSetProperty(collectionPath, getSampleColumn(data));
     },
@@ -160,9 +152,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys(""),
     handler: async () => {
-      const docPath = await getRecoilExternalLoadable(
-        navigatorPathAtom
-      ).toPromise();
+      const docPath = await store.get(navigatorPathAtom);
       if (isCollection(docPath)) {
         // TODO: Show error
         return;
@@ -176,9 +166,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys(""),
     handler: async () => {
-      const docPath = await getRecoilExternalLoadable(
-        navigatorPathAtom
-      ).toPromise();
+      const docPath = await store.get(navigatorPathAtom);
       if (isCollection(docPath)) {
         // TODO: Show error
         return;
@@ -192,9 +180,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys("command+d"),
     handler: async () => {
-      const docPath = await getRecoilExternalLoadable(
-        navigatorPathAtom
-      ).toPromise();
+      const docPath = await store.get(navigatorPathAtom);
 
       if (isCollection(docPath)) {
         // TODO: Show error
@@ -209,9 +195,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys("command+i"),
     handler: async () => {
-      const collectionPath = await getRecoilExternalLoadable(
-        navigatorCollectionPathAtom
-      ).toPromise();
+      const collectionPath = await store.get(navigatorCollectionPathAtom);
       actionToggleImportModal(collectionPath);
     },
   },
@@ -220,9 +204,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys("command+n"),
     handler: async () => {
-      const collectionPath = await getRecoilExternalLoadable(
-        navigatorCollectionPathAtom
-      ).toPromise();
+      const collectionPath = await store.get(navigatorCollectionPathAtom);
       actionNewDocument(collectionPath);
     },
   },

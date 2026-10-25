@@ -2,11 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./styles/tailwind.css";
 import App from "./App";
-import { RecoilRoot } from "recoil";
+import { Provider } from "jotai";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 import AppTheme, { setTheme } from "./styles/theme";
-import { RecoilExternalStatePortal } from "./atoms/RecoilExternalStatePortal";
+import { store } from "./atoms/store";
 import Notifier from "./components/Notifier";
 import "./config";
 import "./firebase";
@@ -22,13 +22,12 @@ try {
 
 ReactDOM.render(
   <BrowserRouter>
-    <RecoilRoot>
+    <Provider store={store}>
       <AppTheme>
-        <RecoilExternalStatePortal />
         <Notifier />
         <App />
       </AppTheme>
-    </RecoilRoot>
+    </Provider>
   </BrowserRouter>,
   document.getElementById("root")
 );

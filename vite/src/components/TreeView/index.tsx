@@ -45,7 +45,7 @@ import React, {
 } from "react";
 import { useDebounce } from "react-use";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useAtom, useAtomValue } from "jotai";
 import "./index.css";
 
 interface IFSDataNode extends DataNode {
@@ -60,7 +60,7 @@ const NodeComponent = ({
   name,
   isCollection,
 }: Pick<IFSDataNode, "path" | "name" | "isCollection">) => {
-  const doc = useRecoilValue(docAtom(path));
+  const doc = useAtomValue(docAtom(path));
 
   return (
     <span
@@ -322,9 +322,9 @@ interface ITreeViewProps {
 }
 
 function TreeView({ allDocs, deletedDocs, pathAvailable }: ITreeViewProps) {
-  const [path, setPath] = useRecoilState(navigatorPathAtom);
-  // const allDocs = useRecoilValue(allDocsAtom);
-  // const pathAvailable = useRecoilValue(pathExpanderAtom);
+  const [path, setPath] = useAtom(navigatorPathAtom);
+  // const allDocs = useAtomValue(allDocsAtom);
+  // const pathAvailable = useAtomValue(pathExpanderAtom);
   const [searchInput, setSearchInput] = useState("");
   const treeWrapperRef = useRef<HTMLDivElement>(null);
   const [addingNewCollection, setAddNewCollection] = useState<{
@@ -562,9 +562,9 @@ function TreeView({ allDocs, deletedDocs, pathAvailable }: ITreeViewProps) {
 }
 
 const TreeViewDebouncer = () => {
-  const allDocs = useRecoilValue(allDocsAtom);
-  const deletedDocs = useRecoilValue(deletedDocsAtom);
-  const pathAvailable = useRecoilValue(pathExpanderAtom);
+  const allDocs = useAtomValue(allDocsAtom);
+  const deletedDocs = useAtomValue(deletedDocsAtom);
+  const pathAvailable = useAtomValue(pathExpanderAtom);
   const [debouncedDocs, setDebouncedDocs] = useState<ClientDocumentSnapshot[]>(
     allDocs
   );

@@ -4,7 +4,7 @@ import { Input } from "@zendeskgarden/react-forms";
 import { Body as ModalBody, Modal } from "@zendeskgarden/react-modals";
 import React, { useEffect, useMemo, useState } from "react";
 import { HotKeys, withHotKeys } from "react-hotkeys";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useAtom, useAtomValue } from "jotai";
 
 const KEYMAP = {
   CLOSE_MODAL: "Escape",
@@ -14,9 +14,9 @@ const DocFinder = () => {
   const [
     isShowDocFinderModalCommand,
     setShowDocFinderModalCommand,
-  ] = useRecoilState(isShowDocFinderModalCommandAtom);
+  ] = useAtom(isShowDocFinderModalCommandAtom);
   const [keyword, setKeyword] = useState("");
-  const allDocs = useRecoilValue(allDocsAtom);
+  const allDocs = useAtomValue(allDocsAtom);
 
   const filteredDocs = useMemo(() => {
     const keywordLowercase = keyword.toLowerCase();

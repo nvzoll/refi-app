@@ -35,12 +35,12 @@ import csvtojson from "csvtojson";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Controller, useForm } from "react-hook-form";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import SelectComboBox from "../SelectComboBox";
 
 const ImportModal = () => {
-  const collectionPath = useRecoilValue(importCollectionPathAtom);
-  const [file, setFile] = useRecoilState(importFileAtom);
+  const collectionPath = useAtomValue(importCollectionPathAtom);
+  const [file, setFile] = useAtom(importFileAtom);
   const [docs, setDocs] = useState<any[]>([]);
   const { register, handleSubmit, formState, watch, errors, control } = useForm(
     {
@@ -69,7 +69,7 @@ const ImportModal = () => {
     multiple: false,
   });
 
-  const setShowImportModal = useSetRecoilState(isImportModalAtom);
+  const setShowImportModal = useSetAtom(isImportModalAtom);
 
   const onSubmit = (value: any) => {
     // TODO: If there is really large list, we should show loading somewhere

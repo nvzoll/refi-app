@@ -21,21 +21,18 @@ import {
   sorterAtom,
   WhereFilterOp,
 } from "./navigator";
-import {
-  getRecoilExternalLoadable,
-  setRecoilExternalState,
-} from "./RecoilExternalStatePortal";
+import { store } from "./store";
 import { notifyErrorPromise } from "./ui.action";
 
 export const actionGoTo = (path: string): void => {
-  setRecoilExternalState(navigatorPathAtom, prettifyPath(path));
+  store.set(navigatorPathAtom, prettifyPath(path));
 };
 
 export const actionRemoveProperty = (
   collectionPath: string,
   property: string
 ): void => {
-  setRecoilExternalState(propertyListAtom(collectionPath), (propertyList) =>
+  store.set(propertyListAtom(collectionPath), (propertyList) =>
     propertyList.filter((item) => item !== property)
   );
 };
@@ -44,7 +41,7 @@ export const actionAddProperty = (
   collectionPath: string,
   property: string
 ): void => {
-  setRecoilExternalState(propertyListAtom(collectionPath), (propertyList) =>
+  store.set(propertyListAtom(collectionPath), (propertyList) =>
     uniq([property, ...propertyList].filter(Boolean))
   );
 };
@@ -53,7 +50,7 @@ export const actionSetProperty = (
   collectionPath: string,
   properties: string[]
 ): void => {
-  setRecoilExternalState(propertyListAtom(collectionPath), properties);
+  store.set(propertyListAtom(collectionPath), properties);
 };
 
 export const actionSubmitQuery = async (
@@ -66,22 +63,17 @@ export const actionSubmitQuery = async (
     collectionPath?: string;
   }
 ): Promise<boolean> => {
-  setRecoilExternalState(
-    queryVersionAtom,
-    ({ queryVersion, collectionPath }) => ({
-      collectionPath,
-      ...option,
-      queryVersion: queryVersion + 1,
-      withQuerier,
-    })
-  );
+  store.set(queryVersionAtom, ({ queryVersion, collectionPath }) => ({
+    collectionPath,
+    ...option,
+    queryVersion: queryVersion + 1,
+    withQuerier,
+  }));
 
   if (!withQuerier) {
-    const collectionPath = await getRecoilExternalLoadable(
-      navigatorCollectionPathAtom
-    ).toPromise();
+    const collectionPath = await store.get(navigatorCollectionPathAtom);
 
-    setRecoilExternalState(querierAtom(collectionPath), (querierOptions) =>
+    store.set(querierAtom(collectionPath), (querierOptions) =>
       querierOptions.map((option) => ({ ...option, isActive: false }))
     );
   }
@@ -90,15 +82,11 @@ export const actionSubmitQuery = async (
 };
 
 export const actionQueryPage = async (isNext = true): Promise<boolean> => {
-  const collectionPath = await getRecoilExternalLoadable(
-    navigatorCollectionPathAtom
-  ).toPromise();
+  const collectionPath = await store.get(navigatorCollectionPathAtom);
   const lastQuery = queryHistory[queryHistory.length - 2];
   const currentQuery = queryHistory[queryHistory.length - 1];
 
-  const docs = await getRecoilExternalLoadable(
-    queryDocOrder(currentQuery.queryVersion)
-  ).toPromise();
+  const docs = await store.get(queryDocOrder(currentQuery.queryVersion));
 
   if (
     docs.length === 0 &&
@@ -130,7 +118,7 @@ export const actionRemoveSorter = (
   collectionPath: string,
   sorterId: string
 ): void => {
-  setRecoilExternalState(sorterAtom(collectionPath), (sorterList) =>
+  store.set(sorterAtom(collectionPath), (sorterList) =>
     sorterList.filter((item) => item.id !== sorterId)
   );
 };
@@ -143,7 +131,7 @@ export const actionAddSorter = (
     ...value,
     id: uniqueId("fs.sorter"),
   };
-  setRecoilExternalState(sorterAtom(collectionPath), (sorterList) => [
+  store.set(sorterAtom(collectionPath), (sorterList) => [
     newSorter,
     ...sorterList.filter((sorter) => sorter.field !== newSorter.field),
   ]);
@@ -194,12 +182,8 @@ export const actionExportCollectionCSV = async (collectionPath: string) => {
 export const actionExportViewJSON = async (
   allFields = true
 ): Promise<boolean> => {
-  const collectionPath = await getRecoilExternalLoadable(
-    navigatorCollectionPathAtom
-  ).toPromise();
-  const docs = await getRecoilExternalLoadable(
-    collectionWithQueryAtom(collectionPath)
-  ).toPromise();
+  const collectionPath = await store.get(navigatorCollectionPathAtom);
+  const docs = await store.get(collectionWithQueryAtom(collectionPath));
 
   const docsAsString = removeFirebaseSerializeMetaData(
     encodeSpecialValues(
@@ -222,12 +206,8 @@ export const actionExportViewJSON = async (
 export const actionExportViewCSV = async (
   allFields = true
 ): Promise<boolean> => {
-  const collectionPath = await getRecoilExternalLoadable(
-    navigatorCollectionPathAtom
-  ).toPromise();
-  const docs = await getRecoilExternalLoadable(
-    collectionWithQueryAtom(collectionPath)
-  ).toPromise();
+  const collectionPath = await store.get(navigatorCollectionPathAtom);
+  const docs = await store.get(collectionWithQueryAtom(collectionPath));
 
   const docsAsString = removeFirebaseSerializeMetaData(
     encodeSpecialValues(
@@ -250,7 +230,7 @@ export const actionExportViewCSV = async (
 export const actionExportDocJSON = async (
   docPath: string
 ): Promise<boolean> => {
-  const doc = await getRecoilExternalLoadable(docAtom(docPath)).toPromise();
+  const doc = await store.get(docAtom(docPath));
 
   if (!doc) {
     // TODO: Get doc local memory not found
@@ -274,7 +254,7 @@ export const actionExportDocJSON = async (
 };
 
 export const actionExportDocCSV = async (docPath: string): Promise<boolean> => {
-  const doc = await getRecoilExternalLoadable(docAtom(docPath)).toPromise();
+  const doc = await store.get(docAtom(docPath));
 
   if (!doc) {
     // TODO: Throw error not found
@@ -301,7 +281,7 @@ export const actionAddFilter = (
   type: WhereFilterOp,
   collectionPath: string
 ): void => {
-  setRecoilExternalState(querierAtom(collectionPath), (filters) => [
+  store.set(querierAtom(collectionPath), (filters) => [
     ...filters,
     {
       id: uniqueId(FILTER_PREFIX),
@@ -330,5 +310,5 @@ export const actionSaveQueryResult = (
   queryVersion: number,
   result: IQueryResult
 ): void => {
-  setRecoilExternalState(queryResultAtom(queryVersion), result);
+  store.set(queryResultAtom(queryVersion), result);
 };

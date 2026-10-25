@@ -14,19 +14,18 @@ import { Notification, Title } from "@zendeskgarden/react-notifications";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useHistory } from "react-router-dom";
-import {
-  useRecoilState,
-  useRecoilValueLoadable,
-  useSetRecoilState,
-} from "recoil";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { unwrap } from "jotai/utils";
+
+const loadedCerts = unwrap(certs, (prev) => prev ?? []);
 
 const LoginPage: React.FC = () => {
-  const userCertsLoadable = useRecoilValueLoadable(certs);
-  const reloadCerts = useSetRecoilState(certsQueryID);
+  const userCerts = useAtomValue(loadedCerts);
+  const reloadCerts = useSetAtom(certsQueryID);
   const [notificationError, setNotificationError] = useState<string>("");
   const [showConfirm, setConfirm] = useState<string>("");
-  const [connection, setConnection] = useRecoilState(emulatorConnection);
-  const [projectValue, setProjectValue] = useRecoilState(emulatorProjectId);
+  const [connection, setConnection] = useAtom(emulatorConnection);
+  const [projectValue, setProjectValue] = useAtom(emulatorProjectId);
   const history = useHistory();
 
   useEffect(() => {
@@ -104,47 +103,45 @@ const LoginPage: React.FC = () => {
   };
 
   const listCerts = useMemo(() => {
-    if (userCertsLoadable.state === "hasValue") {
-      return userCertsLoadable.contents.map((cert) => (
-        <div
-          key={cert.projectId}
-          onDoubleClick={() => handleOpenConnection(cert.projectId)}
-          className="flex flex-row items-center justify-between p-3 border border-gray-300 cursor-pointer dark:border-gray-600 dark:hover:bg-gray-700 hover:bg-gray-200"
-        >
-          <Title>{cert.projectId}</Title>
-          {/* TODO: Last access time */}
-          <div className="flex flex-row items-center space-x-2">
-            <button
-              role="button"
-              className="w-6 h-6 p-1"
-              onClick={() => setConfirm(cert.projectId)}
+    return userCerts.map((cert) => (
+      <div
+        key={cert.projectId}
+        onDoubleClick={() => handleOpenConnection(cert.projectId)}
+        className="flex flex-row items-center justify-between p-3 border border-gray-300 cursor-pointer dark:border-gray-600 dark:hover:bg-gray-700 hover:bg-gray-200"
+      >
+        <Title>{cert.projectId}</Title>
+        {/* TODO: Last access time */}
+        <div className="flex flex-row items-center space-x-2">
+          <button
+            role="button"
+            className="w-6 h-6 p-1"
+            onClick={() => setConfirm(cert.projectId)}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M10 3h3v1h-1v9l-1 1H4l-1-1V4H2V3h3V2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1zM9 2H6v1h3V2zM4 13h7V4H4v9zm2-8H5v7h1V5zm1 0h1v7H7V5zm2 0h1v7H9V5z"
-                />
-              </svg>
-            </button>
-            <Button
-              isPrimary
-              onClick={() => handleOpenConnection(cert.projectId)}
-              size="small"
-            >
-              Connect
-            </Button>
-          </div>
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M10 3h3v1h-1v9l-1 1H4l-1-1V4H2V3h3V2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1zM9 2H6v1h3V2zM4 13h7V4H4v9zm2-8H5v7h1V5zm1 0h1v7H7V5zm2 0h1v7H9V5z"
+              />
+            </svg>
+          </button>
+          <Button
+            isPrimary
+            onClick={() => handleOpenConnection(cert.projectId)}
+            size="small"
+          >
+            Connect
+          </Button>
         </div>
-      ));
-    }
-  }, [userCertsLoadable.contents]);
+      </div>
+    ));
+  }, [userCerts]);
 
   const handleConnectLocal = () => {
     history.push({

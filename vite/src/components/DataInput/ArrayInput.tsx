@@ -1,9 +1,6 @@
 import React from "react";
 import { fieldAtom, parseFSUrl } from "@/atoms/firestore";
-import {
-  getRecoilExternalLoadable,
-  setRecoilExternalState,
-} from "@/atoms/RecoilExternalStatePortal";
+import { store } from "@/atoms/store";
 import { newFieldAtom } from "@/atoms/ui";
 import { IFieldValue } from "@/types/ClientDocumentSnapshot";
 
@@ -16,12 +13,10 @@ const ArrayInput = ({ fieldPath, toggleExpand }: IArrayInputProps) => {
   const handleAddProperty = async () => {
     const fieldAtomInstance = fieldAtom(fieldPath);
     const { path, field } = parseFSUrl(fieldPath);
-    const fieldValue = ((await getRecoilExternalLoadable(
-      fieldAtomInstance
-    ).toPromise()) as unknown) as any[];
+    const fieldValue = (await store.get(fieldAtomInstance)) as unknown as any[];
 
-    setRecoilExternalState(fieldAtomInstance, [...fieldValue, ""]);
-    setRecoilExternalState(newFieldAtom(path), field + "." + fieldValue.length);
+    store.set(fieldAtomInstance, [...fieldValue, ""]);
+    store.set(newFieldAtom(path), field + "." + fieldValue.length);
     toggleExpand(true);
   };
 

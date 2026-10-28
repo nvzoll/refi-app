@@ -34,8 +34,7 @@ import { Input } from "@zendeskgarden/react-forms";
 import classNames from "classnames";
 import { uniq, uniqueId } from "lodash";
 import * as immutable from "object-path-immutable";
-import Tree from "rc-tree";
-import { DataNode, EventDataNode } from "rc-tree/lib/interface";
+import Tree, { DataNode, EventDataNode } from "@rc-component/tree";
 import React, {
   useCallback,
   useEffect,

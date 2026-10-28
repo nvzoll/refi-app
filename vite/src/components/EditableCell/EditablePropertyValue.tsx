@@ -6,6 +6,7 @@ import DataInput from "@/components/DataInput";
 import DateTimePicker from "@/components/DataInput/DateTimePicker";
 import DropdownMenu from "@/components/DropdownMenu";
 import { useContextMenu } from "@/hooks/contextMenu";
+import { IFieldValue } from "@/types/ClientDocumentSnapshot";
 import { isNumeric } from "@/utils/common";
 import { convertFSValue } from "@/utils/fieldConverter";
 import { getFirestoreType } from "@/utils/simplifr";
@@ -55,7 +56,7 @@ export const EditablePropertyValue = ({
   const inputEl = useRef<HTMLTextAreaElement>(null);
 
   const onChange = useCallback(
-    (newInstanceValue) => {
+    (newInstanceValue: IFieldValue) => {
       if (
         getFirestoreType(instanceValue) === "number" &&
         isNumeric(newInstanceValue)

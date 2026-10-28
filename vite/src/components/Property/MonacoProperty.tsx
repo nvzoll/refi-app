@@ -154,7 +154,9 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
         value={defaultValue}
         height="100%"
         theme={appTheme ? "monacoProperty-light" : "monacoProperty-dark"}
-        wrapperClassName="border border-gray-300 dark:border-gray-700 pt-2 pb-2"
+        wrapperProps={{
+          className: "border border-gray-300 dark:border-gray-700 pt-2 pb-2",
+        }}
         onChange={setDefaultValue}
         onValidate={handleEditorValidation}
         options={monacoOption as any}

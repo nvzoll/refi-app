@@ -215,7 +215,7 @@ function TableWrapper({
   );
 
   const handleScroll = useCallback(
-    ({ target }) => {
+    ({ target }: React.UIEvent<HTMLElement>) => {
       if (columns.length < EASY_SCROLL_COLUMN_COUNT) {
         scrollWindowDebounce(target);
       }

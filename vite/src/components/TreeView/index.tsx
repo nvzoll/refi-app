@@ -114,7 +114,7 @@ function buildTree(
         : "treeDocContext",
       "data-cm-payload-path": [parent, key].join("/"),
       "data-cm-id": "tree",
-      icon: ({ expanded }: { expanded: boolean }) => {
+      icon: () => {
         return (
           <div className="w-5">
             {isCollection ? (
@@ -153,8 +153,8 @@ function buildTree(
         expanded,
         isLeaf,
       }: {
-        expanded: boolean;
-        isLeaf: boolean;
+        expanded?: boolean;
+        isLeaf?: boolean;
       }) {
         if (!isCollection) {
           return null;
@@ -333,7 +333,7 @@ function TreeView({ allDocs, deletedDocs, pathAvailable }: ITreeViewProps) {
   } | null>(null);
   const [expandedKeys, setExpanded] = useState<string[]>([]);
 
-  const handleSelectTree = useCallback((keys: React.ReactText[]) => {
+  const handleSelectTree = useCallback((keys: React.Key[]) => {
     if (keys.length > 0) {
       setPath(keys[0] as string);
     }

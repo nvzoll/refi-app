@@ -57,7 +57,7 @@ export const EditablePropertyField = ({
   }, [id]);
 
   const onChange = useCallback(
-    (e) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       // TODO: Notify to focus on next value input if this is new field
       const prefix =
         fieldData.parent.length > 0 ? fieldData.parent.join(".") + "." : "";

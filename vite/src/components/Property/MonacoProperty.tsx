@@ -102,6 +102,7 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
       !document.activeElement?.classList.contains("monaco-mouse-cursor-text")
     ) {
       setDefaultValue(serializeData(doc));
+      setError("");
     }
   }, [doc]);
 
@@ -127,7 +128,7 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
         try {
           JSON.parse(docStr);
         } catch (error) {
-          setError("Can not parse data from JSON");
+          setError((current) => current || "Can not parse data from JSON");
           return;
         }
 

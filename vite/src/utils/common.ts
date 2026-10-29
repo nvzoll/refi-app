@@ -250,8 +250,22 @@ export function beautifyId(id: string): string {
   return id.slice(0, 3) + "..." + id.slice(-4);
 }
 
+const ID_ALPHABET =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const ID_LENGTH = 20;
+const UNBIASED_BYTE_LIMIT = 256 - (256 % ID_ALPHABET.length);
+
 export const newId = (): string => {
-  return firebase.firestore().collection("feedbacks").doc().id;
+  let id = "";
+  while (id.length < ID_LENGTH) {
+    const bytes = crypto.getRandomValues(new Uint8Array(ID_LENGTH));
+    for (const byte of bytes) {
+      if (byte < UNBIASED_BYTE_LIMIT && id.length < ID_LENGTH) {
+        id += ID_ALPHABET[byte % ID_ALPHABET.length];
+      }
+    }
+  }
+  return id;
 };
 
 export function isNumeric(input: unknown): boolean {

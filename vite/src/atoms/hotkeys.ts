@@ -18,7 +18,6 @@ import {
 import { store } from "./store";
 import {
   isModalCommandAtom,
-  isModalFeedbackAtom,
   isModalNewsAtom,
   isShowPreviewChangeModalAtom,
   viewModePathInputAtom,
@@ -78,14 +77,6 @@ export const globalHotKeys: IGlobalHotKeys = {
     sequences: mapHotKeys(""),
     handler: () => {
       store.set(isModalNewsAtom, (value) => !value);
-    },
-  },
-  LEAVE_FEEDBACK: {
-    name: "Leave Feedback",
-    group: "general",
-    sequences: mapHotKeys(""),
-    handler: () => {
-      store.set(isModalFeedbackAtom, (value) => !value);
     },
   },
   SEND_QUERY: {

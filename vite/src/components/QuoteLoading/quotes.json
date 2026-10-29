@@ -1,0 +1,14 @@
+[
+  { "text": "An orderBy() clause also filters for the existence of the field: documents that don't have it are left out of the results.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/query-data/order-limit-data" },
+  { "text": "Deleting a document doesn't delete its subcollections. They stay readable at their full path.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/manage-data/delete-data" },
+  { "text": "A document can hold at most 1 MiB of data, field names included.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/quotas" },
+  { "text": "Subcollections can nest up to 100 levels deep.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/quotas" },
+  { "text": "Document IDs can't be . or .., and can't look like __name__: double underscores at both ends are reserved.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/quotas" },
+  { "text": "The in, not-in and array-contains-any operators take up to 30 values.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/query-data/queries" },
+  { "text": "A query can have only one array-contains clause.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/query-data/queries" },
+  { "text": "!= and not-in skip documents where the field doesn't exist at all.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/query-data/queries" },
+  { "text": "A query takes time in proportion to the size of its result, not the size of the collection.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/query-data/queries" },
+  { "text": "In a transaction, every read must come before the first write.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/manage-data/transactions" },
+  { "text": "Transactions fail when the client is offline. Batched writes don't need a connection to be queued.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/manage-data/transactions" },
+  { "text": "Monotonically increasing document IDs, like timestamps, create hotspots. Prefer auto-generated IDs.", "author": "Firebase", "url": "https://firebase.google.com/docs/firestore/best-practices" }
+]

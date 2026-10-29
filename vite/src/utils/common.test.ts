@@ -11,6 +11,7 @@ import {
   getParentPath,
   getSampleColumn,
   isCollection,
+  newId,
   removeFirebaseSerializeMetaData,
 } from "./common";
 import { simplify } from "./simplifr";
@@ -148,5 +149,14 @@ describe("convertFirebaseType", () => {
   it("passes null and undefined through", () => {
     expect(convertFirebaseType(null)).toBeNull();
     expect(convertFirebaseType(undefined)).toBeUndefined();
+  });
+});
+
+describe("newId", () => {
+  it("makes distinct 20-character alphanumeric IDs", () => {
+    const id = newId();
+
+    expect(id).toMatch(/^[A-Za-z0-9]{20}$/);
+    expect(newId()).not.toBe(id);
   });
 });

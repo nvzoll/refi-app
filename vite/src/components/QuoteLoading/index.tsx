@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import quotes from "./quotes.json";
+import firebaseLogo from "./firebase-logo.svg";
 
 const LOADING_DELAY_MS = 5000;
 
@@ -59,7 +60,12 @@ const QuoteLoading = ({ onDone }: IQuoteLoadingProps) => {
               </a>
             </p>
           )}
-          <div className="flex flex-row items-center mt-6">
+          <img
+            className="w-12 h-12 mt-6 rounded-lg"
+            src={firebaseLogo}
+            alt="Firebase"
+          />
+          <div className="flex flex-row items-center">
             <div className="text-2xl">{quote.author}</div>
           </div>
         </>

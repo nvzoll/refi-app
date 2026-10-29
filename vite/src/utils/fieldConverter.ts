@@ -78,15 +78,17 @@ export const fieldConverter: Record<
     switch (toType) {
       case "string":
         return JSON.stringify(value);
-      case "geopoint":
-        if (isFinite(value?._latitude) && isFinite(value?._longitude)) {
+      case "geopoint": {
+        const coords = getGeoPointCoords(value);
+        if (coords) {
           return new firebase.firestore.GeoPoint(
-            value?._latitude,
-            value?._longitude
+            coords.latitude,
+            coords.longitude
           );
         }
 
         return null;
+      }
       default:
         return null;
     }
@@ -98,6 +100,7 @@ export const fieldConverter: Record<
       case "map":
         return value.reduce((previous, item, index) => {
           previous[index] = item;
+          return previous;
         }, {});
       default:
         return null;
@@ -121,15 +124,15 @@ export const fieldConverter: Record<
   },
   geopoint: (
     toType: RefiFS.IFieldType,
-    { _latitude, _longitude }: { _latitude: number; _longitude: number }
+    value: firebase.firestore.GeoPoint
   ) => {
     switch (toType) {
       case "string":
-        return [_latitude, _longitude].join(",");
+        return `${value.latitude},${value.longitude}`;
       case "map":
         return {
-          _latitude,
-          _longitude,
+          latitude: value.latitude,
+          longitude: value.longitude,
         };
       default:
         return null;
@@ -144,6 +147,18 @@ export const fieldConverter: Record<
     }
   },
 };
+
+function getGeoPointCoords(
+  value: any
+): { latitude: number; longitude: number } | null {
+  if (Number.isFinite(value?.latitude) && Number.isFinite(value?.longitude)) {
+    return { latitude: value.latitude, longitude: value.longitude };
+  }
+  if (Number.isFinite(value?._latitude) && Number.isFinite(value?._longitude)) {
+    return { latitude: value._latitude, longitude: value._longitude };
+  }
+  return null;
+}
 
 function getDefaultValueByType(type: RefiFS.IFieldType) {
   switch (type) {

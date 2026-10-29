@@ -45,8 +45,36 @@ describe("convertFSValue from Firestore types", () => {
     expect(convertFSValue(at, "number")).toBe(at.toMillis());
   });
 
+  it("turns a geopoint into a lat,long string or a coordinate map", () => {
+    expect(convertFSValue(new GeoPoint(1.5, 2), "string")).toBe("1.5,2");
+    expect(convertFSValue(new GeoPoint(1.5, 2), "map")).toEqual({
+      latitude: 1.5,
+      longitude: 2,
+    });
+  });
+
   it("uses the target type's default for unsupported pairs", () => {
     expect(convertFSValue(42, "geopoint")).toEqual(new GeoPoint(0, 0));
     expect(convertFSValue(true, "map")).toEqual({});
+  });
+});
+
+describe("convertFSValue from map", () => {
+  it("turns coordinate maps into geopoints", () => {
+    expect(convertFSValue({ latitude: 1.5, longitude: 2 }, "geopoint")).toEqual(
+      new GeoPoint(1.5, 2)
+    );
+    expect(
+      convertFSValue({ _latitude: 1.5, _longitude: 2 }, "geopoint")
+    ).toEqual(new GeoPoint(1.5, 2));
+    expect(convertFSValue({ latitude: 0, longitude: 0 }, "geopoint")).toEqual(
+      new GeoPoint(0, 0)
+    );
+  });
+});
+
+describe("convertFSValue from array", () => {
+  it("turns an array into an index-keyed map", () => {
+    expect(convertFSValue(["a", "b"], "map")).toEqual({ 0: "a", 1: "b" });
   });
 });

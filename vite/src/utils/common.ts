@@ -318,10 +318,10 @@ export const convertFirebaseType = (input: any): any => {
   }
 
   if (
-    input.seconds &&
-    input.nanoseconds &&
-    !Number.isNaN(input.seconds) &&
-    !Number.isNaN(input.nanoseconds)
+    input &&
+    typeof input === "object" &&
+    Number.isFinite(input.seconds) &&
+    Number.isFinite(input.nanoseconds)
   ) {
     return new firebase.firestore.Timestamp(input.seconds, input.nanoseconds);
   }

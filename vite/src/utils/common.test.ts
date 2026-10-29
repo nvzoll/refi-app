@@ -134,4 +134,21 @@ describe("convertFirebaseType", () => {
     expect(list[0]).toBeInstanceOf(firebase.firestore.Timestamp);
     expect(list[1]).toBe("x");
   });
+
+  it("revives timestamps with 0 nanoseconds, including inside arrays", () => {
+    const single = convertFirebaseType({ seconds: 10, nanoseconds: 0 });
+    const list = convertFirebaseType([{ seconds: 10, nanoseconds: 0 }]);
+
+    expect(single).toBeInstanceOf(firebase.firestore.Timestamp);
+    expect(single.isEqual(new firebase.firestore.Timestamp(10, 0))).toBe(true);
+    expect(list[0]).toBeInstanceOf(firebase.firestore.Timestamp);
+    expect(list[0].isEqual(new firebase.firestore.Timestamp(10, 0))).toBe(true);
+  });
+
+  it("passes null and primitives through unchanged", () => {
+    expect(convertFirebaseType(null)).toBeNull();
+    expect(convertFirebaseType(undefined)).toBeUndefined();
+    expect(convertFirebaseType("str")).toBe("str");
+    expect(convertFirebaseType(123)).toBe(123);
+  });
 });

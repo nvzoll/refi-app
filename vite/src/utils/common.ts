@@ -1,9 +1,9 @@
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
 import { chunk, flatten, intersection, uniq } from "lodash";
 import { isObject, simplify } from "./simplifr";
-import firebase from "firebase/app";
 import { IArrayOperator, INormalOperator } from "@/atoms/navigator";
 import { isMacOS } from "./platform";
+import { Timestamp } from "firebase/firestore";
 
 export const isCollection = (path = ""): boolean => {
   if (path === "/") {
@@ -337,7 +337,7 @@ export const convertFirebaseType = (input: any): any => {
     Number.isFinite(input.seconds) &&
     Number.isFinite(input.nanoseconds)
   ) {
-    return new firebase.firestore.Timestamp(input.seconds, input.nanoseconds);
+    return new Timestamp(input.seconds, input.nanoseconds);
   }
 
   return input;

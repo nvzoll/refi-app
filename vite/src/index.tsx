@@ -9,7 +9,6 @@ import AppTheme, { setTheme } from "./styles/theme";
 import { store } from "./atoms/store";
 import Notifier from "./components/Notifier";
 import "./config";
-import "firebase/firestore";
 
 try {
   const userSettings = JSON.parse(

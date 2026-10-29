@@ -19,6 +19,7 @@ import React, { useLayoutEffect, useMemo, useRef } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import DateTimePicker from "../DataInput/DateTimePicker";
 import DropdownMenu from "../DropdownMenu";
+import { Timestamp } from "firebase/firestore";
 
 type IOperatorValue = IArrayOperator["values"][number];
 
@@ -198,7 +199,7 @@ const FilterItem = ({ id }: { id: string }) => {
               {getFirestoreType(value) === "timestamp" ? (
                 <div className="h-8 pl-20 pr-5 border border-gray-300">
                   <DateTimePicker
-                    value={value as firebase.firestore.Timestamp}
+                    value={value as Timestamp}
                     onChange={(newValue) =>
                       handleChangeArrayItemValue(newValue, index)
                     }
@@ -289,7 +290,7 @@ const FilterItem = ({ id }: { id: string }) => {
         {inputType === "timestamp" ? (
           <div className="h-8 pl-24 border border-gray-300">
             <DateTimePicker
-              value={filter.operator.values as firebase.firestore.Timestamp}
+              value={filter.operator.values as Timestamp}
               onChange={(newValue) => handleChangeValue(newValue)}
             />
           </div>

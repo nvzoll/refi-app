@@ -1,11 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import firebase from "firebase";
-import "firebase/firestore";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 import { DocRef } from "./DocRef";
 import { deserializeDocumentSnapshot, deserializeDocumentSnapshotArray } from "./Deserialize";
 import { serializeDocumentSnapshot, serializeQuerySnapshot } from "./Serialize";
-
-const { GeoPoint, Timestamp } = firebase.firestore;
 
 function snapshot(data: any): any {
     return { id: "doc1", ref: { path: "col/doc1" }, data: () => data };

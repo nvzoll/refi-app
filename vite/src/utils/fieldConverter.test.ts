@@ -1,9 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import firebase from "firebase/app";
-import "firebase/firestore";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 import { convertFSValue } from "./fieldConverter";
-
-const { GeoPoint, Timestamp } = firebase.firestore;
 
 describe("convertFSValue from string", () => {
   it.each([

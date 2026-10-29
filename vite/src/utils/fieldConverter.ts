@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { DocRef } from "firestore-serializers";
 import { getFirestoreType } from "./simplifr";
-import firebase from "firebase/app";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 import { isNumeric } from "@/utils/common";
 
 export const fieldConverter: Record<
@@ -26,24 +26,24 @@ export const fieldConverter: Record<
         // Try to parse
         try {
           return dayjs(value).isValid()
-            ? firebase.firestore.Timestamp.fromDate(dayjs(value).toDate())
-            : firebase.firestore.Timestamp.now();
+            ? Timestamp.fromDate(dayjs(value).toDate())
+            : Timestamp.now();
         } catch (error) {
           console.log(error);
-          return firebase.firestore.Timestamp.now();
+          return Timestamp.now();
         }
       case "geopoint":
         try {
           const [lat, long] = value?.split(",");
 
           if (isNumeric(lat) && isNumeric(long)) {
-            return new firebase.firestore.GeoPoint(Number(lat), Number(long));
+            return new GeoPoint(Number(lat), Number(long));
           }
 
-          return new firebase.firestore.GeoPoint(0, 0);
+          return new GeoPoint(0, 0);
         } catch (error) {
           console.log(error);
-          return new firebase.firestore.GeoPoint(0, 0);
+          return new GeoPoint(0, 0);
         }
 
       case "reference":
@@ -81,7 +81,7 @@ export const fieldConverter: Record<
       case "geopoint": {
         const coords = getGeoPointCoords(value);
         if (coords) {
-          return new firebase.firestore.GeoPoint(
+          return new GeoPoint(
             coords.latitude,
             coords.longitude
           );
@@ -111,7 +111,7 @@ export const fieldConverter: Record<
   },
   timestamp: (
     toType: RefiFS.IFieldType,
-    value: firebase.firestore.Timestamp
+    value: Timestamp
   ) => {
     switch (toType) {
       case "string":
@@ -124,7 +124,7 @@ export const fieldConverter: Record<
   },
   geopoint: (
     toType: RefiFS.IFieldType,
-    value: firebase.firestore.GeoPoint
+    value: GeoPoint
   ) => {
     switch (toType) {
       case "string":
@@ -175,9 +175,9 @@ function getDefaultValueByType(type: RefiFS.IFieldType) {
     case "null":
       return null;
     case "timestamp":
-      return firebase.firestore.Timestamp.now();
+      return Timestamp.now();
     case "geopoint":
-      return new firebase.firestore.GeoPoint(0, 0);
+      return new GeoPoint(0, 0);
     case "reference":
       return new DocRef("/");
   }

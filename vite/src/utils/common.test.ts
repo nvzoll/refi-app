@@ -1,6 +1,4 @@
 import { describe, expect, it } from "bun:test";
-import firebase from "firebase/app";
-import "firebase/firestore";
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
 import {
   buildTableSubRows,
@@ -15,6 +13,7 @@ import {
   removeFirebaseSerializeMetaData,
 } from "./common";
 import { simplify } from "./simplifr";
+import { Timestamp } from "firebase/firestore";
 
 const doc = (data: Record<string, any>, id = "d") =>
   new ClientDocumentSnapshot(data, id, `/col/${id}`);
@@ -130,9 +129,9 @@ describe("convertFirebaseType", () => {
     const single = convertFirebaseType({ seconds: 10, nanoseconds: 5 });
     const list = convertFirebaseType([{ seconds: 10, nanoseconds: 5 }, "x"]);
 
-    expect(single).toBeInstanceOf(firebase.firestore.Timestamp);
-    expect(single.isEqual(new firebase.firestore.Timestamp(10, 5))).toBe(true);
-    expect(list[0]).toBeInstanceOf(firebase.firestore.Timestamp);
+    expect(single).toBeInstanceOf(Timestamp);
+    expect(single.isEqual(new Timestamp(10, 5))).toBe(true);
+    expect(list[0]).toBeInstanceOf(Timestamp);
     expect(list[1]).toBe("x");
   });
 
@@ -140,10 +139,10 @@ describe("convertFirebaseType", () => {
     const single = convertFirebaseType({ seconds: 10, nanoseconds: 0 });
     const list = convertFirebaseType([{ seconds: 10, nanoseconds: 0 }]);
 
-    expect(single).toBeInstanceOf(firebase.firestore.Timestamp);
-    expect(single.isEqual(new firebase.firestore.Timestamp(10, 0))).toBe(true);
-    expect(list[0]).toBeInstanceOf(firebase.firestore.Timestamp);
-    expect(list[0].isEqual(new firebase.firestore.Timestamp(10, 0))).toBe(true);
+    expect(single).toBeInstanceOf(Timestamp);
+    expect(single.isEqual(new Timestamp(10, 0))).toBe(true);
+    expect(list[0]).toBeInstanceOf(Timestamp);
+    expect(list[0].isEqual(new Timestamp(10, 0))).toBe(true);
   });
 
   it("passes null and undefined through", () => {

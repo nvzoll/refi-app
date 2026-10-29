@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import firebase from "firebase/app";
-import "firebase/firestore";
 import { createStore } from "jotai";
+import { Timestamp } from "firebase/firestore";
 
 const storage = new Map<string, string>();
 Object.assign(globalThis, {
@@ -67,7 +66,7 @@ describe("persisted settings", () => {
 
     const [filter] = store.get(querierAtom("/users"));
     expect(filter.field).toBe("createdAt");
-    expect(filter.operator.values).toBeInstanceOf(firebase.firestore.Timestamp);
+    expect(filter.operator.values).toBeInstanceOf(Timestamp);
     expect(filter.operator.values).toMatchObject({
       seconds: 1700000000,
       nanoseconds: 500,

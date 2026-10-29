@@ -1,15 +1,14 @@
-import firebase from "firebase";
 import { SimpleJsonType } from "./types";
 import { serialItemIsSpecial } from "./firestore-identifiers";
 import { mapDeepWithArrays } from "./map-deep-with-arrays";
 import { omit } from "lodash";
 import { DocRef } from "./DocRef";
-import { DocumentSnapshot, QuerySnapshot } from './index.d';
+import { DocumentSnapshot, GeoPointClass, QuerySnapshot, TimestampClass } from './index.d';
 
 function objectifyDocumentProperty(
     item: any,
-    geoPoint: typeof firebase.firestore.GeoPoint,
-    timestamp: typeof firebase.firestore.Timestamp,
+    geoPoint: GeoPointClass,
+    timestamp: TimestampClass,
     firestore?: (path: string) => any
 ): any {
     if (!serialItemIsSpecial(item)) {
@@ -43,8 +42,8 @@ function objectifyDocument(
     partialObject: {
         [key: string]: SimpleJsonType,
     },
-    geoPoint: typeof firebase.firestore.GeoPoint,
-    timestamp: typeof firebase.firestore.Timestamp,
+    geoPoint: GeoPointClass,
+    timestamp: TimestampClass,
     firestore?: (path: string) => any
 ): DocumentSnapshot {
     const mappedObject = mapDeepWithArrays(partialObject, (item: any) => {
@@ -63,8 +62,8 @@ function objectifyDocument(
 
 export function deserializeDocumentSnapshotArray(
     string: string,
-    geoPoint: typeof firebase.firestore.GeoPoint,
-    timestamp: typeof firebase.firestore.Timestamp,
+    geoPoint: GeoPointClass,
+    timestamp: TimestampClass,
     firestore?: (path: string) => any
 ): DocumentSnapshot[] {
     const parsedString: any[] = JSON.parse(string);
@@ -75,8 +74,8 @@ export function deserializeDocumentSnapshotArray(
 
 export function deserializeDocumentSnapshot(
     string: string,
-    geoPoint: typeof firebase.firestore.GeoPoint,
-    timestamp: typeof firebase.firestore.Timestamp,
+    geoPoint: GeoPointClass,
+    timestamp: TimestampClass,
     firestore?: (path: string) => any
 ): DocumentSnapshot {
     return objectifyDocument(JSON.parse(string), geoPoint, timestamp, firestore);

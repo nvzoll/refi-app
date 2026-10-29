@@ -106,7 +106,7 @@ const Commander = () => {
     }
   }, [currentOption]);
 
-  const onSelectOption = useCallback((command) => {
+  const onSelectOption = useCallback((command: string) => {
     setShowModalCommand(false);
     if (globalHotKeysHandler[command]) {
       globalHotKeysHandler[command]();

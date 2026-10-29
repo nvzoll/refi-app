@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import "./styles/tailwind.css";
 import App from "./App";
 import { Provider } from "jotai";
@@ -20,7 +20,7 @@ try {
   console.log(error);
 }
 
-ReactDOM.render(
+createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <Provider store={store}>
       <AppTheme>
@@ -28,8 +28,7 @@ ReactDOM.render(
         <App />
       </AppTheme>
     </Provider>
-  </BrowserRouter>,
-  document.getElementById("root")
+  </BrowserRouter>
 );
 
 // If you want your app to work offline and load faster, you can change

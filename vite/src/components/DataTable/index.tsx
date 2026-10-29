@@ -178,25 +178,28 @@ function TableWrapper({
       const row = data[index];
       prepareRow(row);
       const rowOrigin = row.original as ClientDocumentSnapshot;
+      const { key: rowKey, ...rowProps } = row.getRowProps({
+        style: {
+          ...style,
+          minWidth: "100%",
+          width: "auto",
+        },
+        key: rowOrigin.id,
+      });
       return (
         <div
-          {...row.getRowProps({
-            style: {
-              ...style,
-              minWidth: "100%",
-              width: "auto",
-            },
-            key: rowOrigin.id,
-          })}
+          key={rowKey}
+          {...rowProps}
           className="border-b border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-900 group dark:text-gray-200"
           data-id={rowOrigin.id}
           onClick={(e) => onRowClick(e, rowOrigin)}
         >
           {row.cells.map((cell) => {
+            const { key: cellKey, ...cellProps } = cell.getCellProps();
             return (
-              // eslint-disable-next-line react/jsx-key
               <div
-                {...cell.getCellProps()}
+                key={cellKey}
+                {...cellProps}
                 className="border-r border-gray-200 dark:border-gray-600 last:border-r-0 group-hover:border-gray-300"
                 data-cm-template="rowContext"
                 data-cm-id="rowContext"
@@ -215,7 +218,7 @@ function TableWrapper({
   );
 
   const handleScroll = useCallback(
-    ({ target }) => {
+    ({ target }: React.UIEvent<HTMLElement>) => {
       if (columns.length < EASY_SCROLL_COLUMN_COUNT) {
         scrollWindowDebounce(target);
       }
@@ -248,10 +251,9 @@ function TableWrapper({
           className="w-full h-full border-b border-gray-300 dark:border-gray-600"
         >
           <thead>
-            {headerGroups.map((headerGroup) => (
-              // eslint-disable-next-line react/jsx-key
-              <div
-                {...headerGroup.getHeaderGroupProps({
+            {headerGroups.map((headerGroup) => {
+              const { key: headerGroupKey, ...headerGroupProps } =
+                headerGroup.getHeaderGroupProps({
                   style: {
                     width,
                     overflow: "hidden",
@@ -260,34 +262,39 @@ function TableWrapper({
 
                   className:
                     "border-t border-b border-gray-300 dark:border-gray-600",
-                })}
-                ref={headerRef}
-              >
-                {headerGroup.headers.map((column) => (
-                  // eslint-disable-next-line react/jsx-key
-                  <th
-                    {...column.getHeaderProps(
-                      (column as any).getSortByToggleProps()
-                    )}
-                    className="text-left text-gray-500 border-r border-gray-200 dark:border-gray-600"
-                  >
-                    <div
-                      {...(column as any).getResizerProps({
-                        onClick: ignoreBackdropEvent,
-                      })}
-                      className={classNames(
-                        "w-px h-full inline-block transform translate-x-px hover:bg-gray-400 pl-1 absolute top-0 -right-px"
-                      )}
-                    />
-                    {column.render("Header", {
-                      isSorted: (column as any)?.isSorted,
-                      isSortedDesc: (column as any).isSortedDesc,
-                      toggleSortBy: (column as any).toggleSortBy,
-                    })}
-                  </th>
-                ))}
-              </div>
-            ))}
+                });
+              return (
+                <div key={headerGroupKey} {...headerGroupProps} ref={headerRef}>
+                  {headerGroup.headers.map((column) => {
+                    const { key: headerKey, ...headerProps } =
+                      column.getHeaderProps(
+                        (column as any).getSortByToggleProps()
+                      );
+                    return (
+                      <th
+                        key={headerKey}
+                        {...headerProps}
+                        className="text-left text-gray-500 border-r border-gray-200 dark:border-gray-600"
+                      >
+                        <div
+                          {...(column as any).getResizerProps({
+                            onClick: ignoreBackdropEvent,
+                          })}
+                          className={classNames(
+                            "w-px h-full inline-block transform translate-x-px hover:bg-gray-400 pl-1 absolute top-0 -right-px"
+                          )}
+                        />
+                        {column.render("Header", {
+                          isSorted: (column as any)?.isSorted,
+                          isSortedDesc: (column as any).isSortedDesc,
+                          toggleSortBy: (column as any).toggleSortBy,
+                        })}
+                      </th>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </thead>
           <tbody {...getTableBodyProps()} className="block h-full">
             <Scrollbars

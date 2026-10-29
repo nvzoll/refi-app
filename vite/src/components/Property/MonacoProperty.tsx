@@ -19,7 +19,7 @@ import {
   DocRef,
 } from "firestore-serializers";
 import { debounce } from "lodash";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
 import "./monaco.css";
@@ -102,13 +102,13 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
       !document.activeElement?.classList.contains("monaco-mouse-cursor-text")
     ) {
       setDefaultValue(serializeData(doc));
+      setError("");
     }
   }, [doc]);
 
   const handleEditorValidation: OnValidate = (markers) => {
     if (markers.length === 0) {
       setError("");
-      commitChange(defaultValue);
     }
 
     if (markers[0]) {
@@ -117,35 +117,45 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
     }
   };
 
-  const commitChange = debounce((docStr?: string) => {
-    if (!docStr) {
-      setError("Can not parse data from JSON");
-      return;
-    }
+  const commitChange = useMemo(
+    () =>
+      debounce((docStr?: string) => {
+        if (!docStr) {
+          setError("Can not parse data from JSON");
+          return;
+        }
 
-    try {
-      JSON.parse(docStr);
-    } catch (error) {
-      setError("Can not parse data from JSON");
-      return;
-    }
+        try {
+          JSON.parse(docStr);
+        } catch (error) {
+          setError((current) => current || "Can not parse data from JSON");
+          return;
+        }
 
-    setError("");
-    try {
-      const newDoc = deserializeData(doc, docStr);
-      const changes = diff(doc.data(), newDoc.data()) || [];
-      if (changes.length > 0) {
-        const fieldChanges = changes
-          .map((change) => change.path?.join("."))
-          .filter((_) => _) as string[];
+        setError("");
+        try {
+          const newDoc = deserializeData(doc, docStr);
+          const changes = diff(doc.data(), newDoc.data()) || [];
+          if (changes.length > 0) {
+            const fieldChanges = changes
+              .map((change) => change.path?.join("."))
+              .filter((_) => _) as string[];
 
-        newDoc.addChange(fieldChanges);
-        actionUpdateDoc(newDoc);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, 300);
+            newDoc.addChange(fieldChanges);
+            actionUpdateDoc(newDoc);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }, 300),
+    [doc]
+  );
+
+  // onValidate only fires when the markers change, so valid edits commit from here.
+  const handleChange = (value?: string) => {
+    setDefaultValue(value);
+    commitChange(value);
+  };
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -154,8 +164,10 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
         value={defaultValue}
         height="100%"
         theme={appTheme ? "monacoProperty-light" : "monacoProperty-dark"}
-        wrapperClassName="border border-gray-300 dark:border-gray-700 pt-2 pb-2"
-        onChange={setDefaultValue}
+        wrapperProps={{
+          className: "border border-gray-300 dark:border-gray-700 pt-2 pb-2",
+        }}
+        onChange={handleChange}
         onValidate={handleEditorValidation}
         options={monacoOption as any}
         line={1}

@@ -2,7 +2,8 @@ import { appThemeAtom } from "@/atoms/ui.action";
 import {
   DEFAULT_THEME,
   IGardenTheme,
-  ThemeProvider,
+  IThemeProviderProps,
+  ThemeProvider as GardenThemeProvider,
 } from "@zendeskgarden/react-theming";
 
 import React, { useEffect } from "react";
@@ -78,7 +79,12 @@ export const setTheme = (theme: boolean) => {
   }
 };
 
-const AppTheme: React.FC = ({ children }) => {
+// Garden 8.38 types its provider without children, which React 18 types no longer add.
+export const ThemeProvider = GardenThemeProvider as React.FC<
+  React.PropsWithChildren<IThemeProviderProps>
+>;
+
+const AppTheme = ({ children }: { children: React.ReactNode }) => {
   const [appTheme, setAppTheme] = useAtom(appThemeAtom);
 
   useEffect(() => {

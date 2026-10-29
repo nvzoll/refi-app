@@ -1,16 +1,14 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import "./styles/tailwind.css";
 import * as serviceWorker from "./serviceWorker";
-import { ThemeProvider } from "@zendeskgarden/react-theming";
-import { lightTheme } from "./styles/theme";
+import { lightTheme, ThemeProvider } from "./styles/theme";
 import TabsPage from "./pages/Tabs";
 
-ReactDOM.render(
+createRoot(document.getElementById("root")!).render(
   <ThemeProvider theme={lightTheme} focusVisibleRef={null}>
     <TabsPage />
-  </ThemeProvider>,
-  document.getElementById("root")
+  </ThemeProvider>
 );
 
 // If you want your app to work offline and load faster, you can change

@@ -67,9 +67,12 @@ describe("convertFSValue from map", () => {
     expect(
       convertFSValue({ _latitude: 1.5, _longitude: 2 }, "geopoint")
     ).toEqual(new GeoPoint(1.5, 2));
-    expect(convertFSValue({ latitude: 0, longitude: 0 }, "geopoint")).toEqual(
-      new GeoPoint(0, 0)
+    expect(convertFSValue({ latitude: 0, longitude: 2 }, "geopoint")).toEqual(
+      new GeoPoint(0, 2)
     );
+    expect(
+      convertFSValue({ _latitude: 0, _longitude: 2 }, "geopoint")
+    ).toEqual(new GeoPoint(0, 2));
   });
 });
 

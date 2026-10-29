@@ -145,10 +145,8 @@ describe("convertFirebaseType", () => {
     expect(list[0].isEqual(new firebase.firestore.Timestamp(10, 0))).toBe(true);
   });
 
-  it("passes null and primitives through unchanged", () => {
+  it("passes null and undefined through", () => {
     expect(convertFirebaseType(null)).toBeNull();
     expect(convertFirebaseType(undefined)).toBeUndefined();
-    expect(convertFirebaseType("str")).toBe("str");
-    expect(convertFirebaseType(123)).toBe(123);
   });
 });

@@ -12,11 +12,11 @@ import { store } from "@/atoms/store";
 import { notifyErrorPromise } from "@/atoms/ui.action";
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
 import { getCollectionPath, isCollection } from "@/utils/common";
-import firebase from "firebase/app";
 import { deserializeDocumentSnapshotArray } from "firestore-serializers";
 import { uniq } from "lodash";
 import { useEffect, useRef } from "react";
 import { useAtomValue } from "jotai";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 interface ISubscribeResponse {
   addedData: string;
   modifiedData: string;
@@ -81,8 +81,8 @@ const DataSubscriber = () => {
         const addedDocs = ClientDocumentSnapshot.transformFromFirebase(
           deserializeDocumentSnapshotArray(
             addedData,
-            firebase.firestore.GeoPoint,
-            firebase.firestore.Timestamp
+            GeoPoint,
+            Timestamp
           ),
           queryVersion
         );
@@ -90,8 +90,8 @@ const DataSubscriber = () => {
         const modifiedDocs = ClientDocumentSnapshot.transformFromFirebase(
           deserializeDocumentSnapshotArray(
             modifiedData,
-            firebase.firestore.GeoPoint,
-            firebase.firestore.Timestamp
+            GeoPoint,
+            Timestamp
           ),
           queryVersion
         );
@@ -99,8 +99,8 @@ const DataSubscriber = () => {
         const removedDocs = ClientDocumentSnapshot.transformFromFirebase(
           deserializeDocumentSnapshotArray(
             removedData,
-            firebase.firestore.GeoPoint,
-            firebase.firestore.Timestamp
+            GeoPoint,
+            Timestamp
           ),
           queryVersion
         );
@@ -175,8 +175,8 @@ const DataSubscriber = () => {
             const addedDocs = ClientDocumentSnapshot.transformFromFirebase(
               deserializeDocumentSnapshotArray(
                 docs,
-                firebase.firestore.GeoPoint,
-                firebase.firestore.Timestamp
+                GeoPoint,
+                Timestamp
               ),
               queryVersion
             ).filter(
@@ -189,8 +189,8 @@ const DataSubscriber = () => {
             const modifiedDocs = ClientDocumentSnapshot.transformFromFirebase(
               deserializeDocumentSnapshotArray(
                 docs,
-                firebase.firestore.GeoPoint,
-                firebase.firestore.Timestamp
+                GeoPoint,
+                Timestamp
               ),
               queryVersion
             ).filter(

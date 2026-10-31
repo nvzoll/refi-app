@@ -12,7 +12,6 @@ import {
 } from "@/utils/legacySpecialValues";
 import Editor, { Monaco, OnValidate, useMonaco } from "@monaco-editor/react";
 import { diff } from "deep-diff";
-import firebase from "firebase/app";
 import {
   deserializeDocumentSnapshot,
   serializeDocumentSnapshot,
@@ -23,6 +22,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useTheme } from "styled-components";
 import "./monaco.css";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 
 interface IMonacoPropertyProps {
   doc: ClientDocumentSnapshot;
@@ -64,8 +64,8 @@ const deserializeData = (
         originalDoc.id,
         originalDoc.ref.path
       ),
-      firebase.firestore.GeoPoint,
-      firebase.firestore.Timestamp,
+      GeoPoint,
+      Timestamp,
       (path) => new DocRef(path)
     ).data()
   );

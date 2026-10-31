@@ -25,8 +25,6 @@ export const isModalNewsAtom = atom(
   }
 );
 
-export const isModalFeedbackAtom = atom<boolean>(false);
-
 export const isModalPickProperty = atom<boolean>(false);
 
 export const isModalSorter = atom<boolean>(false);

@@ -27,6 +27,7 @@ import ArrayInput from "../DataInput/ArrayInput";
 import BooleanInput from "../DataInput/BooleanInput";
 import GeopointPicker from "../DataInput/GeopointPicker";
 import ObjectInput from "../DataInput/ObjectInput";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 
 interface IEditableCell {
   docPath: string;
@@ -150,7 +151,7 @@ export const EditablePropertyValue = ({
     case "timestamp":
       defaultEditor = (
         <DateTimePicker
-          value={instanceValue as firebase.firestore.Timestamp}
+          value={instanceValue as Timestamp}
           onChange={setValue}
         />
       );
@@ -213,7 +214,7 @@ export const EditablePropertyValue = ({
       );
       break;
     case "geopoint":
-      const mapValue = instanceValue as firebase.firestore.GeoPoint;
+      const mapValue = instanceValue as GeoPoint;
       defaultEditor = (
         <GeopointPicker
           value={mapValue}

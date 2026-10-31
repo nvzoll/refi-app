@@ -1,11 +1,11 @@
 import { cloneDeep, get, isArray, set, isObject, flattenDeep } from "lodash";
-import firebase from "firebase";
+import type { DocumentReference, GeoPoint, Timestamp } from "firebase/firestore";
 import {itemIsDocumentReference, itemIsGeoPoint, itemIsTimestamp, serialItemIsSpecial} from "./firestore-identifiers";
 
 type DataMappedValue = string | number | boolean | MappedData | DataMappedValue[];
 
 type DataUnmappedValue = string | number | boolean | UnmappedData | DataUnmappedValue[] |
-    firebase.firestore.DocumentReference | firebase.firestore.Timestamp | firebase.firestore.GeoPoint;
+    DocumentReference | Timestamp | GeoPoint;
 
 export type UnmappedData = {
     [key: string]: DataUnmappedValue

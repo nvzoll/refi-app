@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo, useState } from "react";
-import firebase from "firebase/app";
-import { useLocalStorage } from "react-use";
+import React, { useEffect, useMemo } from "react";
+import quotes from "./quotes.json";
+import firebaseLogo from "./firebase-logo.svg";
+
+const LOADING_DELAY_MS = 5000;
 
 interface IQuote {
-  detail: string;
+  text: string;
   author: string;
-  logo: string;
   url?: string;
-  timeout: number;
 }
 
 interface IQuoteLoadingProps {
@@ -15,33 +15,20 @@ interface IQuoteLoadingProps {
 }
 
 const QuoteLoading = ({ onDone }: IQuoteLoadingProps) => {
-  const [quotes, setQuotes] = useLocalStorage<IQuote[]>("quotes", []);
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection("quotes")
-      .get()
-      .then((response) => {
-        setQuotes(response.docs.map((doc) => doc.data() as IQuote));
-      });
-  }, []);
-
-  const quote: IQuote | undefined = useMemo(() => {
-    if (!quotes) {
-      return undefined;
-    }
-    return quotes[Math.floor(Math.random() * quotes.length)];
-  }, []);
+  const quote: IQuote | undefined = useMemo(
+    () => quotes[Math.floor(Math.random() * quotes.length)],
+    []
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
       onDone();
-    }, quote?.timeout || 5000);
+    }, LOADING_DELAY_MS);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [quote]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen text-center quote">
@@ -63,10 +50,9 @@ const QuoteLoading = ({ onDone }: IQuoteLoadingProps) => {
       </div>
       {quote && (
         <>
-          <p
-            className="mt-3 text-3xl italic text-gray-500 mx-72"
-            dangerouslySetInnerHTML={{ __html: quote.detail }}
-          />
+          <p className="mt-3 text-3xl italic text-gray-500 mx-72">
+            {quote.text}
+          </p>
           {quote.url && (
             <p>
               <a className="text-lg text-blue-500" href={quote.url}>
@@ -76,8 +62,8 @@ const QuoteLoading = ({ onDone }: IQuoteLoadingProps) => {
           )}
           <img
             className="w-12 h-12 mt-6 rounded-lg"
-            src={quote.logo}
-            alt="author"
+            src={firebaseLogo}
+            alt="Firebase"
           />
           <div className="flex flex-row items-center">
             <div className="text-2xl">{quote.author}</div>

@@ -16,6 +16,7 @@ import {
   PROJECT_SETTINGS_BUCKET,
 } from "./persistence";
 import { resolveUpdate } from "./store";
+import { Timestamp } from "firebase/firestore";
 
 export const FIELD_TYPES: RefiFS.IFieldType[] = [
   "string",
@@ -49,7 +50,7 @@ export type WhereFilterOp =
   | "not-in"
   | "array-contains-any";
 
-type IOperatorValue = string | number | boolean | firebase.firestore.Timestamp;
+type IOperatorValue = string | number | boolean | Timestamp;
 export interface INormalOperator {
   type: "<" | "<=" | "==" | "!=" | ">=" | ">" | "array-contains";
   values: IOperatorValue;
@@ -74,7 +75,13 @@ export const querierAtom = atomFamily((path: string) =>
     [],
     {
       serialize(input) {
-        return JSON.stringify(input);
+        return JSON.stringify(input, function (this: any, key, value) {
+          const raw = this[key];
+          // Timestamp.toJSON adds a "type" key; keep the stored layout.
+          return raw instanceof Timestamp
+            ? { seconds: raw.seconds, nanoseconds: raw.nanoseconds }
+            : value;
+        });
       },
       deserialize(input) {
         const data = JSON.parse(input);

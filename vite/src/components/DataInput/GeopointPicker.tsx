@@ -1,8 +1,9 @@
 import React from "react";
+import { GeoPoint } from "firebase/firestore";
 
 interface IGeopointPickerProps {
-  value: firebase.firestore.GeoPoint;
-  onChange: (value: firebase.firestore.GeoPoint) => void;
+  value: GeoPoint;
+  onChange: (value: GeoPoint) => void;
 }
 
 const GeopointPicker = ({ value, onChange }: IGeopointPickerProps) => {

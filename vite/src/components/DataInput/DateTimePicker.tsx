@@ -1,13 +1,13 @@
 import classNames from "classnames";
-import firebase from "firebase/app";
 import moment from "moment";
 import React, { ReactElement, useState } from "react";
 import Datetime from "react-datetime";
 import "./DateTimePicker.css";
+import { Timestamp } from "firebase/firestore";
 
 interface IDateTimePickerProps {
-  value: firebase.firestore.Timestamp;
-  onChange: (newValue: firebase.firestore.Timestamp) => void;
+  value: Timestamp;
+  onChange: (newValue: Timestamp) => void;
 }
 
 const dateFormat = "MM/DD/YYYY";
@@ -29,7 +29,7 @@ const DateTimePicker = ({
       if (
         moment(value.toDate()).format(format) !== moment(event).format(format)
       ) {
-        onChange(firebase.firestore.Timestamp.fromDate(event.toDate()));
+        onChange(Timestamp.fromDate(event.toDate()));
       }
     }
   };

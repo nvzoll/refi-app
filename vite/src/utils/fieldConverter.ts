@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { DocRef } from "firestore-serializers";
 import { getFirestoreType } from "./simplifr";
-import firebase from "firebase/app";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 import { isNumeric } from "@/utils/common";
 
 export const fieldConverter: Record<
@@ -26,24 +26,24 @@ export const fieldConverter: Record<
         // Try to parse
         try {
           return dayjs(value).isValid()
-            ? firebase.firestore.Timestamp.fromDate(dayjs(value).toDate())
-            : firebase.firestore.Timestamp.now();
+            ? Timestamp.fromDate(dayjs(value).toDate())
+            : Timestamp.now();
         } catch (error) {
           console.log(error);
-          return firebase.firestore.Timestamp.now();
+          return Timestamp.now();
         }
       case "geopoint":
         try {
           const [lat, long] = value?.split(",");
 
           if (isNumeric(lat) && isNumeric(long)) {
-            return new firebase.firestore.GeoPoint(Number(lat), Number(long));
+            return new GeoPoint(Number(lat), Number(long));
           }
 
-          return new firebase.firestore.GeoPoint(0, 0);
+          return new GeoPoint(0, 0);
         } catch (error) {
           console.log(error);
-          return new firebase.firestore.GeoPoint(0, 0);
+          return new GeoPoint(0, 0);
         }
 
       case "reference":
@@ -78,15 +78,17 @@ export const fieldConverter: Record<
     switch (toType) {
       case "string":
         return JSON.stringify(value);
-      case "geopoint":
-        if (isFinite(value?._latitude) && isFinite(value?._longitude)) {
-          return new firebase.firestore.GeoPoint(
-            value?._latitude,
-            value?._longitude
+      case "geopoint": {
+        const coords = getGeoPointCoords(value);
+        if (coords) {
+          return new GeoPoint(
+            coords.latitude,
+            coords.longitude
           );
         }
 
         return null;
+      }
       default:
         return null;
     }
@@ -98,6 +100,7 @@ export const fieldConverter: Record<
       case "map":
         return value.reduce((previous, item, index) => {
           previous[index] = item;
+          return previous;
         }, {});
       default:
         return null;
@@ -108,7 +111,7 @@ export const fieldConverter: Record<
   },
   timestamp: (
     toType: RefiFS.IFieldType,
-    value: firebase.firestore.Timestamp
+    value: Timestamp
   ) => {
     switch (toType) {
       case "string":
@@ -121,15 +124,15 @@ export const fieldConverter: Record<
   },
   geopoint: (
     toType: RefiFS.IFieldType,
-    { _latitude, _longitude }: { _latitude: number; _longitude: number }
+    value: GeoPoint
   ) => {
     switch (toType) {
       case "string":
-        return [_latitude, _longitude].join(",");
+        return `${value.latitude},${value.longitude}`;
       case "map":
         return {
-          _latitude,
-          _longitude,
+          latitude: value.latitude,
+          longitude: value.longitude,
         };
       default:
         return null;
@@ -144,6 +147,18 @@ export const fieldConverter: Record<
     }
   },
 };
+
+function getGeoPointCoords(
+  value: any
+): { latitude: number; longitude: number } | null {
+  if (Number.isFinite(value?.latitude) && Number.isFinite(value?.longitude)) {
+    return { latitude: value.latitude, longitude: value.longitude };
+  }
+  if (Number.isFinite(value?._latitude) && Number.isFinite(value?._longitude)) {
+    return { latitude: value._latitude, longitude: value._longitude };
+  }
+  return null;
+}
 
 function getDefaultValueByType(type: RefiFS.IFieldType) {
   switch (type) {
@@ -160,9 +175,9 @@ function getDefaultValueByType(type: RefiFS.IFieldType) {
     case "null":
       return null;
     case "timestamp":
-      return firebase.firestore.Timestamp.now();
+      return Timestamp.now();
     case "geopoint":
-      return new firebase.firestore.GeoPoint(0, 0);
+      return new GeoPoint(0, 0);
     case "reference":
       return new DocRef("/");
   }

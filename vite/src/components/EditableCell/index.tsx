@@ -25,6 +25,7 @@ import React, {
 import { useAtom, useAtomValue } from "jotai";
 import CopyIcon from "@/components/CopyIcon";
 import DateTimePicker from "@/components/DataInput/DateTimePicker";
+import { Timestamp } from "firebase/firestore";
 
 interface IEditableCell {
   row: ClientDocumentSnapshot;
@@ -170,7 +171,7 @@ const EditableCell = ({
         case "timestamp":
           defaultEditor = (
             <DateTimePicker
-              value={value as firebase.firestore.Timestamp}
+              value={value as Timestamp}
               onChange={(newValue) => setValue(newValue)}
             />
           );

@@ -3,7 +3,6 @@ import {
   IFieldValue,
 } from "@/types/ClientDocumentSnapshot";
 import { getParentPath } from "@/utils/common";
-import "firebase/firestore";
 import { difference, isObject, isUndefined } from "lodash";
 import * as immutable from "object-path-immutable";
 import { atom, SetStateAction } from "jotai";

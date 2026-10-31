@@ -7,12 +7,13 @@ import {
 } from "firestore-serializers";
 import { isUndefined, uniq } from "lodash";
 import * as immutable from "object-path-immutable";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 
 export type IFieldValue =
   | IPrimitiveType
   | DocRef
-  | firebase.firestore.GeoPoint
-  | firebase.firestore.Timestamp
+  | GeoPoint
+  | Timestamp
   | IFieldValue[];
 
 export type IDocData = Record<string, IFieldValue>;

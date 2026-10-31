@@ -7,7 +7,6 @@ import {
   deserializeDocumentSnapshotArray,
   serializeQuerySnapshot,
 } from "firestore-serializers";
-import firebase from "firebase/app";
 import { atom } from "jotai";
 import { differenceBy, uniq, uniqBy, uniqueId } from "lodash";
 import {
@@ -28,6 +27,7 @@ import { navigatorPathAtom, queryVersionAtom } from "./navigator";
 import { actionGoTo } from "./navigator.action";
 import { notifyErrorPromise } from "./ui.action";
 import { convertFSValue } from "@/utils/fieldConverter";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 
 interface IStoreDocsUpdate {
   added: ClientDocumentSnapshot[];
@@ -240,8 +240,8 @@ export const actionReverseChange = async (): Promise<any> => {
   //   .then((response) => {
   //     const data = deserializeDocumentSnapshotArray(
   //       response,
-  //       firebase.firestore.GeoPoint,
-  //       firebase.firestore.Timestamp
+  //       GeoPoint,
+  //       Timestamp
   //     );
 
   //     actionStoreDocs(ClientDocumentSnapshot.transformFromFirebase(data), true);
@@ -267,8 +267,8 @@ export const actionReverseDocChange = async (
     .then((response) => {
       const data = deserializeDocumentSnapshotArray(
         response,
-        firebase.firestore.GeoPoint,
-        firebase.firestore.Timestamp
+        GeoPoint,
+        Timestamp
       );
 
       actionStoreDocs(
@@ -298,8 +298,8 @@ export const actionGetDocs = async (paths: string[]) => {
     .then((response) => {
       const data = deserializeDocumentSnapshotArray(
         response,
-        firebase.firestore.GeoPoint,
-        firebase.firestore.Timestamp
+        GeoPoint,
+        Timestamp
       );
 
       actionStoreDocs(

@@ -1,87 +1,141 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap");
 
+@layer theme, base;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+
+@plugin "@tailwindcss/forms";
+
+@custom-variant dark (.dark &);
+
+@theme {
+  --font-sans: Inter, sans-serif;
+  --font-mono: Menlo, Monaco, "Courier New", monospace;
+  --text-key: 10px;
+  --default-ring-color: rgb(59 130 246 / 0.5);
+
+  --color-*: initial;
+  --color-black: #000;
+  --color-white: #fff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+  --color-red-900: #7f1d1d;
+  --color-yellow-50: #fffbeb;
+  --color-yellow-100: #fef3c7;
+  --color-yellow-200: #fde68a;
+  --color-yellow-300: #fcd34d;
+  --color-yellow-400: #fbbf24;
+  --color-yellow-500: #f59e0b;
+  --color-yellow-600: #d97706;
+  --color-yellow-700: #b45309;
+  --color-yellow-800: #92400e;
+  --color-yellow-900: #78350f;
+  --color-green-50: #ecfdf5;
+  --color-green-100: #d1fae5;
+  --color-green-200: #a7f3d0;
+  --color-green-300: #6ee7b7;
+  --color-green-400: #34d399;
+  --color-green-500: #10b981;
+  --color-green-600: #059669;
+  --color-green-700: #047857;
+  --color-green-800: #065f46;
+  --color-green-900: #064e3b;
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-300: #93c5fd;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-blue-800: #1e40af;
+  --color-blue-900: #1e3a8a;
+  --color-indigo-50: #eef2ff;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-200: #c7d2fe;
+  --color-indigo-300: #a5b4fc;
+  --color-indigo-400: #818cf8;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #4f46e5;
+  --color-indigo-700: #4338ca;
+  --color-indigo-800: #3730a3;
+  --color-indigo-900: #312e81;
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+  }
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  :disabled {
+    cursor: default;
+  }
+}
+
 body {
   font-size: 14px;
 }
 
-@tailwind base;
+#root-body .h-focus-full-2:focus {
+  height: 200%;
+}
 
-/* Your own custom base styles */
+#root-body .quote code {
+  @apply text-red-600 bg-gray-200 rounded-sm;
+}
 
-/* Start purging... */
-@tailwind components;
-/* Stop purging. */
-
-/* Your own custom component styles */
-@layer components {
-  .input-field {
-    @apply block w-full border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
-  }
-
-  .primary-btn {
-    @apply inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm cursor-pointer hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
-  }
-
-  .secondary-btn {
-    @apply inline-flex justify-center px-4 py-2 text-sm font-medium text-indigo-600 border border-transparent rounded-md shadow-sm cursor-pointer bg-indigo-50 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
-  }
-
-  .text-select-right {
-    text-align-last: right;
-  }
-
-  #root-body .h-focus-full-2:focus {
-    height: 200%;
-  }
-
-  #root-body .quote code {
-    @apply text-red-600 bg-gray-200 rounded;
-  }
-
-  #root-body  {
-    -webkit-app-region: no-drag;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-  #drag-title {
+#root-body {
+  -webkit-app-region: no-drag;
   -webkit-user-select: none;
-    user-select: none;
+  user-select: none;
+}
+
+#drag-title {
+  -webkit-user-select: none;
+  user-select: none;
   -webkit-app-region: no-drag;
 }
 
-  .draggable-containers {
-    -webkit-user-select: none;
-    user-select: none;
+.draggable-containers {
+  -webkit-user-select: none;
+  user-select: none;
   -webkit-app-region: drag;
 }
 
-  /* #root-body {
-    :not(input):not(textarea),
-    :not(input):not(textarea)::after,
-    :not(input):not(textarea)::before {
-        -webkit-user-select: none;
-        user-select: none;
-        cursor: default;
-    }
-    input, button, textarea, :focus {
-        outline: none;
-    }
-
-    a:not([draggable=true]), img:not([draggable=true]) {
-        -webkit-user-drag: none;
-        user-drag: none;
-    }
-    a[href^="http://"],
-    a[href^="https://"],
-    a[href^="ftp://"] {
-        -webkit-user-drag: auto;
-        user-drag: auto;
-    }
-  } */
+#root-body {
+  @tailwind utilities source(none);
 }
 
-/* Start purging... */
-@tailwind utilities;
-/* Stop purging. */
-
-/* Your own custom utilities */
+@source "../**/*.{html,ts,tsx}";
+@source "../../index.html";

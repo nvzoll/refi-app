@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rm -fr dist",
     "watch": "tsc -w",
-    "dev": "run-p watch start",
+    "dev": "run-p --race watch start",
     "start": "electron server/index.js",
     "build": "todesktop build",
     "quick-build": "todesktop build . --code-sign=false",

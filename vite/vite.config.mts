@@ -1,13 +1,14 @@
 import path from "node:path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   resolve: {
     alias: [{ find: "@", replacement: path.resolve(import.meta.dirname, "src") }],
     dedupe: ["react", "react-dom"],
   },
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   server: { port: 3000, strictPort: true },
   optimizeDeps: {
     entries: ["index.html", "tabs.html"],

@@ -65,7 +65,6 @@ const TabsPage = () => {
     <div className="flex flex-col h-screen">
       <div
         className={classNames("flex flex-row justify-between h-9", {
-          ["mr-30"]: !isMac,
           ["ml-20"]: isMac,
         })}
         id="drag-title"

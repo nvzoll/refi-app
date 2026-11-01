@@ -189,7 +189,7 @@ const FilterItem = ({ id }: { id: string }) => {
                 >
                   <button
                     role="button"
-                    className="p-1 font-mono text-xs text-red-700 hover:bg-white hover:border hover:border-gray-300"
+                    className="p-1 font-mono text-xs text-red-700 hover:bg-white"
                     tabIndex={-1}
                   >
                     {getFirestoreType(value)}
@@ -281,7 +281,7 @@ const FilterItem = ({ id }: { id: string }) => {
           <DropdownMenu menu={menuOptions} containerClassName="w-24">
             <button
               role="button"
-              className="p-1 font-mono text-xs text-red-700 hover:bg-white hover:border hover:border-gray-300"
+              className="p-1 font-mono text-xs text-red-700 hover:bg-white"
             >
               {inputType}
             </button>
@@ -321,7 +321,7 @@ const FilterItem = ({ id }: { id: string }) => {
           inputRef={inputRef as any}
         />
       </div>
-      <div className="max-w-xs w-30">
+      <div className="max-w-xs">
         <SelectComboBox
           items={operatorOptions.map((option) => option.value)}
           selectedItem={filter.operator.type}

@@ -272,7 +272,7 @@ const NewCollectionInput = ({ path, onChange }: INewCollectionInputProps) => {
       ref={inputRef}
       tabIndex={2}
       onFocus={handleFocus}
-      className="w-auto p-0.5 min-h border border-gray-300 h-6 focus:border-blue-400 text-sm outline-none"
+      className="w-auto p-0.5 min-h border border-gray-300 h-6 focus:border-blue-400 text-sm outline-hidden"
     />
   );
 };

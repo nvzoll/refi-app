@@ -42,7 +42,7 @@ const EditableField = ({
   return (
     <div className="absolute top-0 left-0 z-10 flex flex-row w-full h-full text-sm shadow-lg ring-1 ring-blue-400">
       <input
-        className="w-full h-full outline-none focus:bg-blue-100 p-1.5 transition-none"
+        className="w-full h-full outline-hidden focus:bg-blue-100 p-1.5 transition-none"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
@@ -55,7 +55,7 @@ const EditableField = ({
         // maxRows={5}
         // isBare
         onKeyDown={handleOnKeyDown}
-        className="w-full h-full border-none outline-none focus:bg-blue-100 ring-1 ring-blue-400 p-1.5 transition-none text-sm"
+        className="w-full h-full border-none outline-hidden focus:bg-blue-100 ring-1 ring-blue-400 p-1.5 transition-none text-sm"
       />
       <div className="w-7">
         <svg

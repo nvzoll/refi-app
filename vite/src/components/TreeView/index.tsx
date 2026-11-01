@@ -342,6 +342,7 @@ function TreeView({ allDocs, deletedDocs, pathAvailable }: ITreeViewProps) {
     (_: React.MouseEvent, node: EventDataNode<IFSDataNode>) => {
       if (node.selectable !== false) {
         actionGoTo(node.key.toString());
+        setExpanded((keys) => uniq([...keys, node.key.toString()]));
       }
     },
     []

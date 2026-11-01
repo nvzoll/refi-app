@@ -193,7 +193,7 @@
 }
 .rc-tree-indent {
   display: inline-block;
-  vertical-align: bottom;
+  vertical-align: top;
   height: 0;
 }
 .rc-tree-indent-unit {

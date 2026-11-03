@@ -60,7 +60,7 @@ const LoginPage: React.FC = () => {
   });
 
   const ErrorNotify = (
-    <Notification type="error" style={{ zIndex: 500 }} className="w-50">
+    <Notification type="error" style={{ zIndex: 500 }}>
       <Title>Error</Title>
       {notificationError}
     </Notification>

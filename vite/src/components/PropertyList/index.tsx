@@ -145,7 +145,7 @@ const PropertyList = () => {
   };
 
   return (
-    <div className="w-54">
+    <div>
       <form
         onSubmit={handleSubmit(handleAddProperty)}
         className="p-0.5 flex flex-row space-x-2"

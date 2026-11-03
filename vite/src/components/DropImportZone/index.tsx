@@ -24,7 +24,7 @@ const DropImportZone = ({ isOver }: IDropImportZoneProps) => {
     <div
       {...bond}
       className={classNames(
-        "absolute top-0 left-0 z-10 flex flex-col items-center justify-center w-full h-full text-gray-500 bg-gray-300 bg-opacity-50 rounded",
+        "absolute top-0 left-0 z-10 flex flex-col items-center justify-center w-full h-full text-gray-500 bg-gray-300/50 rounded-sm",
         {
           ["opacity-0"]: !state.over,
         }

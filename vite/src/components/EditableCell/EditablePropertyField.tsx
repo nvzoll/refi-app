@@ -100,7 +100,7 @@ export const EditablePropertyField = ({
   return (
     <div
       ref={wrapperEl}
-      className={classNames("relative w-full outline-none", {
+      className={classNames("relative w-full outline-hidden", {
         [`border-gray-400 border-l-${Math.min(depth * 2, 8)}`]: depth > 0,
       })}
       data-cm-template="propertyName"
@@ -114,7 +114,7 @@ export const EditablePropertyField = ({
         >
           <button
             role="button"
-            className="p-1 text-xs outline-none"
+            className="p-1 text-xs outline-hidden"
             onClick={() => toggleExpand(!isExpanded)}
           >
             <svg

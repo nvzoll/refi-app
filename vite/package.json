@@ -6,8 +6,6 @@
     "build": "tsc && vite build",
     "serve": "vite preview",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
-    "build:css": "cross-env NODE_ENV=production postcss src/styles/tailwind.css -o src/styles/index.css",
-    "watch:css": "cross-env NODE_ENV=development postcss src/styles/tailwind.css -o src/styles/index.css --watch",
     "test": "bun test"
   },
   "dependencies": {
@@ -60,8 +58,8 @@
     "styled-components": "^5.3.11"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.2.1",
-    "@tailwindcss/typography": "^0.4.0",
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/bun": "^1.4.2",
     "@types/deep-diff": "^1.0.0",
     "@types/lodash": "^4.14.168",
@@ -80,20 +78,12 @@
     "@typescript-eslint/parser": "^4.15.1",
     "@vitejs/plugin-react": "^6.1.2",
     "classnames": "^2.2.6",
-    "cross-env": "^7.0.3",
     "eslint": "^7.20.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
-    "postcss": "^8.2.6",
-    "postcss-cli": "^8.3.1",
-    "postcss-flexbugs-fixes": "^5.0.2",
-    "postcss-loader": "^5.0.0",
-    "postcss-normalize": "^9.0.0",
-    "postcss-preset-env": "^6.7.0",
-    "postcss-safe-parser": "^5.0.2",
     "prettier": "^2.2.1",
     "refi-ipc": "workspace:*",
-    "tailwindcss": "2.2.16",
+    "tailwindcss": "^4.3.3",
     "typescript": "~5.9.3",
     "vite": "^8.3.4"
   }

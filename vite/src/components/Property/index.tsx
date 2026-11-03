@@ -140,7 +140,7 @@ const Property = () => {
         {!doc.isNew && (
           <CopyIcon
             value={doc.id}
-            className="absolute w-6 transform -translate-y-1/2 bg-white opacity-0 cursor-pointer right-1 top-1/2 group-hover:opacity-100 p-0.5 rounded"
+            className="absolute w-6 transform -translate-y-1/2 bg-white opacity-0 cursor-pointer right-1 top-1/2 group-hover:opacity-100 p-0.5 rounded-sm"
           />
         )}
       </div>

@@ -67,7 +67,7 @@ const DocFinder = () => {
                 onChange={(e) => setKeyword(e.target.value)}
               />
               <div
-                className="py-1 mt-2 rounded"
+                className="py-1 mt-2 rounded-sm"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="options-menu"

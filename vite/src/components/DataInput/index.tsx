@@ -18,7 +18,7 @@ const DataInput = (
       ref={ref}
       isBare
       className={classNames(
-        "w-full outline-none ring-inset focus:bg-blue-100 p-1.5 border-none focus:ring-0 dark:text-gray-200 dark:focus:bg-gray-900",
+        "w-full outline-hidden ring-inset focus:bg-blue-100 p-1.5 border-none focus:ring-0 dark:text-gray-200 dark:focus:bg-gray-900",
         {
           ["h-8"]: isMultipleLine || isVeryLong,
         },

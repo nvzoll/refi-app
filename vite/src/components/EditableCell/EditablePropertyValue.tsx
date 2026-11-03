@@ -280,7 +280,7 @@ export const EditablePropertyValue = ({
 
   return (
     <div
-      className={classNames("relative w-full outline-none min-h-12", {
+      className={classNames("relative w-full outline-hidden min-h-12", {
         ["bg-red-300"]: isFieldChanged,
         ["bg-yellow-200 transition-colors duration-300"]: isHighlight,
       })}

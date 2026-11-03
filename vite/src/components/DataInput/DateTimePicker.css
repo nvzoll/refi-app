@@ -1,3 +1,5 @@
+@reference "../../styles/tailwind.css";
+
 /*!
  * https://github.com/arqex/react-datetime
  */
@@ -104,7 +106,7 @@
 }
 
 td.rdtSwitch, td.rdtTimeToggle {
-  @apply bg-gray-200 cursor-pointer hover:bg-gray-300 !important;
+  @apply bg-gray-200! cursor-pointer! hover:bg-gray-300!;
 }
 
 .rdtPicker th.rdtNext,

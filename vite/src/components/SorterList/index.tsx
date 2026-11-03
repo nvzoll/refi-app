@@ -129,7 +129,7 @@ const SorterList = () => {
   }, []);
 
   return (
-    <div className="overflow-y-auto w-54">
+    <div className="overflow-y-auto">
       <form onSubmit={handleSubmit(handleAddSorter)}>
         <Controller
           control={control}

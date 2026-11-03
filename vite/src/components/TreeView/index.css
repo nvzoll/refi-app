@@ -1,3 +1,5 @@
+@reference "../../styles/tailwind.css";
+
 .rc-tree {
   margin: 0;
   border: 1px solid transparent;
@@ -164,7 +166,7 @@
 }
 
 .rc-tree-treenode-selected {
-  @apply bg-gray-300 dark:bg-gray-800 !important;
+  @apply bg-gray-300! dark:bg-gray-800!;
 }
 
 .rc-tree-icon__open {
@@ -191,7 +193,7 @@
 }
 .rc-tree-indent {
   display: inline-block;
-  vertical-align: bottom;
+  vertical-align: top;
   height: 0;
 }
 .rc-tree-indent-unit {

@@ -61,7 +61,7 @@ function DropdownMenu({
           hasArrow={false}
           isAnimated={false}
         >
-          <ul {...getMenuProps()} className="outline-none">
+          <ul {...getMenuProps()} className="outline-hidden">
             {menu.map((item, index) => (
               <li
                 key={`${item.title}${index}`}

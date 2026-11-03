@@ -1,4 +1,7 @@
-import { ITooltipDialogProps, TooltipDialog } from "@zendeskgarden/react-modals";
+import {
+  ITooltipDialogProps,
+  TooltipDialog,
+} from "@zendeskgarden/react-modals";
 import classNames from "classnames";
 import { useSelect } from "downshift";
 import React, { useRef, useState } from "react";

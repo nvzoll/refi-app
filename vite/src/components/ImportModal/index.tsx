@@ -160,10 +160,7 @@ const ImportModal = () => {
       return (
         <Field>
           <Label>Id field</Label>
-          <Input
-            isCompact
-            {...register("idField")}
-          />
+          <Input isCompact {...register("idField")} />
         </Field>
       );
     }

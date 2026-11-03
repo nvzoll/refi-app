@@ -90,13 +90,12 @@ const SorterItem = ({
   );
 };
 
+type SorterFormValues = Omit<ISorterEntity, "id">;
+
 const SorterList = () => {
   const collectionPath = useAtomValue(navigatorCollectionPathAtom);
   const [sorterList, setSorterList] = useAtom(sorterAtom(collectionPath));
-  const { handleSubmit, reset, control, register } = useForm<{
-    field: string;
-    sort: "asc" | "desc";
-  }>({
+  const { handleSubmit, reset, control, register } = useForm<SorterFormValues>({
     defaultValues: { field: "", sort: "asc" },
   });
 
@@ -118,7 +117,7 @@ const SorterList = () => {
     actionRemoveSorter(collectionPath, sorterId);
   };
 
-  const handleAddSorter = (value: { field: string; sort: "asc" | "desc" }) => {
+  const handleAddSorter = (value: SorterFormValues) => {
     actionAddSorter(collectionPath, value);
     reset();
   };

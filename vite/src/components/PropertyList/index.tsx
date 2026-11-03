@@ -154,8 +154,7 @@ const PropertyList = () => {
           <Controller
             control={control}
             name="property"
-            defaultValue=""
-            render={({ onChange, value, ref }) => (
+            render={({ field: { onChange, value, ref } }) => (
               <FieldFinderInput
                 value={value}
                 onChange={onChange}

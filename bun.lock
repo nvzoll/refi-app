@@ -109,7 +109,7 @@
         "react-dom": "18.3.1",
         "react-dropzone": "^11.3.1",
         "react-grid-layout": "^1.2.0",
-        "react-hook-form": "^6.15.4",
+        "react-hook-form": "^7.91.0",
         "react-hotkeys": "^2.0.0",
         "react-linkify": "^1.0.0-alpha",
         "react-router-dom": "^5.2.0",
@@ -1961,7 +1961,7 @@
 
     "react-grid-layout": ["react-grid-layout@1.2.5", "", { "dependencies": { "classnames": "2.3.1", "lodash.isequal": "^4.0.0", "prop-types": "^15.0.0", "react-draggable": "^4.0.0", "react-resizable": "^3.0.1" }, "peerDependencies": { "react": ">= 16.3.0", "react-dom": ">= 16.3.0" } }, "sha512-P/NNWAExTX/zEq+RUh6hrIG67UBicDNCOOg9LZe8BAtSdYtCnCGgVmWBS+sIbM0C8RJIiyGsFHh5dIfCddhS/w=="],
 
-    "react-hook-form": ["react-hook-form@6.15.8", "", { "peerDependencies": { "react": "^16.8.0 || ^17" } }, "sha512-prq82ofMbnRyj5wqDe8hsTRcdR25jQ+B8KtCS7BLCzjFHAwNuCjRwzPuP4eYLsEBjEIeYd6try+pdLdw0kPkpg=="],
+    "react-hook-form": ["react-hook-form@7.91.0", "", { "peerDependencies": { "@types/react": "*", "react": "^16.8.0 || ^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-5BEBUnCBwa28AFXYTYmOaB/+CSpJ/+CWVASHEvIGUzFdHyUiPHeRhG7r5hOZ8nZi0yP7pbHdFNXO/p31EKTJFQ=="],
 
     "react-hotkeys": ["react-hotkeys@2.0.0", "", { "dependencies": { "prop-types": "^15.6.1" }, "peerDependencies": { "react": ">= 0.14.0" } }, "sha512-3n3OU8vLX/pfcJrR3xJ1zlww6KS1kEJt0Whxc4FiGV+MJrQ1mYSYI3qS/11d2MJDFm8IhOXMTFQirfu6AVOF6Q=="],
 

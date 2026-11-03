@@ -151,7 +151,7 @@ const Filters = () => {
         <FilterItem key={filter.id} id={filter.id}></FilterItem>
       ))}
       <div className="flex justify-between">
-        <div className="space-x-2">
+        <div className="flex items-center gap-2">
           <Button size="small" onClick={handleAddFilter}>
             Add Filters
           </Button>
@@ -199,12 +199,12 @@ const Filters = () => {
             <SorterList />
           </TooltipDialog>
         </div>
-        <div className="flex flex-row items-center space-x-2">
+        <div className="flex flex-row items-center gap-2">
           <div className="flex flex-row items-center">
             <div className="space-x-1 text-sm">
               <strong>{totalDocs}</strong> document(s)
             </div>
-            <div className="flex flex-row items-center space-x-1">
+            <div className="flex flex-row items-center gap-1">
               <PreviousButton />
               <NextButton />
             </div>

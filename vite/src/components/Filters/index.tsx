@@ -18,7 +18,7 @@ import { isModalPickProperty, isModalSorter } from "@/atoms/ui";
 import DropdownMenu from "@/components/DropdownMenu";
 import PropertyList from "@/components/PropertyList";
 import { Button } from "@zendeskgarden/react-buttons";
-import { TooltipModal } from "@zendeskgarden/react-modals";
+import { TooltipDialog } from "@zendeskgarden/react-modals";
 import { Tooltip } from "@zendeskgarden/react-tooltips";
 import classNames from "classnames";
 import React, { useCallback, useMemo, useRef } from "react";
@@ -166,7 +166,7 @@ const Filters = () => {
             Properties
           </Button>
 
-          <TooltipModal
+          <TooltipDialog
             referenceElement={
               isShowPropertyList ? propertyBtnRef.current : null
             }
@@ -177,7 +177,7 @@ const Filters = () => {
             isAnimated={false}
           >
             <PropertyList />
-          </TooltipModal>
+          </TooltipDialog>
 
           {/* <Button
             size="small"
@@ -190,14 +190,14 @@ const Filters = () => {
             Sort
           </Button> */}
 
-          <TooltipModal
+          <TooltipDialog
             referenceElement={isShowSorterList ? sorterBtnRef.current : null}
             onClose={() => setShowSorterList(false)}
             placement="bottom-start"
             className="p-3 leading-normal"
           >
             <SorterList />
-          </TooltipModal>
+          </TooltipDialog>
         </div>
         <div className="flex flex-row items-center space-x-2">
           <div className="flex flex-row items-center">

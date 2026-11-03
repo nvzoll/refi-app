@@ -2,8 +2,7 @@ import { appThemeAtom } from "@/atoms/ui.action";
 import {
   DEFAULT_THEME,
   IGardenTheme,
-  IThemeProviderProps,
-  ThemeProvider as GardenThemeProvider,
+  ThemeProvider,
 } from "@zendeskgarden/react-theming";
 
 import React, { useEffect } from "react";
@@ -19,16 +18,19 @@ export const lightTheme = {
   borderRadii: {
     sm: "0px",
     md: "0px",
+    lg: "0px",
   },
   borderWidths: {
     sm: "1px",
     md: "2px",
   },
   shadowWidths: {
+    xs: "1px",
     sm: "1px",
     md: "2px",
   },
   shadows: {
+    xs: (color: string) => `0 0 0 1px ${color}`,
     sm: (color: string) => `0 0 0 1px ${color}`,
     md: (color: string) => `0 0 0 2px ${color}`,
     lg: (offsetY: string, blurRadius: string, color: string) =>
@@ -58,8 +60,21 @@ export const darkTheme = {
   name: "dark",
   colors: {
     ...lightTheme.colors,
-    background: "#1F2937",
-    foreground: "white",
+    base: "dark" as const,
+    variables: {
+      ...DEFAULT_THEME.colors.variables,
+      dark: {
+        ...DEFAULT_THEME.colors.variables.dark,
+        background: {
+          ...DEFAULT_THEME.colors.variables.dark.background,
+          default: "#1F2937",
+        },
+        foreground: {
+          ...DEFAULT_THEME.colors.variables.dark.foreground,
+          default: "white",
+        },
+      },
+    },
     primaryHue: "#3B82F6",
     // dangerHue: "red",
     // warningHue: "yellow",
@@ -79,11 +94,6 @@ export const setTheme = (theme: boolean) => {
   }
 };
 
-// Garden 8.38 types its provider without children, which React 18 types no longer add.
-export const ThemeProvider = GardenThemeProvider as React.FC<
-  React.PropsWithChildren<IThemeProviderProps>
->;
-
 const AppTheme = ({ children }: { children: React.ReactNode }) => {
   const [appTheme, setAppTheme] = useAtom(appThemeAtom);
 
@@ -92,10 +102,7 @@ const AppTheme = ({ children }: { children: React.ReactNode }) => {
   }, [appTheme]);
 
   return (
-    <ThemeProvider
-      theme={appTheme ? lightTheme : darkTheme}
-      focusVisibleRef={null}
-    >
+    <ThemeProvider theme={appTheme ? lightTheme : darkTheme}>
       {children}
     </ThemeProvider>
   );

@@ -1,4 +1,4 @@
-import { GARDEN_PLACEMENT, TooltipModal } from "@zendeskgarden/react-modals";
+import { ITooltipDialogProps, TooltipDialog } from "@zendeskgarden/react-modals";
 import classNames from "classnames";
 import { useSelect } from "downshift";
 import React, { useRef, useState } from "react";
@@ -48,10 +48,10 @@ function DropdownMenu({
         getToggleButtonProps({ disabled, ref: childRef })
       )}
       {ReactDOM.createPortal(
-        <TooltipModal
+        <TooltipDialog
           referenceElement={isOpen ? childRef.current : null}
           onClose={() => toggleMenu()}
-          placement={placement as GARDEN_PLACEMENT}
+          placement={placement as ITooltipDialogProps["placement"]}
           className={classNames(
             "w-20 px-0 py-2 leading-normal shadow-lg",
             containerClassName
@@ -81,7 +81,7 @@ function DropdownMenu({
               </li>
             ))}
           </ul>
-        </TooltipModal>,
+        </TooltipDialog>,
         document.getElementById("root-body") || document.body
       )}
     </div>

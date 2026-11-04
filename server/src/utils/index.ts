@@ -1,5 +1,5 @@
 import log from 'electron-log';
-import * as admin from "firebase-admin";
+import { Timestamp } from "firebase-admin/firestore";
 import { itemIsTimestamp } from "firestore-serializers";
 
 export const prettifyPath = (path: string): string => {
@@ -47,7 +47,7 @@ export const convertFirebaseType = (input: any): any => {
   }
 
   if (input.seconds && input.nanoseconds && !Number.isNaN(input.seconds) && !Number.isNaN(input.nanoseconds)) {
-    return new admin.firestore.Timestamp(input.seconds, input.nanoseconds)
+    return new Timestamp(input.seconds, input.nanoseconds)
   }
 
   return input;

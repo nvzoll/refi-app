@@ -1,20 +1,19 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import admin from "firebase-admin";
+import { initializeApp } from "firebase-admin/app";
+import { DocumentReference, Firestore, GeoPoint, getFirestore, Timestamp } from "firebase-admin/firestore";
 import { deserializeDocumentSnapshot, deserializeDocumentSnapshotArray } from "./Deserialize";
 import { serializeDocumentSnapshot, serializeQuerySnapshot } from "./Serialize";
 
-const { GeoPoint, Timestamp } = admin.firestore;
-
 process.env.FIRESTORE_EMULATOR_HOST ??= "127.0.0.1:8080";
 
-let db: admin.firestore.Firestore;
+let db: Firestore;
 
 beforeAll(() => {
-    const app = admin.initializeApp({ projectId: "demo-refi" });
-    db = app.firestore();
+    const app = initializeApp({ projectId: "demo-refi" });
+    db = getFirestore(app);
 });
 
-function buildData(target: admin.firestore.DocumentReference) {
+function buildData(target: DocumentReference) {
     return {
         time: Timestamp.fromMillis(1609459200123),
         place: { point: new GeoPoint(-12.5, -0.25) },

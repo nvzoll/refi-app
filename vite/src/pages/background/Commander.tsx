@@ -3,7 +3,6 @@ import { isModalCommandAtom } from "@/atoms/ui";
 import EscExit from "@/components/EscExit";
 import ListOptions from "@/components/ListOptions";
 import ShortcutKey from "@/components/ShortcutKey";
-import { useFocusJail } from "@zendeskgarden/container-focusjail";
 import { Input } from "@zendeskgarden/react-forms";
 import { Body as ModalBody, Modal } from "@zendeskgarden/react-modals";
 import classNames from "classnames";

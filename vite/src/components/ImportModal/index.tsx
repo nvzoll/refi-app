@@ -38,24 +38,27 @@ import { Controller, useForm } from "react-hook-form";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import SelectComboBox from "../SelectComboBox";
 
+type ImportFormValues = {
+  path: string;
+  autoId: boolean;
+  idField: string;
+  autoParseJSON: boolean;
+};
+
 const ImportModal = () => {
   const collectionPath = useAtomValue(importCollectionPathAtom);
   const [file, setFile] = useAtom(importFileAtom);
   const [docs, setDocs] = useState<any[]>([]);
-  const { register, handleSubmit, formState, watch, errors, control } = useForm(
-    {
+  const { register, handleSubmit, formState, watch, control } =
+    useForm<ImportFormValues>({
       mode: "onChange",
       defaultValues: {
         path: collectionPath,
+        autoId: true,
         idField: "__id__",
+        autoParseJSON: true,
       },
-    }
-  );
-
-  useEffect(() => {
-    register("autoId" as any, {});
-    register("idField" as any, {});
-  }, []);
+    });
 
   const isAutoId = watch("autoId");
 
@@ -75,7 +78,7 @@ const ImportModal = () => {
     // TODO: If there is really large list, we should show loading somewhere
     actionImportDocs(value.path, docs, {
       idField: value.isAutoId ? null : value.idField,
-      autoParseJSON: value.autoParseJSON,
+      autoParseJSON: fileType === "csv" && value.autoParseJSON,
     })
       .then(() => {
         setFile(undefined);
@@ -142,7 +145,7 @@ const ImportModal = () => {
             <Controller
               control={control}
               name="idField"
-              render={({ onChange, value, ref }) => (
+              render={({ field: { onChange, value, ref } }) => (
                 <SelectComboBox
                   className="mt-2"
                   items={sampleColumn}
@@ -157,18 +160,13 @@ const ImportModal = () => {
       return (
         <Field>
           <Label>Id field</Label>
-          <Input
-            isCompact
-            name="idField"
-            defaultValue="__id__"
-            ref={register}
-          />
+          <Input isCompact {...register("idField")} />
         </Field>
       );
     }
 
     return null;
-  }, [fileType, isAutoId, docs, control]);
+  }, [fileType, isAutoId, docs, control, register]);
 
   // TODO: Path picker, validate path
   // TODO: Add analysis like: Preview import file, how many docs will be imported, warning if it not match current collection schema
@@ -191,13 +189,15 @@ const ImportModal = () => {
               <Controller
                 control={control}
                 name="path"
-                defaultValue={collectionPath}
                 rules={{
                   validate: (value) =>
                     isCollection(value) || "It must be collection path",
                   required: true,
                 }}
-                render={({ onChange, value, ref }, { invalid }) => (
+                render={({
+                  field: { onChange, value, ref },
+                  fieldState: { invalid },
+                }) => (
                   <Input
                     isCompact
                     value={value}
@@ -207,8 +207,10 @@ const ImportModal = () => {
                   />
                 )}
               />
-              {errors.path && (
-                <Message validation="error">{errors.path.message}</Message>
+              {formState.errors.path && (
+                <Message validation="error">
+                  {formState.errors.path.message}
+                </Message>
               )}
             </Field>
             <Field>
@@ -231,8 +233,7 @@ const ImportModal = () => {
               <Controller
                 control={control}
                 name="autoId"
-                defaultValue={true}
-                render={({ onChange, value, ref }) => (
+                render={({ field: { onChange, value, ref } }) => (
                   <Checkbox
                     ref={ref}
                     checked={value}
@@ -249,8 +250,7 @@ const ImportModal = () => {
                 <Controller
                   control={control}
                   name="autoParseJSON"
-                  defaultValue={true}
-                  render={({ onChange, value, ref }) => (
+                  render={({ field: { onChange, value, ref } }) => (
                     <Checkbox
                       ref={ref}
                       checked={value}

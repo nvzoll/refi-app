@@ -203,6 +203,7 @@ const LoginPage: React.FC = () => {
               <Anchor
                 href="https://www.notion.so/cuthanh/How-to-get-my-credential-file-781fb9bfa0cf479a81b72a272728808c"
                 className="pt-2 text-sm"
+                isUnderlined={false}
                 onClick={(e) => {
                   e.preventDefault();
                   window.api.openUrl(

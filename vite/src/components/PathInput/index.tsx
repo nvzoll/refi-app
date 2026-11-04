@@ -79,7 +79,11 @@ function PathInput() {
           entity === "..." ? (
             <Span>{entity}</Span>
           ) : (
-            <Anchor key={entity} onClick={(e) => handleClickEntity(e, entity)}>
+            <Anchor
+              key={entity}
+              isUnderlined={false}
+              onClick={(e) => handleClickEntity(e, entity)}
+            >
               {entity}
             </Anchor>
           )

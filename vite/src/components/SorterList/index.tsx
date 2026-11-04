@@ -90,11 +90,13 @@ const SorterItem = ({
   );
 };
 
+type SorterFormValues = Omit<ISorterEntity, "id">;
+
 const SorterList = () => {
   const collectionPath = useAtomValue(navigatorCollectionPathAtom);
   const [sorterList, setSorterList] = useAtom(sorterAtom(collectionPath));
-  const { handleSubmit, reset, control, register } = useForm({
-    defaultValues: { property: "" },
+  const { handleSubmit, reset, control, register } = useForm<SorterFormValues>({
+    defaultValues: { field: "", sort: "asc" },
   });
 
   const handleDropEnd = (result: DropResult) => {
@@ -115,7 +117,7 @@ const SorterList = () => {
     actionRemoveSorter(collectionPath, sorterId);
   };
 
-  const handleAddSorter = (value: any) => {
+  const handleAddSorter = (value: SorterFormValues) => {
     actionAddSorter(collectionPath, value);
     reset();
   };
@@ -134,11 +136,7 @@ const SorterList = () => {
         <Controller
           control={control}
           name="field"
-          defaultValue=""
-          render={(
-            { onChange, onBlur, value, name, ref },
-            { invalid, isTouched, isDirty }
-          ) => (
+          render={({ field: { onChange, value, ref } }) => (
             <FieldFinderInput
               value={value}
               onChange={onChange}
@@ -146,7 +144,7 @@ const SorterList = () => {
             />
           )}
         />
-        <select ref={register} name="sort">
+        <select {...register("sort")}>
           <option value="asc">ASC</option>
           <option value="desc">DESC</option>
         </select>

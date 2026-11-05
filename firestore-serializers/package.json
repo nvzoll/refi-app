@@ -22,7 +22,7 @@
   "homepage": "https://github.com/palkerecsenyi/firestore-serializers#readme",
   "devDependencies": {
     "@types/lodash": "^4.14.150",
-    "firebase-admin": "9.5.0",
+    "firebase-admin": "14.5.0",
     "firebase-tools": "15.33.0",
     "typescript": "~5.9.3"
   },

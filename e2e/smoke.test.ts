@@ -1,5 +1,6 @@
 import { _electron as electron, expect, Page, test } from "@playwright/test";
-import * as admin from "firebase-admin";
+import { deleteApp, initializeApp } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 import { generateKeyPairSync } from "crypto";
 import { mkdtempSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
@@ -35,8 +36,8 @@ test("edits a document and commits it to Firestore", async () => {
     })
   );
 
-  const app = admin.initializeApp({ projectId });
-  const firestore = app.firestore();
+  const app = initializeApp({ projectId });
+  const firestore = getFirestore(app);
   await firestore.doc("smoke/doc1").set({ name: "before", count: 1 });
 
   const electronApp = await electron.launch({
@@ -73,7 +74,7 @@ test("edits a document and commits it to Firestore", async () => {
       .toEqual({ name: "after", count: 1 });
   } finally {
     await electronApp.close();
-    await app.delete();
+    await deleteApp(app);
     rmSync(tempDir, { recursive: true, force: true });
   }
 });

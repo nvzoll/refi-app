@@ -1,4 +1,5 @@
-import * as admin from "firebase-admin";
+import { App, cert, initializeApp } from "firebase-admin/app";
+import { DocumentData, FieldPath, GeoPoint, getFirestore, OrderByDirection, Query, Timestamp } from "firebase-admin/firestore";
 import type { IAddDoc, IAddDocs, ICollectionSubscribe, IDocSubscribe, IExportCollection, IExportCollectionResponse, IFSInit, IGetDocs, IImportDocs, IListenerKey, IPathSubscribe, IRemoveCollections, IRemoveDocs, IUpdateDocs } from "refi-ipc";
 import { IServiceContext } from "../service";
 import { getDocMetaData } from "../../utils/converter";
@@ -14,7 +15,7 @@ const DOCS_PER_PAGE = 200;
 
 export default class FireStoreService {
   private ctx: IServiceContext;
-  private app: admin.app.App;
+  private app: App;
   private listListeners: NSFireStore.IListenerEntity[] = [];
 
   static addMetadata(doc: any) {
@@ -34,7 +35,7 @@ export default class FireStoreService {
   }
 
   private fsClient() {
-    return admin.firestore(this.app)
+    return getFirestore(this.app)
   }
 
   public async init({ projectId }: IFSInit): Promise<string[]> {
@@ -48,14 +49,14 @@ export default class FireStoreService {
       return collections.map(collection => collection.path)
     }
 
-    const cert = this.ctx.localDB.get('keys').find({ projectId }).value();
-    if (!cert) {
+    const key = this.ctx.localDB.get('keys').find({ projectId }).value();
+    if (!key) {
       throw new Error('We do not have credentials for this project')
     }
-    const serviceAccount = require(cert.keyPath);
+    const serviceAccount = require(key.keyPath);
 
-    this.app = admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+    this.app = initializeApp({
+      credential: cert(serviceAccount),
     }, projectId);
 
     log.info("Initiated firebase app");
@@ -78,7 +79,7 @@ export default class FireStoreService {
       return collections.map(collection => collection.path)
     }
 
-    this.app = admin.initializeApp({
+    this.app = initializeApp({
       projectId,
     }, projectId);
 
@@ -132,7 +133,7 @@ export default class FireStoreService {
     const collectionRef = fs
       .collection(path);
 
-    let querier: FirebaseFirestore.Query = collectionRef;
+    let querier: Query = collectionRef;
 
     queryOptions.forEach(({ field, operator: { type, values } }) => {
       querier = querier.where(field, type, convertFirebaseType(values));
@@ -143,12 +144,12 @@ export default class FireStoreService {
     })
 
     sortOptions.forEach(({ field, sort }) => {
-      querier = querier.orderBy(field === '__id' ? admin.firestore.FieldPath.documentId() : field, sort.toLowerCase() as FirebaseFirestore.OrderByDirection);
+      querier = querier.orderBy(field === '__id' ? FieldPath.documentId() : field, sort.toLowerCase() as OrderByDirection);
     })
 
     if (sortOptions.length === 0) {
       // Default sorting by id
-      querier = querier.orderBy(admin.firestore.FieldPath.documentId());
+      querier = querier.orderBy(FieldPath.documentId());
     }
 
     if (endBefore) {
@@ -254,7 +255,7 @@ export default class FireStoreService {
 
   public async updateDocs({ docs }: IUpdateDocs): Promise<boolean> {
     const fs = this.fsClient();
-    const docsSnapshot = deserializeDocumentSnapshotArray(docs, admin.firestore.GeoPoint, admin.firestore.Timestamp, path => fs.doc(path))
+    const docsSnapshot = deserializeDocumentSnapshotArray(docs, GeoPoint, Timestamp, path => fs.doc(path))
     try {
       const docsTrunk = chunk(docsSnapshot, 500); // Split by 500 each chunk
       // TODO: Make it parallel. I think can not since FireStore only allow about 1k write ops /sec
@@ -307,7 +308,7 @@ export default class FireStoreService {
 
   public async addDocs({ docs }: IAddDocs): Promise<boolean> {
     const fs = this.fsClient();
-    const docsSnapshot = deserializeDocumentSnapshotArray(docs, admin.firestore.GeoPoint, admin.firestore.Timestamp, path => fs.doc(path))
+    const docsSnapshot = deserializeDocumentSnapshotArray(docs, GeoPoint, Timestamp, path => fs.doc(path))
 
     const docsTrunk = chunk(docsSnapshot, 500); // Split by 500 each chunk
     docsTrunk.forEach(async (chunk) => {
@@ -367,7 +368,7 @@ export default class FireStoreService {
     return true;
   }
 
-  private async deleteQueryBatch(query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData>, resolve: (value: boolean) => void) {
+  private async deleteQueryBatch(query: Query<DocumentData>, resolve: (value: boolean) => void) {
     const db = this.fsClient();
     const snapshot = await query.get();
 

@@ -1,4 +1,4 @@
-import { cloneDeep, get, isArray, set, isObject, flattenDeep } from "lodash";
+import { cloneDeep, flattenDeep, get, set } from "es-toolkit/compat";
 import type { DocumentReference, GeoPoint, Timestamp } from "firebase/firestore";
 import {itemIsDocumentReference, itemIsGeoPoint, itemIsTimestamp, serialItemIsSpecial} from "./firestore-identifiers";
 
@@ -37,7 +37,7 @@ function getDeepListOfKeysWithoutInvadingFirebaseProperties(
             const item = object[key];
             const prefixKeyWith = prefix === '' ? '' : prefix + '.';
 
-            if(isObject(item)) {
+            if (item !== null && typeof item === "object") {
                 if(!isLeafValue(item)) {
                     keysList.push(
                         getDeepListOfKeysWithoutInvadingFirebaseProperties(
@@ -76,7 +76,7 @@ export function mapDeepWithArrays
         const item = get(clonedObject, key);
         let newItem = cloneDeep(item);
 
-        if(isArray(item)) {
+        if (Array.isArray(item)) {
             newItem = mapDeepWithArrays(item, callback);
         } else {
             newItem = callback(item);

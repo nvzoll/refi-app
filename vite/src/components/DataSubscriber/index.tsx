@@ -13,7 +13,7 @@ import { notifyErrorPromise } from "@/atoms/ui.action";
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
 import { getCollectionPath, isCollection } from "@/utils/common";
 import { deserializeDocumentSnapshotArray } from "firestore-serializers";
-import { uniq } from "lodash";
+import { uniq } from "es-toolkit/compat";
 import { useEffect, useRef } from "react";
 import { useAtomValue } from "jotai";
 import { GeoPoint, Timestamp } from "firebase/firestore";

@@ -24,7 +24,7 @@ import db from './client/db';
 import ContextMenu from './lib/electron-context-menu'
 import { contextConfig } from './contextMenu';
 import serve from 'electron-serve';
-import { uniqueId } from "lodash";
+import { uniqueId } from "es-toolkit/compat";
 // import { needConfirm, setConfirmReload, shouldConfirm } from "./lib/confirmReload";
 
 serve({ directory: 'build' });

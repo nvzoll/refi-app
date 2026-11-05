@@ -39,6 +39,7 @@ test("edits a document and commits it to Firestore", async () => {
   const app = initializeApp({ projectId });
   const firestore = getFirestore(app);
   await firestore.doc("smoke/doc1").set({ name: "before", count: 1 });
+  await firestore.doc("smoke/doc2").set({ name: "zebra", count: 2 });
 
   const electronApp = await electron.launch({
     executablePath: require("electron") as string,
@@ -72,6 +73,67 @@ test("edits a document and commits it to Firestore", async () => {
     await expect
       .poll(async () => (await firestore.doc("smoke/doc1").get()).data())
       .toEqual({ name: "after", count: 1 });
+
+    // Filters and sorters
+    const nameHeader = page.getByRole("table").locator("th").getByText("name", { exact: true });
+    await nameHeader.click();
+
+    await page.getByRole("button", { name: "Add Filters" }).click();
+    const filterRow = page.locator(".space-y-2 > div").first();
+    await filterRow.locator("input").first().fill("name");
+    await filterRow.locator("input").last().fill("zebra");
+    await page.getByRole("button", { name: "Query", exact: true }).click();
+
+    await expect(page.getByRole("cell", { name: "zebra" })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "after" })).not.toBeVisible();
+
+    await filterRow.getByRole("button").last().click();
+    await page.getByRole("button", { name: "Query", exact: true }).click();
+    await expect(page.getByRole("cell", { name: "after" })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "zebra" })).toBeVisible();
+
+    // Export collection
+    const exported = await page.evaluate(async () => {
+      return await (window as any).send("fs.exportCollection", { path: "/smoke" });
+    });
+    expect(exported.docs).toBeTruthy();
+    expect(exported.docs).toContain("after");
+    expect(exported.docs).toContain("zebra");
+
+    // Import documents and batch delete
+    const importFilePath = join(tempDir, "import.json");
+    writeFileSync(
+      importFilePath,
+      JSON.stringify([
+        { __id__: "imp1", name: "imported1", count: 100 },
+        { __id__: "imp2", name: "imported2", count: 200 },
+      ])
+    );
+
+    await page.keyboard.press("Control+i");
+    const fileInput = page.getByRole("dialog").locator("input[type=file]");
+    await fileInput.setInputFiles(importFilePath);
+    await page.getByRole("button", { name: /Import 2 doc/ }).click();
+
+    await expect
+      .poll(async () => (await firestore.doc("smoke/imp1").get()).data())
+      .toEqual({ name: "imported1", count: 100 });
+    await expect
+      .poll(async () => (await firestore.doc("smoke/imp2").get()).data())
+      .toEqual({ name: "imported2", count: 200 });
+
+    await page.evaluate(async () => {
+      await (window as any).send("fs.deleteDocs", {
+        docs: ["/smoke/imp1", "/smoke/imp2"],
+      });
+    });
+
+    await expect
+      .poll(async () => (await firestore.doc("smoke/imp1").get()).exists)
+      .toBe(false);
+    await expect
+      .poll(async () => (await firestore.doc("smoke/imp2").get()).exists)
+      .toBe(false);
   } finally {
     await electronApp.close();
     await deleteApp(app);

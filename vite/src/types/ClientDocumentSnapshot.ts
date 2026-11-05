@@ -5,7 +5,7 @@ import {
   IDocRef,
   DocRef,
 } from "firestore-serializers";
-import { isUndefined, uniq } from "lodash";
+import { uniq } from "es-toolkit/compat";
 import * as immutable from "object-path-immutable";
 import { GeoPoint, Timestamp } from "firebase/firestore";
 
@@ -95,8 +95,8 @@ export class ClientDocumentSnapshot {
   }
 
   public clone(newData?: IDocData, newId?: string): ClientDocumentSnapshot {
-    const newDocId = isUndefined(newId) ? this.id : newId;
-    const newDocRef = isUndefined(newId)
+    const newDocId = newId === undefined ? this.id : newId;
+    const newDocRef = newId === undefined
       ? this.ref.path
       : this.ref.path.replace(this.id, newId);
 
@@ -105,7 +105,7 @@ export class ClientDocumentSnapshot {
       newDocId,
       newDocRef,
       this.queryVersion,
-      this.isNew || !isUndefined(newId)
+      this.isNew || newId !== undefined
     );
 
     newDoc.addChange(this.changedFields());

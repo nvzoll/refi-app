@@ -8,7 +8,7 @@ import produce from "immer";
 import { atom, SetStateAction } from "jotai";
 import { atomWithDefault } from "jotai/utils";
 import { atomFamily } from "jotai-family";
-import { isEqual } from "lodash";
+import { isEqual } from "es-toolkit/compat";
 import { collectionAtom } from "./firestore";
 import {
   atomWithBucketStorage,

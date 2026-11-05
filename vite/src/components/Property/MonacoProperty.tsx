@@ -17,7 +17,7 @@ import {
   serializeDocumentSnapshot,
   DocRef,
 } from "firestore-serializers";
-import { debounce } from "lodash";
+import { debounce } from "es-toolkit/compat";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useTheme } from "styled-components";

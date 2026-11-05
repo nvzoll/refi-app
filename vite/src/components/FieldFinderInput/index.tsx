@@ -3,7 +3,7 @@ import {
   navigatorCollectionPathAtom,
   propertyListAtom,
 } from "@/atoms/navigator";
-import { uniq } from "lodash";
+import { uniq } from "es-toolkit/compat";
 import React, { ReactElement } from "react";
 import { useAtomValue } from "jotai";
 import InputComboBox from "../InputComboBox";

@@ -54,9 +54,9 @@
     "electron-log": "^4.3.2",
     "electron-serve": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
+    "es-toolkit": "^1.53.1",
     "firebase-admin": "^14.5.0",
     "firestore-serializers": "workspace:*",
-    "lodash": "^4.17.21",
     "lowdb": "^1.0.0",
     "secure-electron-context-menu": "^1.2.2",
     "uuid": "^8.3.2"

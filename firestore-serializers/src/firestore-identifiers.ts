@@ -1,5 +1,5 @@
 import type { DocumentReference, GeoPoint, Timestamp } from "firebase/firestore";
-import { hasIn } from "lodash";
+import { hasIn } from "es-toolkit/compat";
 import { DocRef } from "./DocRef";
 
 export function itemIsInternalDocumentReference(item: any): item is DocRef {

@@ -1,5 +1,5 @@
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
-import { chunk, flatten, intersection, uniq } from "lodash";
+import { chunk, flatten, intersection, uniq } from "es-toolkit/compat";
 import { isObject, simplify } from "./simplifr";
 import { IArrayOperator, INormalOperator } from "@/atoms/navigator";
 import { isMacOS } from "./platform";

@@ -8,7 +8,7 @@ import { buildTableSubRows } from "@/utils/common";
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
 import { store } from "@/atoms/store";
 import { buildFSUrl, fieldAtom } from "@/atoms/firestore";
-import { uniqueId } from "lodash";
+import { uniqueId } from "es-toolkit/compat";
 import { FIELD_KEY_PREFIX } from "@/utils/contant";
 import { newFieldAtom } from "@/atoms/ui";
 

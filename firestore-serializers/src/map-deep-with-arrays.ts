@@ -1,4 +1,4 @@
-import { cloneDeep, flattenDeep, get, set } from "es-toolkit/compat";
+import { cloneDeep, flattenDeep, get, isObject, set } from "es-toolkit/compat";
 import type { DocumentReference, GeoPoint, Timestamp } from "firebase/firestore";
 import {itemIsDocumentReference, itemIsGeoPoint, itemIsTimestamp, serialItemIsSpecial} from "./firestore-identifiers";
 
@@ -37,7 +37,7 @@ function getDeepListOfKeysWithoutInvadingFirebaseProperties(
             const item = object[key];
             const prefixKeyWith = prefix === '' ? '' : prefix + '.';
 
-            if(item !== null && typeof item === 'object') {
+            if(isObject(item)) {
                 if(!isLeafValue(item)) {
                     keysList.push(
                         getDeepListOfKeysWithoutInvadingFirebaseProperties(

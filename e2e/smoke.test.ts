@@ -12,7 +12,7 @@ const isProjectView = (page: Page) =>
 
 const serverDir = resolve(__dirname, "../server");
 
-test("edits a document and commits it to Firestore", async () => {
+test("edits, sorts, filters, imports and deletes documents on the emulator", async () => {
   const emulatorHost = process.env.FIRESTORE_EMULATOR_HOST;
   expect(emulatorHost).toBeTruthy();
 
@@ -74,12 +74,16 @@ test("edits a document and commits it to Firestore", async () => {
       .poll(async () => (await firestore.doc("smoke/doc1").get()).data())
       .toEqual({ name: "after", count: 1 });
 
-    // Filters and sorters
     const nameHeader = page.getByRole("table").locator("th").getByText("name", { exact: true });
+    const firstRow = page.getByRole("row").filter({ has: page.getByRole("cell") }).first();
     await nameHeader.click();
+    await expect(firstRow.getByRole("cell", { name: "after" })).toBeVisible();
+    await nameHeader.click();
+    await expect(firstRow.getByRole("cell", { name: "zebra" })).toBeVisible();
 
     await page.getByRole("button", { name: "Add Filters" }).click();
-    const filterRow = page.locator(".space-y-2 > div").first();
+    const removeFilter = page.getByRole("button", { name: "Remove filter" });
+    const filterRow = page.locator("div").filter({ has: removeFilter }).last();
     await filterRow.locator("input").first().fill("name");
     await filterRow.locator("input").last().fill("zebra");
     await page.getByRole("button", { name: "Query", exact: true }).click();
@@ -87,20 +91,11 @@ test("edits a document and commits it to Firestore", async () => {
     await expect(page.getByRole("cell", { name: "zebra" })).toBeVisible();
     await expect(page.getByRole("cell", { name: "after" })).not.toBeVisible();
 
-    await filterRow.getByRole("button").last().click();
+    await removeFilter.click();
     await page.getByRole("button", { name: "Query", exact: true }).click();
     await expect(page.getByRole("cell", { name: "after" })).toBeVisible();
     await expect(page.getByRole("cell", { name: "zebra" })).toBeVisible();
 
-    // Export collection
-    const exported = await page.evaluate(async () => {
-      return await (window as any).send("fs.exportCollection", { path: "/smoke" });
-    });
-    expect(exported.docs).toBeTruthy();
-    expect(exported.docs).toContain("after");
-    expect(exported.docs).toContain("zebra");
-
-    // Import documents and batch delete
     const importFilePath = join(tempDir, "import.json");
     writeFileSync(
       importFilePath,

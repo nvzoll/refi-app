@@ -12,7 +12,7 @@ import { Checkbox, Field, Label } from "@zendeskgarden/react-forms";
 import { Tooltip } from "@zendeskgarden/react-tooltips";
 import classNames from "classnames";
 import { DocRef } from "firestore-serializers";
-import { isEqual, isUndefined } from "lodash";
+import { isEqual } from "es-toolkit/compat";
 import { Textarea } from "@zendeskgarden/react-forms";
 import React, {
   ReactElement,
@@ -54,7 +54,7 @@ const EditableCell = ({
   }, [value]);
 
   const onChange = (newInstanceValue: IFieldValue | undefined) => {
-    if (isUndefined(value)) {
+    if (value === undefined) {
       setValue(newInstanceValue);
       return;
     }
@@ -147,7 +147,7 @@ const EditableCell = ({
       />
     );
 
-    if (!isUndefined(instanceValue)) {
+    if (instanceValue !== undefined) {
       switch (fieldType) {
         case "array":
           defaultEditor = (

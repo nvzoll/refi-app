@@ -101,13 +101,13 @@ function simplifyNode(
       childs: [],
     };
 
-    if (isArray(obj)) {
+    if (Array.isArray(obj)) {
       data[path].type = "array";
       for (let i = -1, l = obj.length; ++i < l; ) {
         data[path].childs.push(i);
         dive(obj[i], path + dilimiter + i);
       }
-    } else if (isObject(obj)) {
+    } else if (hasObjectProto(obj)) {
       data[path].type = getFirestoreType(obj);
       for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -121,10 +121,6 @@ function simplifyNode(
   }
 }
 
-export function isArray(_: any) {
-  return Object.prototype.toString.call(_) === "[object Array]";
-}
-
-export function isObject(_: any) {
+export function hasObjectProto(_: any) {
   return Object.prototype.toString.call(_) === "[object Object]";
 }

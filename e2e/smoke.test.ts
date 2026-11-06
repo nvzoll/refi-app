@@ -12,7 +12,7 @@ const isProjectView = (page: Page) =>
 
 const serverDir = resolve(__dirname, "../server");
 
-test("edits a document and commits it to Firestore", async () => {
+test("edits, sorts, filters, imports and deletes documents on the emulator", async () => {
   const emulatorHost = process.env.FIRESTORE_EMULATOR_HOST;
   expect(emulatorHost).toBeTruthy();
 
@@ -39,6 +39,7 @@ test("edits a document and commits it to Firestore", async () => {
   const app = initializeApp({ projectId });
   const firestore = getFirestore(app);
   await firestore.doc("smoke/doc1").set({ name: "before", count: 1 });
+  await firestore.doc("smoke/doc2").set({ name: "zebra", count: 2 });
 
   const electronApp = await electron.launch({
     executablePath: require("electron") as string,
@@ -72,6 +73,62 @@ test("edits a document and commits it to Firestore", async () => {
     await expect
       .poll(async () => (await firestore.doc("smoke/doc1").get()).data())
       .toEqual({ name: "after", count: 1 });
+
+    const nameHeader = page.getByRole("table").locator("th").getByText("name", { exact: true });
+    const firstRow = page.getByRole("row").filter({ has: page.getByRole("cell") }).first();
+    await nameHeader.click();
+    await expect(firstRow.getByRole("cell", { name: "after" })).toBeVisible();
+    await nameHeader.click();
+    await expect(firstRow.getByRole("cell", { name: "zebra" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Add Filters" }).click();
+    const removeFilter = page.getByRole("button", { name: "Remove filter" });
+    const filterRow = page.locator("div").filter({ has: removeFilter }).last();
+    await filterRow.locator("input").first().fill("name");
+    await filterRow.locator("input").last().fill("zebra");
+    await page.getByRole("button", { name: "Query", exact: true }).click();
+
+    await expect(page.getByRole("cell", { name: "zebra" })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "after" })).not.toBeVisible();
+
+    await removeFilter.click();
+    await page.getByRole("button", { name: "Query", exact: true }).click();
+    await expect(page.getByRole("cell", { name: "after" })).toBeVisible();
+    await expect(page.getByRole("cell", { name: "zebra" })).toBeVisible();
+
+    const importFilePath = join(tempDir, "import.json");
+    writeFileSync(
+      importFilePath,
+      JSON.stringify([
+        { __id__: "imp1", name: "imported1", count: 100 },
+        { __id__: "imp2", name: "imported2", count: 200 },
+      ])
+    );
+
+    await page.keyboard.press("Control+i");
+    const fileInput = page.getByRole("dialog").locator("input[type=file]");
+    await fileInput.setInputFiles(importFilePath);
+    await page.getByRole("button", { name: /Import 2 doc/ }).click();
+
+    await expect
+      .poll(async () => (await firestore.doc("smoke/imp1").get()).data())
+      .toEqual({ name: "imported1", count: 100 });
+    await expect
+      .poll(async () => (await firestore.doc("smoke/imp2").get()).data())
+      .toEqual({ name: "imported2", count: 200 });
+
+    await page.evaluate(async () => {
+      await (window as any).send("fs.deleteDocs", {
+        docs: ["/smoke/imp1", "/smoke/imp2"],
+      });
+    });
+
+    await expect
+      .poll(async () => (await firestore.doc("smoke/imp1").get()).exists)
+      .toBe(false);
+    await expect
+      .poll(async () => (await firestore.doc("smoke/imp2").get()).exists)
+      .toBe(false);
   } finally {
     await electronApp.close();
     await deleteApp(app);

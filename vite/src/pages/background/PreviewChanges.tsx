@@ -22,7 +22,7 @@ import {
 } from "@zendeskgarden/react-modals";
 import classNames from "classnames";
 import { Tag } from "@zendeskgarden/react-tags";
-import { groupBy } from "lodash";
+import { groupBy } from "es-toolkit/compat";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import EscExit from "@/components/EscExit";

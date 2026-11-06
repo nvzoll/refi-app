@@ -6,7 +6,7 @@ import { getDocMetaData } from "../../utils/converter";
 import { v4 as uuidv4 } from 'uuid';
 import { deserializeDocumentSnapshotArray, DocumentSnapshot, serializeDocumentSnapshot, serializeQuerySnapshot } from "firestore-serializers";
 import { isCollection } from "../../utils/navigator";
-import { chunk, get } from "lodash";
+import { chunk, get } from "es-toolkit/compat";
 import log from 'electron-log';
 import { convertFirebaseType, isRangeFilter, parseEmulatorConnection } from "../../utils";
 import axios from 'axios';

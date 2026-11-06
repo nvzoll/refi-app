@@ -1,4 +1,4 @@
-import { uniqueId } from "lodash";
+import { uniqueId } from "es-toolkit/compat";
 import { atomWithBucketStorage, USER_SETTINGS_BUCKET } from "./persistence";
 import { store } from "./store";
 import {

@@ -13,7 +13,7 @@ import { getFirestoreType } from "@/utils/simplifr";
 import { Tooltip } from "@zendeskgarden/react-tooltips";
 import classNames from "classnames";
 import { DocRef } from "firestore-serializers";
-import { isEqual, isUndefined } from "lodash";
+import { isEqual } from "es-toolkit/compat";
 import React, {
   ReactElement,
   useCallback,
@@ -97,7 +97,7 @@ export const EditablePropertyValue = ({
 
   // Sync the external into instanceValue
   useEffect(() => {
-    if (!isUndefined(value) && !isEqual(instanceValue, value)) {
+    if (value !== undefined && !isEqual(instanceValue, value)) {
       setInstanceValue(value);
       toggleHight();
     }

@@ -6,7 +6,7 @@ import {
   serializeDocumentSnapshot,
   serializeQuerySnapshot,
 } from "firestore-serializers";
-import { uniq, uniqueId } from "lodash";
+import { uniq, uniqueId } from "es-toolkit/compat";
 import { collectionWithQueryAtom, docAtom, queryDocOrder } from "./firestore";
 import { actionAddPathExpander } from "./firestore.action";
 import {

@@ -1,6 +1,4 @@
-const _pickBy = require("lodash/pickBy");
-const _omit = require("lodash/omit");
-const _mapValues = require("lodash/mapValues");
+import { mapValues, omit, pickBy } from "es-toolkit/compat";
 
 export async function convertDocumentRef(docRef: any) {
   const docCollections = await docRef.listCollections();
@@ -53,11 +51,11 @@ export function convertSnapshotToDoc(snapshot: any) {
     {}
   );
 
-  const refFields = _pickBy(
+  const refFields = pickBy(
     objData,
     (value: any, key: string) => docTypes[key] === "DocumentReference"
   );
-  const resFieldsValue = _mapValues(refFields, (value: any) => value.path);
+  const resFieldsValue = mapValues(refFields, (value: any) => value.path);
 
   return {
     ...objData,
@@ -79,7 +77,7 @@ export function convertSnapshotToDoc(snapshot: any) {
 
 export const postConverter = {
   toFirestore(doc: any) {
-    return _omit(doc, ["__METADATA"]);
+    return omit(doc, ["__METADATA"]);
   },
   fromFirestore(snapshot: any) {
     return convertSnapshotToDoc(snapshot);

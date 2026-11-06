@@ -1,6 +1,6 @@
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
-import { chunk, flatten, intersection, uniq } from "lodash";
-import { isObject, simplify } from "./simplifr";
+import { chunk, flatten, intersection, uniq } from "es-toolkit/compat";
+import { hasObjectProto, simplify } from "./simplifr";
 import { IArrayOperator, INormalOperator } from "@/atoms/navigator";
 import { isMacOS } from "./platform";
 import { Timestamp } from "firebase/firestore";
@@ -134,7 +134,7 @@ export const buildTableSubRows = (
     .filter(({ field }) => field.split(".").length === level && field !== "")
     .sort((a, b) => a.field.localeCompare(b.field))
     .reduce((rowWithSub: ITableSubRow[], { field, value }) => {
-      if (isObject(value)) {
+      if (hasObjectProto(value)) {
         rowWithSub.push({
           field,
           value,

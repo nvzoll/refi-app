@@ -32,7 +32,7 @@ import {
 import { COLLECTION_PREFIX } from "@/utils/contant";
 import { Input } from "@zendeskgarden/react-forms";
 import classNames from "classnames";
-import { uniq, uniqueId } from "lodash";
+import { uniq, uniqueId } from "es-toolkit/compat";
 import * as immutable from "object-path-immutable";
 import Tree, { DataNode, EventDataNode } from "@rc-component/tree";
 import React, {

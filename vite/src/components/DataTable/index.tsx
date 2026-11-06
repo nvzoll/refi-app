@@ -33,7 +33,7 @@ import {
 } from "@/utils/common";
 import { Cell } from "@zendeskgarden/react-tables";
 import classNames from "classnames";
-import { get, sumBy, throttle, uniqueId } from "lodash";
+import { get, sumBy, throttle, uniqueId } from "es-toolkit/compat";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import {

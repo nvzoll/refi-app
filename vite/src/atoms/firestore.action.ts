@@ -8,7 +8,7 @@ import {
   serializeQuerySnapshot,
 } from "firestore-serializers";
 import { atom } from "jotai";
-import { differenceBy, uniq, uniqBy, uniqueId } from "lodash";
+import { differenceBy, uniq, uniqBy, uniqueId } from "es-toolkit/compat";
 import {
   changedDocAtom,
   collectionAtom,

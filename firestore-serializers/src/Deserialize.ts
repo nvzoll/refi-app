@@ -1,7 +1,7 @@
 import { SimpleJsonType } from "./types";
 import { serialItemIsSpecial } from "./firestore-identifiers";
 import { mapDeepWithArrays } from "./map-deep-with-arrays";
-import { omit } from "lodash";
+import { omit } from "es-toolkit/compat";
 import { DocRef } from "./DocRef";
 import { DocumentSnapshot, GeoPointClass, QuerySnapshot, TimestampClass } from './index.d';
 

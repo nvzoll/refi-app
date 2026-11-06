@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "es-toolkit/compat";
 
 // Must match client-preload.js
 const contextMenuRequest = "ContextMenu-Request";

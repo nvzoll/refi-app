@@ -3,7 +3,7 @@ import {
   IFieldValue,
 } from "@/types/ClientDocumentSnapshot";
 import { getParentPath } from "@/utils/common";
-import { difference, isObject, isUndefined } from "lodash";
+import { difference, isObject } from "es-toolkit/compat";
 import * as immutable from "object-path-immutable";
 import { atom, SetStateAction } from "jotai";
 import { atomFamily } from "jotai-family";
@@ -127,7 +127,7 @@ export const fieldAtom = atomFamily((url: string) => {
     },
     (get, set, update: SetStateAction<IFieldValue | undefined>) => {
       const newValue = resolveUpdate(update, get(anAtom));
-      if (isUndefined(newValue)) {
+      if (newValue === undefined) {
         return;
       }
 
@@ -136,7 +136,7 @@ export const fieldAtom = atomFamily((url: string) => {
       if (doc) {
         const newDoc = doc.clone().setField(field, newValue);
         const oldValue = immutable.get(doc.data(), field);
-        if (newValue && isObject(oldValue) && isObject(oldValue)) {
+        if (newValue && isObject(oldValue)) {
           // Add changes if the object inside changed
           // TODO: Use immer to store field patch
           newDoc.addChange(

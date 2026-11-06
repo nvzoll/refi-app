@@ -96,9 +96,10 @@ export class ClientDocumentSnapshot {
 
   public clone(newData?: IDocData, newId?: string): ClientDocumentSnapshot {
     const newDocId = newId === undefined ? this.id : newId;
-    const newDocRef = newId === undefined
-      ? this.ref.path
-      : this.ref.path.replace(this.id, newId);
+    const newDocRef =
+      newId === undefined
+        ? this.ref.path
+        : this.ref.path.replace(this.id, newId);
 
     const newDoc = new ClientDocumentSnapshot(
       newData || this.data(),

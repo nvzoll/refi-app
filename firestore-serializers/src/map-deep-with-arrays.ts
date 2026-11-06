@@ -37,7 +37,7 @@ function getDeepListOfKeysWithoutInvadingFirebaseProperties(
             const item = object[key];
             const prefixKeyWith = prefix === '' ? '' : prefix + '.';
 
-            if (item !== null && typeof item === "object") {
+            if(item !== null && typeof item === 'object') {
                 if(!isLeafValue(item)) {
                     keysList.push(
                         getDeepListOfKeysWithoutInvadingFirebaseProperties(
@@ -76,7 +76,7 @@ export function mapDeepWithArrays
         const item = get(clonedObject, key);
         let newItem = cloneDeep(item);
 
-        if (Array.isArray(item)) {
+        if(Array.isArray(item)) {
             newItem = mapDeepWithArrays(item, callback);
         } else {
             newItem = callback(item);

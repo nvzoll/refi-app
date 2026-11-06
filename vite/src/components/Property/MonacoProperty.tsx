@@ -20,7 +20,6 @@ import {
 import { debounce } from "es-toolkit/compat";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useTheme } from "styled-components";
 import "./monaco.css";
 import { GeoPoint, Timestamp } from "firebase/firestore";
 

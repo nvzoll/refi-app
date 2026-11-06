@@ -1,24 +1,30 @@
 import { navigatorPathAtom } from "@/atoms/navigator";
 import { getProjectId } from "@/utils/common";
 import { useEffect } from "react";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAtom } from "jotai";
 
 const URLSynchronizer = () => {
-  const params = useParams() as any;
+  const { projectId } = useParams<{ projectId: string }>();
   const [path, setPath] = useAtom(navigatorPathAtom);
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    history.push({
-      pathname: `${params.projectId}`,
+    if (!projectId) {
+      return;
+    }
+    navigate({
+      pathname: `/${projectId}`,
       hash: path,
     });
   }, [path]);
 
   useEffect(() => {
-    window.projectId = params.projectId;
+    if (!projectId) {
+      return;
+    }
+    window.projectId = projectId;
     const urlPath = location.hash.replace("#", "");
     setPath(urlPath || "/");
     document.title = `${getProjectId()} - Refi app`;

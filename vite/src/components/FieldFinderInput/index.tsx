@@ -11,7 +11,7 @@ import InputComboBox from "../InputComboBox";
 interface IFieldFinderInputProps {
   value: string;
   onChange: (value: string) => void;
-  inputRef?: HTMLInputElement;
+  inputRef?: React.Ref<HTMLInputElement>;
   placeholder?: string;
   onSelect?: (value: string) => void;
 }

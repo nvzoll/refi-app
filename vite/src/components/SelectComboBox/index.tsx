@@ -1,6 +1,7 @@
 import { Input } from "@zendeskgarden/react-forms";
 import classNames from "classnames";
 import { useCombobox } from "downshift";
+import { ignoreInputClick } from "@/utils/combobox";
 import React, { ReactElement, useMemo, useRef, useState } from "react";
 
 interface ISelectComboBoxProps<T> {
@@ -37,11 +38,11 @@ const SelectComboBox = ({
     getToggleButtonProps,
     getMenuProps,
     getInputProps,
-    getComboboxProps,
     highlightedIndex,
     getItemProps,
   } = useCombobox({
     items: inputItems,
+    stateReducer: ignoreInputClick,
     // selectedItem,
     inputValue,
     onSelectedItemChange: ({ selectedItem }) => {
@@ -63,7 +64,7 @@ const SelectComboBox = ({
 
   return (
     <div className={className}>
-      <div {...getComboboxProps()} className="relative">
+      <div className="relative">
         <Input
           {...getInputProps({
             onBlur: handleInputBlur,

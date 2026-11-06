@@ -13,7 +13,7 @@ import {
 import { Notification, Title } from "@zendeskgarden/react-notifications";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { unwrap } from "jotai/utils";
 
@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
   const [showConfirm, setConfirm] = useState<string>("");
   const [connection, setConnection] = useAtom(emulatorConnection);
   const [projectValue, setProjectValue] = useAtom(emulatorProjectId);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (notificationError) {
@@ -54,7 +54,7 @@ const LoginPage: React.FC = () => {
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: ["application/json"],
+    accept: { "application/json": [] },
     onDrop,
     multiple: false,
   });
@@ -67,7 +67,7 @@ const LoginPage: React.FC = () => {
   );
 
   const handleOpenConnection = (projectId: string) => {
-    history.push({
+    navigate({
       pathname: `/${projectId}`,
       hash: "/",
     });
@@ -144,7 +144,7 @@ const LoginPage: React.FC = () => {
   }, [userCerts]);
 
   const handleConnectLocal = () => {
-    history.push({
+    navigate({
       pathname: `/${connection}_connect_${projectValue}`,
       hash: "/",
     });

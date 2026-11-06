@@ -44,7 +44,7 @@ import {
   useTable,
 } from "react-table";
 import { useAsync, useCustomCompareEffect } from "react-use";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { AutoSizer } from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
 import { useAtomValue, useSetAtom } from "jotai";
 import EditableCell, { IDReadOnlyField } from "../EditableCell";
@@ -244,86 +244,97 @@ function TableWrapper({
   );
 
   return (
-    <AutoSizer>
-      {({ height, width }) => (
-        <table
-          {...getTableProps()}
-          className="w-full h-full border-b border-gray-300 dark:border-gray-600"
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => {
-              const { key: headerGroupKey, ...headerGroupProps } =
-                headerGroup.getHeaderGroupProps({
-                  style: {
-                    width,
-                    overflow: "hidden",
-                    minWidth: "unset",
-                  },
+    <AutoSizer
+      box="border-box"
+      style={{ overflow: "visible", height: 0, width: 0 }}
+      renderProp={({ height, width }) => {
+        if (!height || !width) {
+          return null;
+        }
+        return (
+          <table
+            {...getTableProps()}
+            className="w-full h-full border-b border-gray-300 dark:border-gray-600"
+          >
+            <thead>
+              {headerGroups.map((headerGroup) => {
+                const { key: headerGroupKey, ...headerGroupProps } =
+                  headerGroup.getHeaderGroupProps({
+                    style: {
+                      width,
+                      overflow: "hidden",
+                      minWidth: "unset",
+                    },
 
-                  className:
-                    "border-t border-b border-gray-300 dark:border-gray-600",
-                });
-              return (
-                <div key={headerGroupKey} {...headerGroupProps} ref={headerRef}>
-                  {headerGroup.headers.map((column) => {
-                    const { key: headerKey, ...headerProps } =
-                      column.getHeaderProps(
-                        (column as any).getSortByToggleProps()
-                      );
-                    return (
-                      <th
-                        key={headerKey}
-                        {...headerProps}
-                        className="text-left text-gray-500 border-r border-gray-200 dark:border-gray-600"
-                      >
-                        <div
-                          {...(column as any).getResizerProps({
-                            onClick: ignoreBackdropEvent,
+                    className:
+                      "border-t border-b border-gray-300 dark:border-gray-600",
+                  });
+                return (
+                  <div
+                    key={headerGroupKey}
+                    {...headerGroupProps}
+                    ref={headerRef}
+                  >
+                    {headerGroup.headers.map((column) => {
+                      const { key: headerKey, ...headerProps } =
+                        column.getHeaderProps(
+                          (column as any).getSortByToggleProps()
+                        );
+                      return (
+                        <th
+                          key={headerKey}
+                          {...headerProps}
+                          className="text-left text-gray-500 border-r border-gray-200 dark:border-gray-600"
+                        >
+                          <div
+                            {...(column as any).getResizerProps({
+                              onClick: ignoreBackdropEvent,
+                            })}
+                            className={classNames(
+                              "w-px h-full inline-block transform translate-x-px hover:bg-gray-400 pl-1 absolute top-0 -right-px"
+                            )}
+                          />
+                          {column.render("Header", {
+                            isSorted: (column as any)?.isSorted,
+                            isSortedDesc: (column as any).isSortedDesc,
+                            toggleSortBy: (column as any).toggleSortBy,
                           })}
-                          className={classNames(
-                            "w-px h-full inline-block transform translate-x-px hover:bg-gray-400 pl-1 absolute top-0 -right-px"
-                          )}
-                        />
-                        {column.render("Header", {
-                          isSorted: (column as any)?.isSorted,
-                          isSortedDesc: (column as any).isSortedDesc,
-                          toggleSortBy: (column as any).toggleSortBy,
-                        })}
-                      </th>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </thead>
-          <tbody {...getTableBodyProps()} className="block h-full">
-            <Scrollbars
-              style={{ height: height - 36, width }}
-              autoHide
-              onScroll={handleScroll}
-              onScrollStop={handleScrollStop}
-              hideTracksWhenNotNeeded
-              ref={scrollerRef}
-            >
-              <FixedSizeList
-                height={height - 34}
-                itemCount={rows.length}
-                itemSize={36}
-                width={width}
-                itemData={rows}
-                itemKey={(id: number, data: Row<ClientDocumentSnapshot>[]) =>
-                  data[id].original.id
-                }
-                ref={listRef}
-                style={{ overflow: false }}
+                        </th>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </thead>
+            <tbody {...getTableBodyProps()} className="block h-full">
+              <Scrollbars
+                style={{ height: height - 36, width }}
+                autoHide
+                onScroll={handleScroll}
+                onScrollStop={handleScrollStop}
+                hideTracksWhenNotNeeded
+                ref={scrollerRef}
               >
-                {RenderRow}
-              </FixedSizeList>
-            </Scrollbars>
-          </tbody>
-        </table>
-      )}
-    </AutoSizer>
+                <FixedSizeList
+                  height={height - 34}
+                  itemCount={rows.length}
+                  itemSize={36}
+                  width={width}
+                  itemData={rows}
+                  itemKey={(id: number, data: Row<ClientDocumentSnapshot>[]) =>
+                    data[id].original.id
+                  }
+                  ref={listRef}
+                  style={{ overflow: false }}
+                >
+                  {RenderRow}
+                </FixedSizeList>
+              </Scrollbars>
+            </tbody>
+          </table>
+        );
+      }}
+    />
   );
 }
 

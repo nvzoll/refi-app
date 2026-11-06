@@ -4,7 +4,7 @@ import {
   getAllColumnsRecursive,
   getCollectionPath,
 } from "@/utils/common";
-import produce from "immer";
+import { produce } from "immer";
 import { atom, SetStateAction } from "jotai";
 import { atomWithDefault } from "jotai/utils";
 import { atomFamily } from "jotai-family";

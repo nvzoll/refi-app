@@ -67,7 +67,11 @@ const ImportModal = () => {
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: ["application/json", "text/comma-separated-values", "text/csv"],
+    accept: {
+      "application/json": [],
+      "text/comma-separated-values": [],
+      "text/csv": [],
+    },
     onDrop,
     multiple: false,
   });

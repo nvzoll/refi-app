@@ -18,7 +18,6 @@ declare module "*.svg" {
   >;
 }
 
-declare module "react-grid-layout";
 declare module "react-window";
 
 type WorkerRequests = import("refi-ipc").WorkerRequests;

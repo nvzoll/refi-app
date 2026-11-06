@@ -41,6 +41,10 @@ function DropdownMenu({
   } = useSelect({
     items: menu,
     onSelectedItemChange: ({ selectedItem }) => selectedItem?.onClick(),
+    stateReducer: (state, { type, changes }) =>
+      type === useSelect.stateChangeTypes.ToggleButtonBlur
+        ? { ...changes, selectedItem: state.selectedItem }
+        : changes,
   });
   const childRef = useRef<HTMLButtonElement>(null);
 

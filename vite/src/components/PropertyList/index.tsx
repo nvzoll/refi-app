@@ -159,7 +159,7 @@ const PropertyList = () => {
                 value={value}
                 onChange={onChange}
                 onSelect={(value) => handleAddProperty({ property: value })}
-                inputRef={ref as any}
+                inputRef={ref}
                 placeholder="Add more property to table"
               />
             )}

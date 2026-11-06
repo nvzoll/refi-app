@@ -2,9 +2,10 @@ import { Input } from "@zendeskgarden/react-forms";
 import { useCombobox } from "downshift";
 import React, { ReactElement, useEffect, useState } from "react";
 import classNames from "classnames";
+import { ignoreInputClick } from "@/utils/combobox";
 
 interface IInputComboBoxProps<T> {
-  inputRef?: HTMLInputElement;
+  inputRef?: React.Ref<HTMLInputElement>;
   items: T[];
   selectedItem: T;
   handleSelectedItemChange: (item: T) => void;
@@ -25,7 +26,6 @@ const InputComboBox = ({
     isOpen,
     getMenuProps,
     getInputProps,
-    getComboboxProps,
     highlightedIndex,
     getItemProps,
     setInputValue,
@@ -33,6 +33,7 @@ const InputComboBox = ({
   } = useCombobox({
     defaultInputValue: selectedItem,
     items: inputItems,
+    stateReducer: ignoreInputClick,
     onSelectedItemChange: ({ selectedItem }) => {
       if (onSelect) {
         // If we got onSelect, only fire onSelect event
@@ -64,10 +65,9 @@ const InputComboBox = ({
 
   return (
     <div className="relative">
-      <div {...getComboboxProps()} className="relative">
+      <div className="relative">
         <Input
-          {...getInputProps()}
-          ref={inputRef}
+          {...getInputProps({ ref: inputRef })}
           placeholder={placeholder}
           isCompact
         />

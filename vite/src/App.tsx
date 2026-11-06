@@ -1,21 +1,15 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import MainLayout from "./pages/main";
 
 import LoginPage from "./pages/main/login";
 
 function App() {
   return (
-    <Router>
-      <Switch>
-        <Route path={["/:projectId", "/:projectId/(.*)"]}>
-          <MainLayout />
-        </Route>
-        <Route path="/">
-          <LoginPage />
-        </Route>
-      </Switch>
-    </Router>
+    <Routes>
+      <Route path="/:projectId/*" element={<MainLayout />} />
+      <Route path="/" element={<LoginPage />} />
+    </Routes>
   );
 }
 

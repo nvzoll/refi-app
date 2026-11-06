@@ -329,7 +329,12 @@ const FilterItem = ({ id }: { id: string }) => {
         />
       </div>
       <div className="w-full">{inputComponent}</div>
-      <IconButton size="small" isPill onClick={handleToggleActiveFilter}>
+      <IconButton
+        size="small"
+        isPill
+        aria-label="Toggle filter"
+        onClick={handleToggleActiveFilter}
+      >
         <div className="w-5">
           <svg
             width="16"
@@ -346,7 +351,12 @@ const FilterItem = ({ id }: { id: string }) => {
           </svg>
         </div>
       </IconButton>
-      <IconButton size="small" isPill onClick={handleRemoveFilter}>
+      <IconButton
+        size="small"
+        isPill
+        aria-label="Remove filter"
+        onClick={handleRemoveFilter}
+      >
         <div className="w-5">
           <svg
             width="16"

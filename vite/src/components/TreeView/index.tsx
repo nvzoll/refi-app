@@ -43,7 +43,7 @@ import React, {
   useState,
 } from "react";
 import { useDebounce } from "react-use";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { AutoSizer } from "react-virtualized-auto-sizer";
 import { useAtom, useAtomValue } from "jotai";
 import "./index.css";
 
@@ -535,26 +535,29 @@ function TreeView({ allDocs, deletedDocs, pathAvailable }: ITreeViewProps) {
           </button>
         </div>
         <div className="w-full h-full dark:bg-gray-900">
-          <AutoSizer disableWidth>
-            {({ height }) => (
-              <Tree
-                // showLine
-                treeData={treeData as any}
-                onSelect={handleSelectTree}
-                onClick={handleClickNode}
-                loadData={handleExpandData}
-                height={height}
-                itemHeight={30}
-                virtual
-                focusable
-                className="h-full"
-                defaultExpandedKeys={[path]}
-                selectedKeys={[path]}
-                expandedKeys={expandedKeysWithFilter}
-                onExpand={handleOnExpand}
-              />
-            )}
-          </AutoSizer>
+          <AutoSizer
+            style={{ overflow: "visible", height: 0 }}
+            renderProp={({ height }) =>
+              height ? (
+                <Tree
+                  // showLine
+                  treeData={treeData as any}
+                  onSelect={handleSelectTree}
+                  onClick={handleClickNode}
+                  loadData={handleExpandData}
+                  height={height}
+                  itemHeight={30}
+                  virtual
+                  focusable
+                  className="h-full"
+                  defaultExpandedKeys={[path]}
+                  selectedKeys={[path]}
+                  expandedKeys={expandedKeysWithFilter}
+                  onExpand={handleOnExpand}
+                />
+              ) : null
+            }
+          />
         </div>
       </div>
     </div>

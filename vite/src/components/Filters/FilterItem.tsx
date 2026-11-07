@@ -14,7 +14,7 @@ import { getFirestoreType } from "@/utils/simplifr";
 import { Button, IconButton } from "@zendeskgarden/react-buttons";
 import { Input } from "@zendeskgarden/react-forms";
 import classNames from "classnames";
-import immer from "immer";
+import { produce } from "immer";
 import React, { useLayoutEffect, useMemo, useRef } from "react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import DateTimePicker from "../DataInput/DateTimePicker";
@@ -28,7 +28,7 @@ const arrayInput = ["in", "not-in", "array-contains"];
 const FilterItem = ({ id }: { id: string }) => {
   const collectionPath = useAtomValue(navigatorCollectionPathAtom);
   const setQueryOptions = useSetAtom(querierAtom(collectionPath));
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [filter, setFilter] = useAtom(
     querierOptionAtom({ id, path: collectionPath })
   );
@@ -39,7 +39,7 @@ const FilterItem = ({ id }: { id: string }) => {
 
   const handleToggleActiveFilter = () => {
     setFilter(
-      immer((curFilter) => {
+      produce((curFilter) => {
         if (curFilter) {
           curFilter.isActive = !curFilter.isActive;
         }
@@ -49,7 +49,7 @@ const FilterItem = ({ id }: { id: string }) => {
 
   const handleSetField = (value: string) => {
     setFilter(
-      immer((curFilter) => {
+      produce((curFilter) => {
         if (curFilter) {
           curFilter.field = value;
         }
@@ -63,7 +63,7 @@ const FilterItem = ({ id }: { id: string }) => {
     }
     const isArrayInput = arrayInput.includes(value);
     setFilter(
-      immer((curFilter) => {
+      produce((curFilter) => {
         if (curFilter) {
           curFilter.operator.type = value as WhereFilterOp;
           if (isArrayInput && !Array.isArray(curFilter.operator.values)) {
@@ -85,7 +85,7 @@ const FilterItem = ({ id }: { id: string }) => {
         ? Number(value)
         : value;
     setFilter(
-      immer((curFilter) => {
+      produce((curFilter) => {
         if (curFilter) {
           curFilter.operator.values = newValue;
         }
@@ -318,7 +318,7 @@ const FilterItem = ({ id }: { id: string }) => {
         <FieldFinderInput
           value={filter.field}
           onChange={handleSetField}
-          inputRef={inputRef as any}
+          inputRef={inputRef}
         />
       </div>
       <div className="max-w-xs">

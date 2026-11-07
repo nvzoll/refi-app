@@ -10,14 +10,12 @@ import QuoteLoading from "@/components/QuoteLoading";
 import TreeView from "@/components/TreeView";
 import URLSynchronizer from "@/components/URLSynchronizer";
 import React, { ReactElement, useEffect, useState } from "react";
-import RGL, { WidthProvider } from "react-grid-layout";
-import { useHistory, useParams } from "react-router-dom";
-import AutoSizer from "react-virtualized-auto-sizer";
+import GridLayout from "react-grid-layout";
+import { useNavigate, useParams } from "react-router-dom";
+import { AutoSizer } from "react-virtualized-auto-sizer";
 import Background from "../background";
 import UniversalHotKey from "../hotkey";
 import Main from "./main";
-
-const ReactGridLayout = WidthProvider(RGL);
 
 const BASE_HEIGHT = 32;
 const BASE_SPACE = 16;
@@ -37,11 +35,14 @@ const buildLayout = (height: number) => {
 };
 
 function MainLayout(): ReactElement {
-  const history = useHistory();
-  const { projectId } = useParams() as any;
+  const navigate = useNavigate();
+  const { projectId } = useParams<{ projectId: string }>();
   const [showLoading, setShowLoading] = useState(true);
 
   useEffect(() => {
+    if (!projectId) {
+      return;
+    }
     store.set(projectIdAtom, projectId);
     window
       .send("fs.init", { projectId })
@@ -51,10 +52,7 @@ function MainLayout(): ReactElement {
         window.api.renameTab(projectId);
       })
       .catch((error) => {
-        history.replace({
-          pathname: `/`,
-          hash: "/",
-        });
+        navigate({ pathname: "/", hash: "/" }, { replace: true });
         notifyErrorPromise(error);
       });
   }, []);
@@ -69,33 +67,39 @@ function MainLayout(): ReactElement {
             <UniversalHotKey />
             <DataSubscriber />
             <URLSynchronizer />
-            <AutoSizer disableWidth>
-              {({ height }) => (
-                <ReactGridLayout
-                  className="transition-none layout"
-                  layout={buildLayout(height)}
-                  cols={12}
-                  rowHeight={BASE_HEIGHT}
-                  autoSize={true}
-                  margin={[BASE_SPACE, BASE_SPACE]}
-                  isDraggable={false}
-                  isResizable={false}
-                >
-                  <div key="nav-bar" className="z-30">
-                    <NavBar />
-                  </div>
-                  <div key="sidebar">
-                    <TreeView />
-                  </div>
-                  <div key="main">
-                    <Main />
-                  </div>
-                  <div key="property">
-                    <Property />
-                  </div>
-                </ReactGridLayout>
-              )}
-            </AutoSizer>
+            <AutoSizer
+              style={{ overflow: "visible", height: 0 }}
+              renderProp={({ height, width }) =>
+                height && width ? (
+                  <GridLayout
+                    className="transition-none layout"
+                    layout={buildLayout(height)}
+                    width={width}
+                    gridConfig={{
+                      cols: 12,
+                      rowHeight: BASE_HEIGHT,
+                      margin: [BASE_SPACE, BASE_SPACE],
+                    }}
+                    autoSize={true}
+                    dragConfig={{ enabled: false }}
+                    resizeConfig={{ enabled: false }}
+                  >
+                    <div key="nav-bar" className="z-30">
+                      <NavBar />
+                    </div>
+                    <div key="sidebar">
+                      <TreeView />
+                    </div>
+                    <div key="main">
+                      <Main />
+                    </div>
+                    <div key="property">
+                      <Property />
+                    </div>
+                  </GridLayout>
+                ) : null
+              }
+            />
             <Background />
           </div>
           <div className="flex flex-row justify-end pr-3 text-white bg-gray-400 dark:bg-gray-900">

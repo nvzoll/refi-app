@@ -140,7 +140,7 @@ const SorterList = () => {
             <FieldFinderInput
               value={value}
               onChange={onChange}
-              inputRef={ref as any}
+              inputRef={ref}
             />
           )}
         />

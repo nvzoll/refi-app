@@ -24,23 +24,21 @@ export default class CertService {
     const keyPath = path.join(this.ctx.userDataPath, 'Keys', `${uuidv4()}.json`);
     fs.writeFileSync(keyPath, base64data, { encoding: 'base64' });
     const cert = CertService.parseCertificateFile(keyPath);
-    if (this.ctx.localDB.get('keys').find({ projectId: cert.project_id }).value()) {
+    if (this.ctx.localDB.data.keys.find(key => key.projectId === cert.project_id)) {
       throw new Error('This key is already existed');
     }
 
-    this.ctx.localDB.get('keys')
-      .push({
-        keyPath,
-        projectId: cert.project_id
-      })
-      .write();
+    this.ctx.localDB.data.keys.push({
+      keyPath,
+      projectId: cert.project_id
+    });
+    this.ctx.localDB.write();
 
     return true;
   }
 
   public async getKeys(): Promise<ICertificateData[]> {
-    return this.ctx.localDB.get('keys')
-      .value()
+    return this.ctx.localDB.data.keys
   }
 
   public async removeKey({ projectId }: IRemoveKey): Promise<boolean> {
@@ -53,7 +51,9 @@ export default class CertService {
     } catch (error) {
       // Ignore error
     }
-    await this.ctx.localDB.get('keys').remove({ projectId }).write();
+    const { data } = this.ctx.localDB;
+    data.keys = data.keys.filter(key => key.projectId !== projectId);
+    this.ctx.localDB.write();
     return true;
   }
 }

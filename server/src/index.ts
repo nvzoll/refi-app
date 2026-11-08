@@ -425,7 +425,7 @@ app.whenReady().then(async () => {
   if (isDev) {
     const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
     installExtension(REACT_DEVELOPER_TOOLS)
-      .then((name: string) => log.info(`Added Extension:  ${name}`))
+      .then((extension: { name: string }) => log.info(`Added Extension:  ${extension.name}`))
       .catch((err: any) => log.info('An error occurred: ', err));
   }
 });

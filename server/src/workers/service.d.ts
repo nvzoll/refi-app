@@ -1,4 +1,4 @@
-import Lowdb from 'lowdb';
+import type { LocalStore } from '../client/db';
 
 declare namespace LocalDB {
   interface IKey {
@@ -21,6 +21,6 @@ interface IIpcTransport {
 
 interface IServiceContext {
   userDataPath: string;
-  localDB: Lowdb.LowdbSync<LocalDB.IDatabase>
+  localDB: LocalStore
   ipc: IIpcTransport
 }

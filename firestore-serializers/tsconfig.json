@@ -7,7 +7,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "target": "ES5",
+    "rootDir": "./src",
+    "strict": false,
+    "target": "ES2022",
     "types": ["node"]
   },
   "include": ["src/**/*"],

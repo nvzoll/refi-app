@@ -33,7 +33,7 @@
     "firebase": "^12.19.0",
     "firestore-serializers": "workspace:*",
     "immer": "^11.2.9",
-    "jotai": "^2.20.3",
+    "jotai": "^3.0.1",
     "jotai-family": "^1.1.0",
     "moment": "^2.29.1",
     "monaco-editor": "^0.23.0",
@@ -78,7 +78,7 @@
     "prettier": "^2.2.1",
     "refi-ipc": "workspace:*",
     "tailwindcss": "^4.3.3",
-    "typescript": "~5.9.3",
+    "typescript": "~7.0.2",
     "vite": "^8.3.4"
   }
 }

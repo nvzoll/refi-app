@@ -7,18 +7,14 @@
     "strictFunctionTypes": true,
     "inlineSourceMap": true,
     "inlineSources": true,
-    "baseUrl": ".",
     "outDir": "server",
-    "moduleResolution": "node",
+    "rootDir": "./src",
+    "strict": false,
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "types": ["node"],
-    "paths": {
-      "*": [
-        "node_modules/*"
-      ]
-    }
+    "types": ["node"]
   },
   "include": [
     "src/**/*"

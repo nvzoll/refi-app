@@ -23,7 +23,7 @@
   "devDependencies": {
     "firebase-admin": "14.5.0",
     "firebase-tools": "15.33.0",
-    "typescript": "~5.9.3"
+    "typescript": "~7.0.2"
   },
   "dependencies": {
     "es-toolkit": "^1.53.1",

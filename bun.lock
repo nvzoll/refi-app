@@ -48,7 +48,7 @@
       "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^2.18.0",
         "@typescript-eslint/parser": "^2.18.0",
-        "electron": "44.7.1",
+        "electron": "45.2.3",
         "electron-builder": "^23.0.3",
         "electron-devtools-installer": "^4.0.0",
         "electron-notarize": "^1.0.0",
@@ -985,7 +985,7 @@
 
     "ejs": ["ejs@3.1.8", "", { "dependencies": { "jake": "^10.8.5" }, "bin": "bin/cli.js" }, "sha512-/sXZeMlhS0ArkfX2Aw780gJzXSMPnKjtspYZv+f3NiKLlubezAHDU5+9xz6gd3/NhG3txQCo6xlglmTS+oTGEQ=="],
 
-    "electron": ["electron@44.7.1", "", { "dependencies": { "@electron-internal/extract-zip": "^1.0.1", "@electron/get": "^5.0.0", "@types/node": "^24.9.0" }, "bin": { "electron": "cli.js", "install-electron": "install.js" } }, "sha512-41b08f4Lq55NiH2UzLaE4WMdW3ufFfln3sAVeXpnRrFbzOwBZckK3XpxlMvPcgHbNNApYiOr3r3hMD+Oyrq2dw=="],
+    "electron": ["electron@45.2.3", "", { "dependencies": { "@electron-internal/extract-zip": "^1.0.1", "@electron/get": "^5.0.0", "@types/node": "^24.9.0" }, "bin": { "electron": "cli.js", "install-electron": "install.js" } }, "sha512-Vurzu5UOA5nTGT4LqIwXD16QFGrOZdiXxF+1UP4KNsAOo/YtDcT3/u0jhP4WSwNJ0iLrLDi85hzBJ0arnGDhyw=="],
 
     "electron-builder": ["electron-builder@23.0.3", "", { "dependencies": { "@types/yargs": "^17.0.1", "app-builder-lib": "23.0.3", "builder-util": "23.0.2", "builder-util-runtime": "9.0.0", "chalk": "^4.1.1", "dmg-builder": "23.0.3", "fs-extra": "^10.0.0", "is-ci": "^3.0.0", "lazy-val": "^1.0.5", "read-config-file": "6.2.0", "update-notifier": "^5.1.0", "yargs": "^17.0.1" }, "bin": { "electron-builder": "cli.js", "install-app-deps": "install-app-deps.js" } }, "sha512-0lnTsljAgcOMuIiOjPcoFf+WxOOe/O04hZPgIvvUBXIbz3kolbNu0Xdch1f5WuQ40NdeZI7oqs8Eo395PcuGHQ=="],
 

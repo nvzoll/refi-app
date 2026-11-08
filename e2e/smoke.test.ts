@@ -78,8 +78,11 @@ test("edits, sorts, filters, imports and deletes documents on the emulator", asy
     const jsonEditor = page.getByRole("textbox", { name: "Editor content" });
     await jsonEditor.focus();
     await page.keyboard.press("Control+Home");
-    await page.keyboard.type("x");
+    await page.keyboard.type('"__Timestamp__"');
     await expect(page.getByText(/^Line 1: /)).toBeVisible();
+    await expect(
+      page.locator(".monaco-editor .view-line span span", { hasText: /^__Timestamp__$/ })
+    ).toHaveCSS("font-weight", "700");
     await page.keyboard.press("Control+z");
     await expect(page.getByText(/^Line 1: /)).not.toBeVisible();
 

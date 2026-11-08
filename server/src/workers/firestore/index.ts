@@ -49,7 +49,7 @@ export default class FireStoreService {
       return collections.map(collection => collection.path)
     }
 
-    const key = this.ctx.localDB.get('keys').find({ projectId }).value();
+    const key = this.ctx.localDB.data.keys.find(entry => entry.projectId === projectId);
     if (!key) {
       throw new Error('We do not have credentials for this project')
     }

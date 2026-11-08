@@ -1,26 +1,31 @@
-import low from 'lowdb';
-import FileSync from 'lowdb/adapters/FileSync';
 import fs from 'fs';
 import path from 'path';
 import log from 'electron-log';
 import { LocalDB } from '../workers/service';
 
-const db = (userDataPath: string) => {
+export interface LocalStore {
+  data: LocalDB.IDatabase;
+  write: () => void;
+}
+
+const db = (userDataPath: string): LocalStore => {
   const dbFolderPath = path.join(userDataPath, 'DB');
   const dbPath = path.join(dbFolderPath, 'db.json');
 
-  // Create folder
   fs.mkdirSync(dbFolderPath, { recursive: true });
-  fs.closeSync(fs.openSync(dbPath, 'a'));
   log.info('Created db file');
 
-  const adapter = new FileSync<LocalDB.IDatabase>(dbPath)
-  const dbInstance = low(adapter)
+  const text = fs.existsSync(dbPath) ? fs.readFileSync(dbPath, 'utf-8').trim() : '';
+  const data: LocalDB.IDatabase = { keys: [], ...(text ? JSON.parse(text) : {}) };
 
-  dbInstance.defaults({ keys: [] })
-    .write();
-
-  return dbInstance;
+  return {
+    data,
+    write: () => {
+      const tempPath = `${dbPath}.tmp`;
+      fs.writeFileSync(tempPath, JSON.stringify(data, null, 2));
+      fs.renameSync(tempPath, dbPath);
+    },
+  };
 }
 
 export default db;

@@ -74,6 +74,15 @@ test("edits, sorts, filters, imports and deletes documents on the emulator", asy
       .poll(async () => (await firestore.doc("smoke/doc1").get()).data())
       .toEqual({ name: "after", count: 1 });
 
+    await page.getByRole("cell", { name: "after" }).getByRole("textbox").click();
+    const jsonEditor = page.getByRole("textbox", { name: "Editor content" });
+    await jsonEditor.focus();
+    await page.keyboard.press("Control+Home");
+    await page.keyboard.type("x");
+    await expect(page.getByText(/^Line 1: /)).toBeVisible();
+    await page.keyboard.press("Control+z");
+    await expect(page.getByText(/^Line 1: /)).not.toBeVisible();
+
     const nameHeader = page.getByRole("table").locator("th").getByText("name", { exact: true });
     const firstRow = page.getByRole("row").filter({ has: page.getByRole("cell") }).first();
     await nameHeader.click();

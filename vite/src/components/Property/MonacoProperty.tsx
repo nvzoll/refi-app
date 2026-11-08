@@ -95,11 +95,7 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
   }, [doc.ref.path]);
 
   useEffect(() => {
-    // If user is editing on monaco editor. Do not sync outside value to it
-    // TODO: Check if new version of monaco change this div className
-    if (
-      !document.activeElement?.classList.contains("monaco-mouse-cursor-text")
-    ) {
+    if (!editorView.current?.hasTextFocus()) {
       setDefaultValue(serializeData(doc));
       setError("");
     }

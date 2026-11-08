@@ -1,6 +1,11 @@
 import { configure } from "react-hotkeys";
 import { loader } from "@monaco-editor/react";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+import * as monaco from "monaco-editor/editor";
+import "monaco-editor/features/register.all";
+import "monaco-editor/editor/contrib/semanticTokens/browser/documentSemanticTokens";
+import "monaco-editor/languages/features/json/register";
+import EditorWorker from "monaco-editor/editor/editor.worker?worker";
+import JsonWorker from "monaco-editor/languages/features/json/json.worker?worker";
 
 /**
  * Config react-hotkeys
@@ -13,11 +18,12 @@ configure({
 /**
  * Config monaco-editor
  */
-loader.config({
-  paths: {
-    vs: "/vs",
-  },
-});
+self.MonacoEnvironment = {
+  getWorker: (_, label) =>
+    label === "json" ? new JsonWorker() : new EditorWorker(),
+};
+
+loader.config({ monaco });
 
 function createDependencyProposals(range: monaco.IRange) {
   return [
@@ -89,104 +95,101 @@ function getType(type: string) {
   return legend.tokenTypes.indexOf(type);
 }
 
-// Try to preload the editor
-loader.init().then((monaco) => {
-  monaco.languages.registerDocumentSemanticTokensProvider("json", {
-    getLegend: function () {
-      return legend;
-    },
-    provideDocumentSemanticTokens: function (model, lastResultId, token) {
-      const lines = model.getLinesContent();
+monaco.languages.registerDocumentSemanticTokensProvider("json", {
+  getLegend: function () {
+    return legend;
+  },
+  provideDocumentSemanticTokens: function (model, lastResultId, token) {
+    const lines = model.getLinesContent();
 
-      /** @type {number[]} */
-      const data: any[] = [];
+    /** @type {number[]} */
+    const data: any[] = [];
 
-      let prevLine = 0;
-      let prevChar = 0;
+    let prevLine = 0;
+    let prevChar = 0;
 
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
 
-        for (
-          let match: null | RegExpExecArray = null;
-          (match = tokenPattern.exec(line));
+      for (
+        let match: null | RegExpExecArray = null;
+        (match = tokenPattern.exec(line));
 
-        ) {
-          // translate token and modifiers to number representations
-          const type = getType(match[0]);
-          if (type === -1) {
-            continue;
-          }
-          const modifier = 0;
-
-          data.push(
-            // translate line to deltaLine
-            i - prevLine,
-            // for the same line, translate start to deltaStart
-            prevLine === i ? match.index - prevChar : match.index,
-            match[0].length,
-            type,
-            modifier
-          );
-
-          prevLine = i;
-          prevChar = match.index;
+      ) {
+        // translate token and modifiers to number representations
+        const type = getType(match[0]);
+        if (type === -1) {
+          continue;
         }
+        const modifier = 0;
+
+        data.push(
+          // translate line to deltaLine
+          i - prevLine,
+          // for the same line, translate start to deltaStart
+          prevLine === i ? match.index - prevChar : match.index,
+          match[0].length,
+          type,
+          modifier
+        );
+
+        prevLine = i;
+        prevChar = match.index;
       }
-      return {
-        data: new Uint32Array(data),
-        resultId: undefined,
-      };
+    }
+    return {
+      data: new Uint32Array(data),
+      resultId: undefined,
+    };
+  },
+  releaseDocumentSemanticTokens: function (resultId) {
+    return;
+  },
+});
+monaco.editor.defineTheme("monacoProperty-light", {
+  base: "vs",
+  inherit: true,
+  colors: {},
+  rules: [
+    { token: "__GeoPoint__", foreground: "0000ff", fontStyle: "bold" },
+    {
+      token: "__DocumentReference__",
+      foreground: "0000ff",
+      fontStyle: "bold",
     },
-    releaseDocumentSemanticTokens: function (resultId) {
-      return;
+    { token: "__Timestamp__", foreground: "0000ff", fontStyle: "bold" },
+  ],
+});
+
+monaco.editor.defineTheme("monacoProperty-dark", {
+  base: "vs-dark",
+  inherit: true,
+  colors: {},
+  rules: [
+    { token: "__GeoPoint__", foreground: "0000ff", fontStyle: "bold" },
+    {
+      token: "__DocumentReference__",
+      foreground: "0000ff",
+      fontStyle: "bold",
     },
-  });
-  monaco.editor.defineTheme("monacoProperty-light", {
-    base: "vs",
-    inherit: true,
-    colors: {},
-    rules: [
-      { token: "__GeoPoint__", foreground: "0000ff", fontStyle: "bold" },
-      {
-        token: "__DocumentReference__",
-        foreground: "0000ff",
-        fontStyle: "bold",
-      },
-      { token: "__Timestamp__", foreground: "0000ff", fontStyle: "bold" },
-    ],
-  });
+    { token: "__Timestamp__", foreground: "0000ff", fontStyle: "bold" },
+  ],
+});
 
-  monaco.editor.defineTheme("monacoProperty-dark", {
-    base: "vs-dark",
-    inherit: true,
-    colors: {},
-    rules: [
-      { token: "__GeoPoint__", foreground: "0000ff", fontStyle: "bold" },
-      {
-        token: "__DocumentReference__",
-        foreground: "0000ff",
-        fontStyle: "bold",
-      },
-      { token: "__Timestamp__", foreground: "0000ff", fontStyle: "bold" },
-    ],
-  });
+monaco.languages.registerCompletionItemProvider("json", {
+  provideCompletionItems: function (model, position) {
+    const word = model.getWordUntilPosition(position);
+    const range = {
+      startLineNumber: position.lineNumber,
+      endLineNumber: position.lineNumber,
+      startColumn: word.startColumn,
+      endColumn: word.endColumn,
+    };
 
-  monaco.languages.registerCompletionItemProvider("json", {
-    provideCompletionItems: function (model, position) {
-      const word = model.getWordUntilPosition(position);
-      const range = {
-        startLineNumber: position.lineNumber,
-        endLineNumber: position.lineNumber,
-        startColumn: word.startColumn,
-        endColumn: word.endColumn,
-      };
-
-      return {
-        suggestions: createDependencyProposals(range),
-      };
-    },
-  });
+    return {
+      suggestions: createDependencyProposals(range),
+    };
+  },
 });
 
 export default {};

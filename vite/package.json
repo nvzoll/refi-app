@@ -36,7 +36,7 @@
     "jotai": "^3.0.1",
     "jotai-family": "^1.1.0",
     "moment": "^2.29.1",
-    "monaco-editor": "^0.23.0",
+    "monaco-editor": "^0.57.0",
     "object-path-immutable": "^4.1.1",
     "react": "18.3.1",
     "react-beautiful-dnd": "^13.1.1",

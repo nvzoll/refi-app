@@ -118,9 +118,8 @@ const PreviousButton = () => {
 const Filters = () => {
   const collectionPath = useAtomValue(navigatorCollectionPathAtom);
   const queryOptions = useAtomValue(querierAtom(collectionPath));
-  const [isShowPropertyList, setShowPropertyList] = useAtom(
-    isModalPickProperty
-  );
+  const [isShowPropertyList, setShowPropertyList] =
+    useAtom(isModalPickProperty);
 
   const totalDocs = useAtomValue(totalDocsWithQueryAtom(collectionPath));
 

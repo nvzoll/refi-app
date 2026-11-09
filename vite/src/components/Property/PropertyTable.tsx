@@ -93,21 +93,16 @@ const PropertyTable = ({ searchInput, doc }: IPropertyTableProps) => {
     return [];
   }, [doc, searchInput]);
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
-    {
-      columns: propertyColumns,
-      data: fieldData,
-      autoResetExpanded: false,
-      // getSubRows,
-    } as any,
-    useExpanded // Use the useExpanded plugin hook
-  );
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns: propertyColumns,
+        data: fieldData,
+        autoResetExpanded: false,
+        // getSubRows,
+      } as any,
+      useExpanded // Use the useExpanded plugin hook
+    );
 
   const handleAddProperty = useCallback(() => {
     const fieldAtomInstance = fieldAtom(

@@ -229,10 +229,7 @@ export const globalHotKeys: IGlobalHotKeys = {
   },
 };
 
-type IGlobalHotKeysHandler = Record<
-  string,
-  IGlobalHotKeys[string]["handler"]
->;
+type IGlobalHotKeysHandler = Record<string, IGlobalHotKeys[string]["handler"]>;
 
 export const globalHotKeysHandler: IGlobalHotKeysHandler = Object.keys(
   globalHotKeys

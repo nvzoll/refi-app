@@ -1,4 +1,4 @@
-import log from 'electron-log';
+import log from "electron-log";
 import { Timestamp } from "firebase-admin/firestore";
 import { itemIsTimestamp } from "firestore-serializers";
 
@@ -29,26 +29,33 @@ export const getParentPath = (url: string) => {
 };
 
 export const isRangeFilter = (operator: string) => {
-  return ["<", "<=", ">", ">="].includes(operator)
-}
+  return ["<", "<=", ">", ">="].includes(operator);
+};
 
 export const parseEmulatorConnection = (connectionString: string) => {
   const [connection, projectId] = connectionString.split("_connect_");
-  const [host, port] = connection.split(':');
+  const [host, port] = connection.split(":");
   if (!host || !port) {
-    throw new Error('The right connection format is host:port. Eg: 127.0.0.1:8080')
+    throw new Error(
+      "The right connection format is host:port. Eg: 127.0.0.1:8080"
+    );
   }
-  return { host, port, projectId }
-}
+  return { host, port, projectId };
+};
 
 export const convertFirebaseType = (input: any): any => {
   if (Array.isArray(input)) {
-    return input.map(row => convertFirebaseType(row));
+    return input.map((row) => convertFirebaseType(row));
   }
 
-  if (input.seconds && input.nanoseconds && !Number.isNaN(input.seconds) && !Number.isNaN(input.nanoseconds)) {
-    return new Timestamp(input.seconds, input.nanoseconds)
+  if (
+    input.seconds &&
+    input.nanoseconds &&
+    !Number.isNaN(input.seconds) &&
+    !Number.isNaN(input.nanoseconds)
+  ) {
+    return new Timestamp(input.seconds, input.nanoseconds);
   }
 
   return input;
-}
+};

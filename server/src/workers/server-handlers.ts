@@ -1,9 +1,9 @@
 import type { WorkerRequests } from "refi-ipc";
 import { send } from "./server-ipc";
-import db from '../client/db';
-import { IServiceContext } from './service';
-import FireStoreService from './firestore';
-import CertService from './cert';
+import db from "../client/db";
+import { IServiceContext } from "./service";
+import FireStoreService from "./firestore";
+import CertService from "./cert";
 
 const userDataPath = process.cwd();
 
@@ -12,16 +12,18 @@ const ctx: IServiceContext = {
   userDataPath,
   localDB: db(userDataPath),
   ipc: {
-    send
-  }
-}
+    send,
+  },
+};
 
 // Init service
 const certService = new CertService(ctx);
 const fsService = new FireStoreService(ctx);
 
 const handlers: {
-  [Name in keyof WorkerRequests]: (args: WorkerRequests[Name]["args"]) => Promise<WorkerRequests[Name]["result"]>
+  [Name in keyof WorkerRequests]: (
+    args: WorkerRequests[Name]["args"]
+  ) => Promise<WorkerRequests[Name]["result"]>;
 } = {
   "cert.storeKey": certService.storeKey.bind(certService),
   "cert.getKeys": certService.getKeys.bind(certService),

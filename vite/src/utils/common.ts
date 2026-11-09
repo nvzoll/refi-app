@@ -294,7 +294,8 @@ export function isArrayOp(
 export function linkify(inputText: string) {
   let replacedText: string;
   //URLs starting with http://, https://, or ftp://
-  const replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+  const replacePattern1 =
+    /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
   replacedText = inputText.replace(
     replacePattern1,
     '<a href="$1" target="_blank">$1</a>'
@@ -308,7 +309,8 @@ export function linkify(inputText: string) {
   );
 
   //Change email addresses to mailto:: links.
-  const replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+  const replacePattern3 =
+    /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
   replacedText = replacedText.replace(
     replacePattern3,
     '<a href="mailto:$1">$1</a>'

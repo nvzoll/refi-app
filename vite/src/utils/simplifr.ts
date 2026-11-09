@@ -103,7 +103,7 @@ function simplifyNode(
 
     if (Array.isArray(obj)) {
       data[path].type = "array";
-      for (let i = -1, l = obj.length; ++i < l; ) {
+      for (let i = -1, l = obj.length; ++i < l;) {
         data[path].childs.push(i);
         dive(obj[i], path + dilimiter + i);
       }

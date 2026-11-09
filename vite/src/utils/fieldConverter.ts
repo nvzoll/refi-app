@@ -81,10 +81,7 @@ export const fieldConverter: Record<
       case "geopoint": {
         const coords = getGeoPointCoords(value);
         if (coords) {
-          return new GeoPoint(
-            coords.latitude,
-            coords.longitude
-          );
+          return new GeoPoint(coords.latitude, coords.longitude);
         }
 
         return null;
@@ -109,10 +106,7 @@ export const fieldConverter: Record<
   null: () => {
     return null;
   },
-  timestamp: (
-    toType: RefiFS.IFieldType,
-    value: Timestamp
-  ) => {
+  timestamp: (toType: RefiFS.IFieldType, value: Timestamp) => {
     switch (toType) {
       case "string":
         return value.toDate().toISOString();
@@ -122,10 +116,7 @@ export const fieldConverter: Record<
         return null;
     }
   },
-  geopoint: (
-    toType: RefiFS.IFieldType,
-    value: GeoPoint
-  ) => {
+  geopoint: (toType: RefiFS.IFieldType, value: GeoPoint) => {
     switch (toType) {
       case "string":
         return `${value.latitude},${value.longitude}`;

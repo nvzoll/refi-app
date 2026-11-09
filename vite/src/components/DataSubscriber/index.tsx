@@ -79,29 +79,17 @@ const DataSubscriber = () => {
         // }
 
         const addedDocs = ClientDocumentSnapshot.transformFromFirebase(
-          deserializeDocumentSnapshotArray(
-            addedData,
-            GeoPoint,
-            Timestamp
-          ),
+          deserializeDocumentSnapshotArray(addedData, GeoPoint, Timestamp),
           queryVersion
         );
 
         const modifiedDocs = ClientDocumentSnapshot.transformFromFirebase(
-          deserializeDocumentSnapshotArray(
-            modifiedData,
-            GeoPoint,
-            Timestamp
-          ),
+          deserializeDocumentSnapshotArray(modifiedData, GeoPoint, Timestamp),
           queryVersion
         );
 
         const removedDocs = ClientDocumentSnapshot.transformFromFirebase(
-          deserializeDocumentSnapshotArray(
-            removedData,
-            GeoPoint,
-            Timestamp
-          ),
+          deserializeDocumentSnapshotArray(removedData, GeoPoint, Timestamp),
           queryVersion
         );
 
@@ -173,11 +161,7 @@ const DataSubscriber = () => {
         switch (type) {
           case "added":
             const addedDocs = ClientDocumentSnapshot.transformFromFirebase(
-              deserializeDocumentSnapshotArray(
-                docs,
-                GeoPoint,
-                Timestamp
-              ),
+              deserializeDocumentSnapshotArray(docs, GeoPoint, Timestamp),
               queryVersion
             ).filter(
               (doc) => getCollectionPath(doc.ref.path) !== collectionPath
@@ -187,11 +171,7 @@ const DataSubscriber = () => {
             break;
           case "modified":
             const modifiedDocs = ClientDocumentSnapshot.transformFromFirebase(
-              deserializeDocumentSnapshotArray(
-                docs,
-                GeoPoint,
-                Timestamp
-              ),
+              deserializeDocumentSnapshotArray(docs, GeoPoint, Timestamp),
               queryVersion
             ).filter(
               (doc) => getCollectionPath(doc.ref.path) !== collectionPath

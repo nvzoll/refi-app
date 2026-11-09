@@ -15,11 +15,11 @@ function getAllFiles(dirPath, arrayOfFiles) {
     }
   });
 
-  return arrayOfFiles.filter(path => path.match(/\.js$/));
+  return arrayOfFiles.filter((path) => path.match(/\.js$/));
 }
 
 function minifyFiles(filePaths) {
-  filePaths.forEach(async filePath => {
+  filePaths.forEach(async (filePath) => {
     fs.writeFileSync(
       filePath,
       (await Terser.minify(fs.readFileSync(filePath, "utf8"))).code

@@ -94,10 +94,10 @@ const Commander = () => {
     return filtered;
   }, [filteredCommands]);
 
-  const currentOption = useMemo(() => options[activeOption], [
-    activeOption,
-    options,
-  ]);
+  const currentOption = useMemo(
+    () => options[activeOption],
+    [activeOption, options]
+  );
 
   useEffect(() => {
     if (!currentOption) {

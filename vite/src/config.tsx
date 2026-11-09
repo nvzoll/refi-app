@@ -114,7 +114,6 @@ monaco.languages.registerDocumentSemanticTokensProvider("json", {
       for (
         let match: null | RegExpExecArray = null;
         (match = tokenPattern.exec(line));
-
       ) {
         // translate token and modifiers to number representations
         const type = getType(match[0]);

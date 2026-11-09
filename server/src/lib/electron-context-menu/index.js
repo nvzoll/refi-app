@@ -11,15 +11,13 @@ class ContextMenu {
   }
 
   mainBindings(ipcMain, view, mainWindow, Menu, isDevelopment, templates) {
-
     view.webContents.on("context-menu", (event, params) => {
       view.webContents.send(contextMenuRequest, {
-        params
+        params,
       });
     });
 
     ipcMain.on(contextMenuResponse, (IpcMainEvent, args) => {
-
       // id prepend; if we have a list of common elements,
       // certain bindings may not work because each element would have
       // registered for the same event name. In these cases, prepend each
@@ -29,27 +27,34 @@ class ContextMenu {
       const cleanedTemplatesKey = `${idPrepend}${args.template}`;
 
       let generatedContextMenu;
-      if (args.template === null || typeof this.cleanedTemplates[cleanedTemplatesKey] === "undefined") {
-
-        generatedContextMenu = templates[args.template] ? cloneDeep(templates[args.template]) : [];
+      if (
+        args.template === null ||
+        typeof this.cleanedTemplates[cleanedTemplatesKey] === "undefined"
+      ) {
+        generatedContextMenu = templates[args.template]
+          ? cloneDeep(templates[args.template])
+          : [];
         if (isDevelopment) {
           generatedContextMenu.push({
             label: "Inspect element",
             click: () => {
               view.webContents.inspectElement(args.params.x, args.params.y);
-            }
+            },
           });
         }
 
         if (args.template !== null) {
-
           for (let i = 0; i < generatedContextMenu.length; i++) {
             if (typeof generatedContextMenu[i]["click"] === "undefined") {
-              generatedContextMenu[i].click = function (event, window, webContents) {
+              generatedContextMenu[i].click = function (
+                event,
+                window,
+                webContents
+              ) {
                 view.webContents.send(contextMenuClicked, {
-                  id: `${idPrepend}${(generatedContextMenu[i].id || generatedContextMenu[i].label)}`
+                  id: `${idPrepend}${generatedContextMenu[i].id || generatedContextMenu[i].label}`,
                 });
-              }
+              };
             }
           }
         }
@@ -58,7 +63,9 @@ class ContextMenu {
       }
       generatedContextMenu = this.cleanedTemplates[cleanedTemplatesKey];
 
-      Menu.buildFromTemplate(generatedContextMenu).popup({ window: mainWindow });
+      Menu.buildFromTemplate(generatedContextMenu).popup({
+        window: mainWindow,
+      });
     });
   }
 

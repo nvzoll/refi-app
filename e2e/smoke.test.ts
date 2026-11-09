@@ -46,6 +46,7 @@ test("edits, sorts, filters, imports and deletes documents on the emulator", asy
     args: [`--user-data-dir=${userDataDir}`, "."],
     cwd: serverDir,
     env: { ...(process.env as Record<string, string>), ELECTRON_IS_DEV: "0" },
+    chromiumSandbox: true,
   });
 
   try {

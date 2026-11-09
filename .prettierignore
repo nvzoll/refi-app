@@ -1,0 +1,6 @@
+server/server
+server/build
+server/dist
+firestore-serializers/dist
+vite/dist
+e2e/test-results

@@ -53,6 +53,13 @@ bun run build
 
 This runs the Vite build, copies `vite/dist` into `server/build`, and compiles the server TypeScript.
 
+### Package electron app
+
+```
+bun run --cwd server package
+bun run --cwd server release
+```
+
 ## Lint, format and typecheck
 
 Run from the root:
@@ -64,10 +71,3 @@ bun run typecheck
 ```
 
 `bun run format` rewrites the files in place. oxlint reports the findings that existed when it replaced ESLint as warnings, so only new correctness problems fail the lint script.
-
-### Package electron app
-
-```
-bun run --cwd server package
-bun run --cwd server release
-```

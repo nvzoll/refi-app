@@ -35,6 +35,6 @@
   "devDependencies": {
     "oxlint": "^1.93.0",
     "oxlint-tsgolint": "^7.0.2006",
-    "prettier": "^3"
+    "prettier": "^3.9.10"
   }
 }

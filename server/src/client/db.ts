@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import log from 'electron-log';
-import { LocalDB } from '../workers/service';
+import fs from "fs";
+import path from "path";
+import log from "electron-log";
+import { LocalDB } from "../workers/service";
 
 export interface LocalStore {
   data: LocalDB.IDatabase;
@@ -9,14 +9,19 @@ export interface LocalStore {
 }
 
 const db = (userDataPath: string): LocalStore => {
-  const dbFolderPath = path.join(userDataPath, 'DB');
-  const dbPath = path.join(dbFolderPath, 'db.json');
+  const dbFolderPath = path.join(userDataPath, "DB");
+  const dbPath = path.join(dbFolderPath, "db.json");
 
   fs.mkdirSync(dbFolderPath, { recursive: true });
-  log.info('Created db file');
+  log.info("Created db file");
 
-  const text = fs.existsSync(dbPath) ? fs.readFileSync(dbPath, 'utf-8').trim() : '';
-  const data: LocalDB.IDatabase = { keys: [], ...(text ? JSON.parse(text) : {}) };
+  const text = fs.existsSync(dbPath)
+    ? fs.readFileSync(dbPath, "utf-8").trim()
+    : "";
+  const data: LocalDB.IDatabase = {
+    keys: [],
+    ...(text ? JSON.parse(text) : {}),
+  };
 
   return {
     data,
@@ -26,6 +31,6 @@ const db = (userDataPath: string): LocalStore => {
       fs.renameSync(tempPath, dbPath);
     },
   };
-}
+};
 
 export default db;

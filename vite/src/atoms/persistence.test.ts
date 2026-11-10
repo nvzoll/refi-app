@@ -41,15 +41,12 @@ storage.set(
   })
 );
 
-const { ClientDocumentSnapshot } = await import(
-  "@/types/ClientDocumentSnapshot"
-);
-const { collectionAtom, docAtom, docsLibraryAtom } = await import(
-  "./firestore"
-);
-const { propertyListAtom, propertyListCoreAtom, querierAtom } = await import(
-  "./navigator"
-);
+const { ClientDocumentSnapshot } =
+  await import("@/types/ClientDocumentSnapshot");
+const { collectionAtom, docAtom, docsLibraryAtom } =
+  await import("./firestore");
+const { propertyListAtom, propertyListCoreAtom, querierAtom } =
+  await import("./navigator");
 const { defaultEditorAtom, emulatorProjectId } = await import("./ui");
 const { appThemeAtom } = await import("./ui.action");
 

@@ -1,10 +1,10 @@
 export const needConfirm = {
-  value: false
+  value: false,
 };
 
 export const shouldConfirm = () => needConfirm.value;
 
 export const setConfirmReload = (confirm: boolean) => {
   needConfirm.value = confirm;
-  console.log(needConfirm)
-}
+  console.log(needConfirm);
+};

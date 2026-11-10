@@ -1,4 +1,4 @@
-import type { LocalStore } from '../client/db';
+import type { LocalStore } from "../client/db";
 
 declare namespace LocalDB {
   interface IKey {
@@ -12,15 +12,15 @@ declare namespace LocalDB {
 }
 
 interface ISendOption {
-  firestore: boolean
+  firestore: boolean;
 }
 
 interface IIpcTransport {
-  send: (topic: string, arg: any, option?: ISendOption) => void
+  send: (topic: string, arg: any, option?: ISendOption) => void;
 }
 
 interface IServiceContext {
   userDataPath: string;
-  localDB: LocalStore
-  ipc: IIpcTransport
+  localDB: LocalStore;
+  ipc: IIpcTransport;
 }

@@ -122,7 +122,10 @@ export interface WorkerRequests {
   "cert.removeKey": { args: IRemoveKey; result: boolean };
   "fs.init": { args: IFSInit; result: string[] };
   "fs.queryDoc.subscribe": { args: IDocSubscribe; result: IListenerKey };
-  "fs.queryCollection.subscribe": { args: ICollectionSubscribe; result: IListenerKey };
+  "fs.queryCollection.subscribe": {
+    args: ICollectionSubscribe;
+    result: IListenerKey;
+  };
   "fs.pathExplorer.subscribe": { args: IPathSubscribe; result: IListenerKey };
   "fs.updateDocs": { args: IUpdateDocs; result: boolean };
   "fs.addDoc": { args: IAddDoc; result: string };
@@ -130,7 +133,10 @@ export interface WorkerRequests {
   "fs.deleteDocs": { args: IRemoveDocs; result: boolean };
   "fs.deleteCollections": { args: IRemoveCollections; result: boolean };
   "fs.importDocs": { args: IImportDocs; result: boolean };
-  "fs.exportCollection": { args: IExportCollection; result: IExportCollectionResponse };
+  "fs.exportCollection": {
+    args: IExportCollection;
+    result: IExportCollectionResponse;
+  };
   "fs.getDocs": { args: IGetDocs; result: string };
   "fs.unsubscribe": { args: IListenerKey; result: boolean };
   "fs.pathExpander": { args: IPathExpander; result: string[] };

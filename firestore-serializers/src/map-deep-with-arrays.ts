@@ -1,89 +1,104 @@
 import { cloneDeep, flattenDeep, get, isObject, set } from "es-toolkit/compat";
-import type { DocumentReference, GeoPoint, Timestamp } from "firebase/firestore";
-import {itemIsDocumentReference, itemIsGeoPoint, itemIsTimestamp, serialItemIsSpecial} from "./firestore-identifiers";
+import type {
+  DocumentReference,
+  GeoPoint,
+  Timestamp,
+} from "firebase/firestore";
+import {
+  itemIsDocumentReference,
+  itemIsGeoPoint,
+  itemIsTimestamp,
+  serialItemIsSpecial,
+} from "./firestore-identifiers";
 
-type DataMappedValue = string | number | boolean | MappedData | DataMappedValue[];
+type DataMappedValue =
+  string | number | boolean | MappedData | DataMappedValue[];
 
-type DataUnmappedValue = string | number | boolean | UnmappedData | DataUnmappedValue[] |
-    DocumentReference | Timestamp | GeoPoint;
+type DataUnmappedValue =
+  | string
+  | number
+  | boolean
+  | UnmappedData
+  | DataUnmappedValue[]
+  | DocumentReference
+  | Timestamp
+  | GeoPoint;
 
 export type UnmappedData = {
-    [key: string]: DataUnmappedValue
-}
+  [key: string]: DataUnmappedValue;
+};
 
 export type MappedData = {
-    [key: string]: DataMappedValue;
-}
+  [key: string]: DataMappedValue;
+};
 
 type RecursiveStringArray = string | RecursiveStringArray[];
 
 function isLeafValue(item: any): boolean {
-    return itemIsDocumentReference(item)
-        || itemIsTimestamp(item)
-        || itemIsGeoPoint(item)
-        || serialItemIsSpecial(item);
+  return (
+    itemIsDocumentReference(item) ||
+    itemIsTimestamp(item) ||
+    itemIsGeoPoint(item) ||
+    serialItemIsSpecial(item)
+  );
 }
 
 function getDeepListOfKeysWithoutInvadingFirebaseProperties(
-    object: {
-        [key: string]: any
-    },
-    prefix: string = ''
+  object: {
+    [key: string]: any;
+  },
+  prefix: string = ""
 ): string[] {
-    let keysList: RecursiveStringArray[] = [];
+  let keysList: RecursiveStringArray[] = [];
 
-    for(const key in object) {
-        if(object.hasOwnProperty(key)) {
-            const item = object[key];
-            const prefixKeyWith = prefix === '' ? '' : prefix + '.';
+  for (const key in object) {
+    if (object.hasOwnProperty(key)) {
+      const item = object[key];
+      const prefixKeyWith = prefix === "" ? "" : prefix + ".";
 
-            if(isObject(item)) {
-                if(!isLeafValue(item)) {
-                    keysList.push(
-                        getDeepListOfKeysWithoutInvadingFirebaseProperties(
-                            item,
-                            prefixKeyWith + key
-                        ));
-                } else {
-                    keysList.push(
-                        prefixKeyWith + key
-                    );
-                }
-            } else {
-                keysList.push(
-                    prefixKeyWith + key
-                );
-            }
+      if (isObject(item)) {
+        if (!isLeafValue(item)) {
+          keysList.push(
+            getDeepListOfKeysWithoutInvadingFirebaseProperties(
+              item,
+              prefixKeyWith + key
+            )
+          );
+        } else {
+          keysList.push(prefixKeyWith + key);
         }
+      } else {
+        keysList.push(prefixKeyWith + key);
+      }
     }
+  }
 
-    return flattenDeep(keysList);
+  return flattenDeep(keysList);
 }
 
 export function mapDeepWithArrays(
-    object: MappedData | DataMappedValue[],
-    callback: (item: DataMappedValue) => DataUnmappedValue
+  object: MappedData | DataMappedValue[],
+  callback: (item: DataMappedValue) => DataUnmappedValue
 ): UnmappedData;
-export function mapDeepWithArrays
-(
-    object: UnmappedData | DataUnmappedValue[],
-    callback: (item: any) => DataMappedValue
+export function mapDeepWithArrays(
+  object: UnmappedData | DataUnmappedValue[],
+  callback: (item: any) => DataMappedValue
 ): MappedData {
-    const clonedObject = cloneDeep(object);
-    const keys = getDeepListOfKeysWithoutInvadingFirebaseProperties(object);
+  const clonedObject = cloneDeep(object);
+  const keys = getDeepListOfKeysWithoutInvadingFirebaseProperties(object);
 
-    for(const key of keys) {
-        const item = get(clonedObject, key);
-        let newItem = cloneDeep(item);
+  for (const key of keys) {
+    const item = get(clonedObject, key);
+    let newItem = cloneDeep(item);
 
-        if(Array.isArray(item)) {
-            newItem = mapDeepWithArrays(item, callback);
-        } else {
-            newItem = callback(item);
-        }
-
-        set(clonedObject, key, newItem);
+    if (Array.isArray(item)) {
+      newItem = mapDeepWithArrays(item, callback);
+    } else {
+      newItem = callback(item);
     }
 
-    return clonedObject as MappedData;
+    set(clonedObject, key, newItem);
+  }
+
+  return clonedObject as MappedData;
 }

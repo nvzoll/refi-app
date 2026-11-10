@@ -26,6 +26,15 @@
     "build": "bun run build:serializers && bun run --cwd vite build && bun run --cwd server copy-fe && bun run --cwd server build-ts",
     "test:serializers": "bun run --cwd firestore-serializers test:emulator",
     "test": "bun run build:serializers && bun run --cwd firestore-serializers test && bun run --cwd vite test",
-    "test:e2e": "bun run build && bun run --cwd e2e test"
+    "test:e2e": "bun run build && bun run --cwd e2e test",
+    "lint": "bun run build:serializers && oxlint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,cjs,css}\"",
+    "typecheck": "bun run build:serializers && tsc --noEmit -p vite && tsc --noEmit -p server && tsc --noEmit -p firestore-serializers"
+  },
+  "devDependencies": {
+    "oxlint": "^1.93.0",
+    "oxlint-tsgolint": "^7.0.2006",
+    "prettier": "^3.9.10"
   }
 }

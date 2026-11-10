@@ -1,6 +1,6 @@
-import path from 'path';
-import fs from 'fs';
-import { v4 as uuidv4 } from 'uuid';
+import path from "path";
+import fs from "fs";
+import { v4 as uuidv4 } from "uuid";
 
 import type { ICertificateData, IRemoveKey, IStoreKey } from "refi-ipc";
 import { IServiceContext } from "../service";
@@ -19,18 +19,26 @@ export default class CertService {
   }
 
   public async storeKey({ file }: IStoreKey): Promise<boolean> {
-    const base64data = file.split(';base64,').pop();
+    const base64data = file.split(";base64,").pop();
 
-    const keyPath = path.join(this.ctx.userDataPath, 'Keys', `${uuidv4()}.json`);
-    fs.writeFileSync(keyPath, base64data, { encoding: 'base64' });
+    const keyPath = path.join(
+      this.ctx.userDataPath,
+      "Keys",
+      `${uuidv4()}.json`
+    );
+    fs.writeFileSync(keyPath, base64data, { encoding: "base64" });
     const cert = CertService.parseCertificateFile(keyPath);
-    if (this.ctx.localDB.data.keys.find(key => key.projectId === cert.project_id)) {
-      throw new Error('This key is already existed');
+    if (
+      this.ctx.localDB.data.keys.find(
+        (key) => key.projectId === cert.project_id
+      )
+    ) {
+      throw new Error("This key is already existed");
     }
 
     this.ctx.localDB.data.keys.push({
       keyPath,
-      projectId: cert.project_id
+      projectId: cert.project_id,
     });
     this.ctx.localDB.write();
 
@@ -38,13 +46,13 @@ export default class CertService {
   }
 
   public async getKeys(): Promise<ICertificateData[]> {
-    return this.ctx.localDB.data.keys
+    return this.ctx.localDB.data.keys;
   }
 
   public async removeKey({ projectId }: IRemoveKey): Promise<boolean> {
     const keys = await this.getKeys();
     try {
-      const keyData = keys.find(key => key.projectId === projectId);
+      const keyData = keys.find((key) => key.projectId === projectId);
       if (keyData) {
         fs.unlinkSync(keyData.keyPath);
       }
@@ -52,7 +60,7 @@ export default class CertService {
       // Ignore error
     }
     const { data } = this.ctx.localDB;
-    data.keys = data.keys.filter(key => key.projectId !== projectId);
+    data.keys = data.keys.filter((key) => key.projectId !== projectId);
     this.ctx.localDB.write();
     return true;
   }

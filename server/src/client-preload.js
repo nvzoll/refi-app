@@ -1,117 +1,131 @@
-const { contextBridge, ipcRenderer, webFrame } = require('electron')
+const { contextBridge, ipcRenderer, webFrame } = require("electron");
 
 // Channel names must match lib/electron-context-menu
-const contextMenuRequest = 'ContextMenu-Request'
-const contextMenuResponse = 'ContextMenu-Response'
-const contextMenuClicked = 'ContextMenu-Clicked'
+const contextMenuRequest = "ContextMenu-Request";
+const contextMenuResponse = "ContextMenu-Response";
+const contextMenuClicked = "ContextMenu-Clicked";
 
-const templateAttribute = 'data-cm-template'
-const payloadAttribute = 'data-cm-payload'
-const idAttribute = 'data-cm-id'
+const templateAttribute = "data-cm-template";
+const payloadAttribute = "data-cm-payload";
+const idAttribute = "data-cm-id";
 
-let menuId = ''
-let selectedElementAttributes = {}
-let contextMenuParams = {}
-let callbacks = {}
+let menuId = "";
+let selectedElementAttributes = {};
+let contextMenuParams = {};
+let callbacks = {};
 
 const findContextElement = (element, x, y) => {
   if (!element) {
-    return null
+    return null;
   }
 
-  const { top, left, right, bottom } = element.getBoundingClientRect()
+  const { top, left, right, bottom } = element.getBoundingClientRect();
   if (x < left || x > right || y < top || y > bottom) {
-    return null
+    return null;
   }
 
-  const template = element.getAttribute(templateAttribute)
-  if (template !== '' && template !== null) {
-    return element
+  const template = element.getAttribute(templateAttribute);
+  if (template !== "" && template !== null) {
+    return element;
   }
 
-  return findContextElement(element.parentElement, x, y)
-}
+  return findContextElement(element.parentElement, x, y);
+};
 
 const onContextMenuRequest = (event, args) => {
-  let template = null
-  selectedElementAttributes = {}
-  contextMenuParams = args.params
+  let template = null;
+  selectedElementAttributes = {};
+  contextMenuParams = args.params;
 
-  const element = findContextElement(document.elementFromPoint(args.params.x, args.params.y), args.params.x, args.params.y)
+  const element = findContextElement(
+    document.elementFromPoint(args.params.x, args.params.y),
+    args.params.x,
+    args.params.y
+  );
   if (element !== null) {
-    const elementTemplate = element.getAttribute(templateAttribute)
-    if (elementTemplate !== '' && elementTemplate !== null) {
+    const elementTemplate = element.getAttribute(templateAttribute);
+    if (elementTemplate !== "" && elementTemplate !== null) {
       for (const attribute of element.attributes) {
         if (attribute.name.indexOf(payloadAttribute) >= 0) {
-          selectedElementAttributes[attribute.name.replace(`${payloadAttribute}-`, '')] = attribute.value
+          selectedElementAttributes[
+            attribute.name.replace(`${payloadAttribute}-`, "")
+          ] = attribute.value;
         } else if (attribute.name.indexOf(idAttribute) >= 0) {
-          menuId = attribute.value
+          menuId = attribute.value;
         }
       }
-      template = elementTemplate
+      template = elementTemplate;
     }
   }
 
-  ipcRenderer.send(contextMenuResponse, { id: menuId, params: args.params, template })
-}
+  ipcRenderer.send(contextMenuResponse, {
+    id: menuId,
+    params: args.params,
+    template,
+  });
+};
 
 const onContextMenuClicked = (event, args) => {
-  if (typeof callbacks[args.id] !== 'undefined') {
-    callbacks[args.id]({ params: contextMenuParams, attributes: selectedElementAttributes })
+  if (typeof callbacks[args.id] !== "undefined") {
+    callbacks[args.id]({
+      params: contextMenuParams,
+      attributes: selectedElementAttributes,
+    });
   }
-}
+};
 
-ipcRenderer.on(contextMenuRequest, onContextMenuRequest)
-ipcRenderer.on(contextMenuClicked, onContextMenuClicked)
+ipcRenderer.on(contextMenuRequest, onContextMenuRequest);
+ipcRenderer.on(contextMenuClicked, onContextMenuClicked);
 
 const contextMenu = {
   onReceive: (actionId, func, id) => {
-    callbacks[id === undefined ? actionId : `${id}___${actionId}`] = func
+    callbacks[id === undefined ? actionId : `${id}___${actionId}`] = func;
   },
   clearRendererBindings: (actionId, id) => {
     if (actionId) {
-      delete callbacks[id === undefined ? actionId : `${id}___${actionId}`]
-      return
+      delete callbacks[id === undefined ? actionId : `${id}___${actionId}`];
+      return;
     }
 
-    callbacks = {}
-    contextMenuParams = {}
-    menuId = ''
+    callbacks = {};
+    contextMenuParams = {};
+    menuId = "";
   },
-}
+};
 
-let workerPort = null
-let pendingRequests = []
-const messageListeners = []
+let workerPort = null;
+let pendingRequests = [];
+const messageListeners = [];
 
-ipcRenderer.on('worker-port', (event) => {
-  workerPort = event.ports[0]
-  workerPort.onmessage = (portEvent) => messageListeners.forEach((cb) => cb(portEvent.data))
-  pendingRequests.forEach((msg) => workerPort.postMessage(msg))
-  pendingRequests = []
-})
-ipcRenderer.send('connect-worker')
+ipcRenderer.on("worker-port", (event) => {
+  workerPort = event.ports[0];
+  workerPort.onmessage = (portEvent) =>
+    messageListeners.forEach((cb) => cb(portEvent.data));
+  pendingRequests.forEach((msg) => workerPort.postMessage(msg));
+  pendingRequests = [];
+});
+ipcRenderer.send("connect-worker");
 
-contextBridge.exposeInMainWorld('ipc', {
+contextBridge.exposeInMainWorld("ipc", {
   request: (msg) => {
     if (workerPort) {
-      workerPort.postMessage(msg)
+      workerPort.postMessage(msg);
     } else {
-      pendingRequests.push(msg)
+      pendingRequests.push(msg);
     }
   },
   onMessage: (cb) => messageListeners.push(cb),
-})
+});
 
-contextBridge.exposeInMainWorld('platform', process.platform)
+contextBridge.exposeInMainWorld("platform", process.platform);
 
-contextBridge.exposeInMainWorld('api', {
+contextBridge.exposeInMainWorld("api", {
   contextMenu,
-  openUrl: (url) => ipcRenderer.invoke('open-url', url),
+  openUrl: (url) => ipcRenderer.invoke("open-url", url),
   webFrame: {
     setZoomFactor: (factor) => webFrame.setZoomFactor(factor),
     getZoomFactor: () => webFrame.getZoomFactor(),
   },
-  newTab: () => ipcRenderer.invoke('new-tab', window.location.href),
-  renameTab: (name) => ipcRenderer.invoke('rename-tab', name),
-})
+  newTab: () => ipcRenderer.invoke("new-tab", window.location.href),
+  renameTab: (name) => ipcRenderer.invoke("rename-tab", name),
+});

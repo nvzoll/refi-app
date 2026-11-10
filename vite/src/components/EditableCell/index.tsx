@@ -218,7 +218,8 @@ const EditableCell = ({
                   "focus:ring-1 p-1.5 pt-2 bg-transparent break-all outline-hidden focus:ring-blue-400 h-full w-full truncate underline text-blue-400 focus:z-50 focus:shadow-lg",
                   {
                     ["bg-blue-200 dark:bg-gray-500"]: isFieldChanged,
-                    ["bg-yellow-200 transition-colors duration-300"]: isHighlight,
+                    ["bg-yellow-200 transition-colors duration-300"]:
+                      isHighlight,
                   }
                 )}
                 isBare

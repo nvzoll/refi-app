@@ -46,6 +46,7 @@ test("edits, sorts, filters, imports and deletes documents on the emulator", asy
     args: [`--user-data-dir=${userDataDir}`, "."],
     cwd: serverDir,
     env: { ...(process.env as Record<string, string>), ELECTRON_IS_DEV: "0" },
+    chromiumSandbox: true,
   });
 
   try {
@@ -65,8 +66,14 @@ test("edits, sorts, filters, imports and deletes documents on the emulator", asy
     await page.locator("input[type=file]").setInputFiles(keyPath);
     const row = page.getByText(projectId, { exact: true }).locator("..");
     await row.getByRole("button", { name: "Connect" }).click();
-    await page.getByRole("treeitem", { name: "smoke" }).getByText("smoke").click();
-    await page.getByRole("cell", { name: "before" }).getByRole("textbox").fill("after");
+    await page
+      .getByRole("treeitem", { name: "smoke" })
+      .getByText("smoke")
+      .click();
+    await page
+      .getByRole("cell", { name: "before" })
+      .getByRole("textbox")
+      .fill("after");
     await page.getByRole("cell", { name: "after" }).getByRole("textbox").blur();
     await page.getByRole("button", { name: "Commit" }).click();
 
@@ -74,20 +81,31 @@ test("edits, sorts, filters, imports and deletes documents on the emulator", asy
       .poll(async () => (await firestore.doc("smoke/doc1").get()).data())
       .toEqual({ name: "after", count: 1 });
 
-    await page.getByRole("cell", { name: "after" }).getByRole("textbox").click();
+    await page
+      .getByRole("cell", { name: "after" })
+      .getByRole("textbox")
+      .click();
     const jsonEditor = page.getByRole("textbox", { name: "Editor content" });
     await jsonEditor.focus();
     await page.keyboard.press("Control+Home");
     await page.keyboard.type('"__Timestamp__"');
     await expect(page.getByText(/^Line 1: /)).toBeVisible();
     await expect(
-      page.locator(".monaco-editor .view-line span span", { hasText: /^__Timestamp__$/ })
+      page.locator(".monaco-editor .view-line span span", {
+        hasText: /^__Timestamp__$/,
+      })
     ).toHaveCSS("font-weight", "700");
     await page.keyboard.press("Control+z");
     await expect(page.getByText(/^Line 1: /)).not.toBeVisible();
 
-    const nameHeader = page.getByRole("table").locator("th").getByText("name", { exact: true });
-    const firstRow = page.getByRole("row").filter({ has: page.getByRole("cell") }).first();
+    const nameHeader = page
+      .getByRole("table")
+      .locator("th")
+      .getByText("name", { exact: true });
+    const firstRow = page
+      .getByRole("row")
+      .filter({ has: page.getByRole("cell") })
+      .first();
     await nameHeader.click();
     await expect(firstRow.getByRole("cell", { name: "after" })).toBeVisible();
     await nameHeader.click();

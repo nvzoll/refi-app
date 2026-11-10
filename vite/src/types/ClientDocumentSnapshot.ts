@@ -10,11 +10,7 @@ import * as immutable from "object-path-immutable";
 import { GeoPoint, Timestamp } from "firebase/firestore";
 
 export type IFieldValue =
-  | IPrimitiveType
-  | DocRef
-  | GeoPoint
-  | Timestamp
-  | IFieldValue[];
+  IPrimitiveType | DocRef | GeoPoint | Timestamp | IFieldValue[];
 
 export type IDocData = Record<string, IFieldValue>;
 

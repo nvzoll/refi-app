@@ -11,10 +11,9 @@ const KEYMAP = {
 };
 
 const DocFinder = () => {
-  const [
-    isShowDocFinderModalCommand,
-    setShowDocFinderModalCommand,
-  ] = useAtom(isShowDocFinderModalCommandAtom);
+  const [isShowDocFinderModalCommand, setShowDocFinderModalCommand] = useAtom(
+    isShowDocFinderModalCommandAtom
+  );
   const [keyword, setKeyword] = useState("");
   const allDocs = useAtomValue(allDocsAtom);
 

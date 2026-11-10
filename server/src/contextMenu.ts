@@ -1,94 +1,94 @@
 export const contextConfig = {
-  "columnHeaderContext": [
+  columnHeaderContext: [
     {
       id: "HIDE",
-      label: "Hide column"
+      label: "Hide column",
     },
     {
       id: "ADD",
-      label: "Add column"
+      label: "Add column",
     },
     {
-      type: "separator"
+      type: "separator",
     },
     {
       id: "FILTER",
-      label: "Filter by this column"
+      label: "Filter by this column",
     },
     {
-      type: "separator"
+      type: "separator",
     },
     {
       id: "ASC",
-      label: "ASC"
+      label: "ASC",
     },
     {
       id: "DESC",
-      label: "DESC"
-    }
+      label: "DESC",
+    },
   ],
-  "treeDocContext": [
+  treeDocContext: [
     {
       id: "NEW_COLLECTION",
-      label: "New collection"
+      label: "New collection",
     },
     {
-      type: "separator"
+      type: "separator",
     },
     {
       id: "EXPORT_CSV",
-      label: "Export as CSV"
+      label: "Export as CSV",
     },
     {
       id: "EXPORT_JSON",
-      label: "Export as JSON"
+      label: "Export as JSON",
     },
     {
-      type: "separator"
+      type: "separator",
     },
     {
       id: "DELETE",
-      label: "Delete"
-    }
+      label: "Delete",
+    },
   ],
-  "treeCollectionContext": [
+  treeCollectionContext: [
     {
       id: "NEW_DOC",
       label: "New document",
-      accelerator: "CommandOrControl+N"
+      accelerator: "CommandOrControl+N",
     },
     {
-      type: "separator"
+      type: "separator",
     },
     {
       id: "IMPORT",
       label: "Import Data",
-      accelerator: "CommandOrControl+I"
+      accelerator: "CommandOrControl+I",
     },
     {
       id: "EXPORT_CSV",
-      label: "Export as CSV"
+      label: "Export as CSV",
     },
     {
       id: "EXPORT_JSON",
-      label: "Export as JSON"
+      label: "Export as JSON",
     },
     {
-      type: "separator"
+      type: "separator",
     },
     {
       id: "DELETE",
-      label: "Delete"
-    }
+      label: "Delete",
+    },
   ],
-  "rowContext": [
+  rowContext: [
     {
       id: "DUPLICATE",
       label: "Duplicate",
-      accelerator: "CommandOrControl+D"
+      accelerator: "CommandOrControl+D",
     },
     {
-      type: "separator"
+      type: "separator",
     },
     {
       id: "CONVERT_NUMBER",
@@ -123,76 +123,77 @@ export const contextConfig = {
       label: "To NULL",
     },
     {
-      type: "separator"
+      type: "separator",
     },
     {
       id: "EXPORT_CSV",
-      label: "Export document as CSV"
+      label: "Export document as CSV",
     },
     {
       id: "EXPORT_JSON",
-      label: "Export document as JSON"
+      label: "Export document as JSON",
     },
     {
       id: "EXPORT_VIEW_CSV",
       label: "Export current table as CSV",
-      accelerator: "CommandOrControl+E"
+      accelerator: "CommandOrControl+E",
     },
     {
       id: "EXPORT_VIEW_JSON",
       label: "Export current table as JSON",
-      accelerator: "CommandOrControl+Shift+E"
+      accelerator: "CommandOrControl+Shift+E",
     },
     {
-      type: "separator"
+      type: "separator",
     },
     {
       id: "DELETE",
-      label: "Delete"
-    }
+      label: "Delete",
+    },
   ],
-  "propertyName": [
+  propertyName: [
     {
       id: "ADD_PROPERTY",
-      label: "Add this field to table"
+      label: "Add this field to table",
     },
     {
       id: "DELETE_PROPERTY",
-      label: "Delete"
-    }
+      label: "Delete",
+    },
   ],
-  "propertyValue": [
+  propertyValue: [
     {
       id: "ADD_PROPERTY",
-      label: "Add this field to table"
+      label: "Add this field to table",
     },
     {
       id: "DELETE_PROPERTY_VALUE",
-      label: "Delete"
-    }
+      label: "Delete",
+    },
   ],
-  "default": [
+  default: [
     {
       label: "Edit",
       submenu: [
         {
-          role: "undo"
+          role: "undo",
         },
         {
-          role: "redo"
+          role: "redo",
         },
         {
-          type: "separator"
+          type: "separator",
         },
         {
-          role: "cut"
+          role: "cut",
         },
         {
-          role: "copy"
+          role: "copy",
         },
         {
-          role: "paste"
-        }
-      ]
-    }]
-}
+          role: "paste",
+        },
+      ],
+    },
+  ],
+};

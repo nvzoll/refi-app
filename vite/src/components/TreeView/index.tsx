@@ -568,15 +568,12 @@ const TreeViewDebouncer = () => {
   const allDocs = useAtomValue(allDocsAtom);
   const deletedDocs = useAtomValue(deletedDocsAtom);
   const pathAvailable = useAtomValue(pathExpanderAtom);
-  const [debouncedDocs, setDebouncedDocs] = useState<ClientDocumentSnapshot[]>(
-    allDocs
-  );
-  const [debouncedDeletedDocs, setDebouncedDeletedDocs] = useState<
-    ClientDocumentSnapshot[]
-  >(deletedDocs);
-  const [debouncedPathAvailable, setDebouncedPathAvailable] = useState<
-    string[]
-  >(pathAvailable);
+  const [debouncedDocs, setDebouncedDocs] =
+    useState<ClientDocumentSnapshot[]>(allDocs);
+  const [debouncedDeletedDocs, setDebouncedDeletedDocs] =
+    useState<ClientDocumentSnapshot[]>(deletedDocs);
+  const [debouncedPathAvailable, setDebouncedPathAvailable] =
+    useState<string[]>(pathAvailable);
 
   useDebounce(
     () => {

@@ -6,7 +6,7 @@ interface IGeopointPickerProps {
   onChange: (value: GeoPoint) => void;
 }
 
-const GeopointPicker = ({ value, onChange }: IGeopointPickerProps) => {
+const GeopointPicker = (_props: IGeopointPickerProps) => {
   return (
     <div className="flex flex-row items-center px-1.5">
       {/* // TODO: Implement geo picker */}

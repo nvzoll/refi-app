@@ -56,7 +56,7 @@ export default class CertService {
       if (keyData) {
         fs.unlinkSync(keyData.keyPath);
       }
-    } catch (error) {
+    } catch {
       // Ignore error
     }
     const { data } = this.ctx.localDB;

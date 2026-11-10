@@ -3,7 +3,7 @@ import { isShowDocFinderModalCommandAtom } from "@/atoms/ui";
 import { Input } from "@zendeskgarden/react-forms";
 import { Body as ModalBody, Modal } from "@zendeskgarden/react-modals";
 import React, { useEffect, useMemo, useState } from "react";
-import { HotKeys, withHotKeys } from "react-hotkeys";
+import { HotKeys } from "react-hotkeys";
 import { useAtom, useAtomValue } from "jotai";
 
 const KEYMAP = {

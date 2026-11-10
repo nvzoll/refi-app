@@ -95,7 +95,7 @@ export const setTheme = (theme: boolean) => {
 };
 
 const AppTheme = ({ children }: { children: React.ReactNode }) => {
-  const [appTheme, setAppTheme] = useAtom(appThemeAtom);
+  const [appTheme] = useAtom(appThemeAtom);
 
   useEffect(() => {
     setTheme(appTheme);

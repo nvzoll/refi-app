@@ -71,7 +71,6 @@ const DataSubscriber = () => {
         addedData,
         modifiedData,
         removedData,
-        totalDocs,
         isInitResult,
       }: ISubscribeResponse) => {
         // if (totalDocs > 50) {

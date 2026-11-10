@@ -17,7 +17,7 @@ interface IFieldFinderInputProps {
 }
 
 const FieldFinderInput = ({
-  value = "",
+  value,
   onChange,
   onSelect,
   inputRef,

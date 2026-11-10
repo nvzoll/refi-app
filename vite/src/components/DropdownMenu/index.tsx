@@ -4,7 +4,7 @@ import {
 } from "@zendeskgarden/react-modals";
 import classNames from "classnames";
 import { useSelect } from "downshift";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import ReactDOM from "react-dom";
 import ShortcutKey from "../ShortcutKey";
 

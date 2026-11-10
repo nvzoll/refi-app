@@ -36,7 +36,7 @@ export const deletedDocsAtom = atom<ClientDocumentSnapshot[]>([]);
 // TODO: Clean up function for this library
 export const docsLibraryAtom = atom<IFirestorePath[]>([]);
 
-export const docAtom = atomFamily((path: IFirestorePath) => {
+export const docAtom = atomFamily((_path: IFirestorePath) => {
   const anAtom = atom(
     null as ClientDocumentSnapshot | null,
     (get, set, update: SetStateAction<ClientDocumentSnapshot | null>) => {
@@ -68,7 +68,7 @@ export const collectionAtom = atomFamily((path: IFirestorePath) =>
   })
 );
 
-export const queryDocOrder = atomFamily((queryVersion: number) =>
+export const queryDocOrder = atomFamily((_queryVersion: number) =>
   atom<string[]>([])
 );
 

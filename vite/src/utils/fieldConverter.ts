@@ -18,7 +18,7 @@ export const fieldConverter: Record<
       case "map":
         try {
           return JSON.parse(value);
-        } catch (error) {
+        } catch {
           return {};
         }
 

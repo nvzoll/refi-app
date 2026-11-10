@@ -148,13 +148,7 @@ function buildTree(
           </div>
         );
       },
-      switcherIcon({
-        expanded,
-        isLeaf,
-      }: {
-        expanded?: boolean;
-        isLeaf?: boolean;
-      }) {
+      switcherIcon({ expanded }: { expanded?: boolean; isLeaf?: boolean }) {
         if (!isCollection) {
           return null;
         }
@@ -355,12 +349,9 @@ function TreeView({ allDocs, deletedDocs, pathAvailable }: ITreeViewProps) {
     []
   );
 
-  const handleOnAddCollection = useCallback(
-    (path: string | null): void => {
-      setAddNewCollection(null);
-    },
-    [setAddNewCollection]
-  );
+  const handleOnAddCollection = useCallback((): void => {
+    setAddNewCollection(null);
+  }, [setAddNewCollection]);
 
   const allPaths = useMemo(() => {
     let paths = [
@@ -466,7 +457,7 @@ function TreeView({ allDocs, deletedDocs, pathAvailable }: ITreeViewProps) {
 
   const handleOnExpand = (
     expandedKeys: any[],
-    { expanded = true, node }: { expanded: boolean; node: DataNode }
+    { expanded, node }: { expanded: boolean; node: DataNode }
   ) => {
     if (!expanded) {
       setExpanded((keys) =>

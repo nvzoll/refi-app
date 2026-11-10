@@ -3,20 +3,17 @@ import {
   actionUpdateFieldKey,
   actionRemoveFieldKey,
 } from "@/atoms/firestore.action";
-import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
 import React, {
   useState,
   useRef,
   useMemo,
   useCallback,
   useEffect,
-  useLayoutEffect,
 } from "react";
 import { useAtomValue } from "jotai";
 import classNames from "classnames";
 import { useContextMenu } from "@/hooks/contextMenu";
 import DataInput from "@/components/DataInput";
-import { FIELD_KEY_PREFIX } from "@/utils/contant";
 import { store } from "@/atoms/store";
 import { newFieldAtom } from "@/atoms/ui";
 
@@ -87,7 +84,7 @@ export const EditablePropertyField = ({
   );
 
   const setInputAutoFocus = async () => {
-    const newFieldPath = await store.get(newFieldAtom(docPath));
+    const newFieldPath = store.get(newFieldAtom(docPath));
     if (id === newFieldPath) {
       inputEl.current?.focus();
     }

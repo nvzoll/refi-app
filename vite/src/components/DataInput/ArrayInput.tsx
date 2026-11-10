@@ -2,7 +2,6 @@ import React from "react";
 import { fieldAtom, parseFSUrl } from "@/atoms/firestore";
 import { store } from "@/atoms/store";
 import { newFieldAtom } from "@/atoms/ui";
-import { IFieldValue } from "@/types/ClientDocumentSnapshot";
 
 interface IArrayInputProps {
   fieldPath: string;
@@ -13,7 +12,7 @@ const ArrayInput = ({ fieldPath, toggleExpand }: IArrayInputProps) => {
   const handleAddProperty = async () => {
     const fieldAtomInstance = fieldAtom(fieldPath);
     const { path, field } = parseFSUrl(fieldPath);
-    const fieldValue = (await store.get(fieldAtomInstance)) as unknown as any[];
+    const fieldValue = store.get(fieldAtomInstance) as unknown as any[];
 
     store.set(fieldAtomInstance, [...fieldValue, ""]);
     store.set(newFieldAtom(path), field + "." + fieldValue.length);

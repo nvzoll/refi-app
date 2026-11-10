@@ -10,11 +10,7 @@ import {
   isImportModalAtom,
 } from "@/atoms/ui";
 import { notifyErrorPromise } from "@/atoms/ui.action";
-import {
-  ignoreBackdropEvent,
-  isCollection,
-  readerFilePromise,
-} from "@/utils/common";
+import { isCollection, readerFilePromise } from "@/utils/common";
 import { Button } from "@zendeskgarden/react-buttons";
 import {
   Checkbox,
@@ -149,7 +145,7 @@ const ImportModal = () => {
             <Controller
               control={control}
               name="idField"
-              render={({ field: { onChange, value, ref } }) => (
+              render={({ field: { onChange, value } }) => (
                 <SelectComboBox
                   className="mt-2"
                   items={sampleColumn}

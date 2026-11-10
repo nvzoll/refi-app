@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Cell, useTable, useExpanded } from "react-table";
 import classNames from "classnames";
 import EditablePropertyField from "@/components/EditableCell/EditablePropertyField";
@@ -23,15 +23,7 @@ const PropertyTable = ({ searchInput, doc }: IPropertyTableProps) => {
         Header: "Field",
         id: "field",
         accessor: "field",
-        Cell: ({
-          row,
-          value,
-          depth,
-        }: {
-          row: any;
-          value: any;
-          depth: number;
-        }) => (
+        Cell: ({ row, depth }: { row: any; value: any; depth: number }) => (
           <EditablePropertyField
             docPath={doc.ref.path}
             canExpand={row.canExpand}
@@ -47,7 +39,7 @@ const PropertyTable = ({ searchInput, doc }: IPropertyTableProps) => {
         Header: "Value",
         id: "value",
         accessor: "value",
-        Cell: ({ row, value }: { row: any; value: any }) => {
+        Cell: ({ row }: { row: any; value: any }) => {
           return (
             <EditablePropertyValue
               column={{ id: row.original.field }}
@@ -93,16 +85,15 @@ const PropertyTable = ({ searchInput, doc }: IPropertyTableProps) => {
     return [];
   }, [doc, searchInput]);
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable(
-      {
-        columns: propertyColumns,
-        data: fieldData,
-        autoResetExpanded: false,
-        // getSubRows,
-      } as any,
-      useExpanded // Use the useExpanded plugin hook
-    );
+  const { getTableProps, getTableBodyProps, rows, prepareRow } = useTable(
+    {
+      columns: propertyColumns,
+      data: fieldData,
+      autoResetExpanded: false,
+      // getSubRows,
+    } as any,
+    useExpanded // Use the useExpanded plugin hook
+  );
 
   const handleAddProperty = useCallback(() => {
     const fieldAtomInstance = fieldAtom(
@@ -120,7 +111,7 @@ const PropertyTable = ({ searchInput, doc }: IPropertyTableProps) => {
     <div className="w-full">
       <table {...getTableProps()} className="w-full table-fixed">
         <tbody {...getTableBodyProps()}>
-          {rows.map((row: any, i) => {
+          {rows.map((row: any) => {
             prepareRow(row);
             const depth = row.isExpanded
               ? row.depth + 1

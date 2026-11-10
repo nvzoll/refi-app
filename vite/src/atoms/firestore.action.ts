@@ -1,14 +1,11 @@
-import {
-  ClientDocumentSnapshot,
-  IFieldValue,
-} from "@/types/ClientDocumentSnapshot";
-import { getParentPath, newId, prettifyPath } from "@/utils/common";
+import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
+import { newId, prettifyPath } from "@/utils/common";
 import {
   deserializeDocumentSnapshotArray,
   serializeQuerySnapshot,
 } from "firestore-serializers";
 import { atom } from "jotai";
-import { differenceBy, uniq, uniqBy, uniqueId } from "es-toolkit/compat";
+import { differenceBy, uniq, uniqBy } from "es-toolkit/compat";
 import {
   changedDocAtom,
   collectionAtom,
@@ -80,7 +77,7 @@ export const actionStoreDocs = (
 
 // This is trigger from user
 export const actionDeleteDoc = async (docPath: string) => {
-  const doc = await store.get(docAtom(docPath));
+  const doc = store.get(docAtom(docPath));
   if (doc) {
     store.set(docAtom(docPath), null);
     if (doc.isNew) {
@@ -96,10 +93,7 @@ export const actionDeleteDoc = async (docPath: string) => {
 };
 
 // This is trigger from server. It will irevertable
-export const actionRemoveDocs = (
-  docs: ClientDocumentSnapshot[],
-  override = false
-): void => {
+export const actionRemoveDocs = (docs: ClientDocumentSnapshot[]): void => {
   docs.forEach(async (doc) => {
     // TODO: What if user already modified the deleted one
     store.set(docAtom(doc.ref.path), null);
@@ -133,7 +127,7 @@ const deleteCollectionAtom = atom(
 export const actionDeleteCollection = async (path: string): Promise<void> => {
   console.log(`start delete collection ${path}`);
   // Marks all docs as delete
-  const docsInCollection = await store.get(collectionAtom(path));
+  const docsInCollection = store.get(collectionAtom(path));
 
   requestAnimationFrame(() => {
     store.set(deleteCollectionAtom, { path, docsInCollection });
@@ -150,7 +144,7 @@ export const actionUpdateFieldKey = async (
 ): Promise<void> => {
   const { path, field: oldField } = parseFSUrl(oldPath);
   const curDocAtom = docAtom(path);
-  const doc = await store.get(curDocAtom);
+  const doc = store.get(curDocAtom);
   if (doc) {
     const docData = immutable.wrap(doc.data());
     const oldFieldData = immutable.get(doc.data(), oldField);
@@ -165,7 +159,7 @@ export const actionUpdateFieldKey = async (
 export const actionRemoveFieldKey = async (oldPath: string): Promise<void> => {
   const { path, field: oldField } = parseFSUrl(oldPath);
   const curDocAtom = docAtom(path);
-  const doc = await store.get(curDocAtom);
+  const doc = store.get(curDocAtom);
   if (doc) {
     const newDoc = doc.clone().removeField(oldField);
     store.set(docAtom(path), newDoc);
@@ -173,12 +167,12 @@ export const actionRemoveFieldKey = async (oldPath: string): Promise<void> => {
 };
 
 export const actionCommitChange = async (): Promise<boolean> => {
-  const docsChange = await store.get(changedDocAtom);
+  const docsChange = store.get(changedDocAtom);
 
-  const newDocs = await store.get(newDocsAtom);
-  const allDeletedDocs = await store.get(deletedDocsAtom);
+  const newDocs = store.get(newDocsAtom);
+  const allDeletedDocs = store.get(deletedDocsAtom);
 
-  const deletedCollections = await store.get(collectionHasBeenDeleteAtom);
+  const deletedCollections = store.get(collectionHasBeenDeleteAtom);
 
   const deletedDocs = allDeletedDocs.filter(
     (doc) =>
@@ -252,7 +246,7 @@ export const actionReverseDocChange = async (
   docPath: string,
   type: "new" | "modified" | "deleted"
 ): Promise<any> => {
-  const { queryVersion } = await store.get(queryVersionAtom);
+  const { queryVersion } = store.get(queryVersionAtom);
   // TODO: Do we really need to fetch the data again?
 
   if (type === "new") {
@@ -289,7 +283,7 @@ export const actionReverseDocChange = async (
 };
 
 export const actionGetDocs = async (paths: string[]) => {
-  const { queryVersion } = await store.get(queryVersionAtom);
+  const { queryVersion } = store.get(queryVersionAtom);
 
   return window
     .send("fs.getDocs", {
@@ -321,7 +315,7 @@ export const actionAddPathExpander = (paths: string[]) => {
 };
 
 export const actionDuplicateDoc = async (path: string) => {
-  const doc = await store.get(docAtom(path));
+  const doc = store.get(docAtom(path));
 
   if (!doc) {
     // TODO: Throw error here
@@ -366,7 +360,7 @@ export const actionNewDocument = async (
   const newDocId = id || newId();
   const newPath = prettifyPath(`${collectionPath}/${newDocId}`);
 
-  const { queryVersion } = await store.get(queryVersionAtom);
+  const { queryVersion } = store.get(queryVersionAtom);
   store.set(
     docAtom(newPath),
     new ClientDocumentSnapshot({}, newDocId, newPath, queryVersion, true)
@@ -381,7 +375,7 @@ export const actionSetFieldValue = async (
   fieldType: RefiFS.IFieldType
 ) => {
   const fieldPath = buildFSUrl({ path: docPath, field });
-  const instanceValue = await store.get(fieldAtom(fieldPath));
+  const instanceValue = store.get(fieldAtom(fieldPath));
   const newValue = convertFSValue(instanceValue, fieldType);
   store.set(fieldAtom(fieldPath), newValue);
 };

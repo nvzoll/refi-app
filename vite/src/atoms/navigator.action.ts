@@ -71,7 +71,7 @@ export const actionSubmitQuery = async (
   }));
 
   if (!withQuerier) {
-    const collectionPath = await store.get(navigatorCollectionPathAtom);
+    const collectionPath = store.get(navigatorCollectionPathAtom);
 
     store.set(querierAtom(collectionPath), (querierOptions) =>
       querierOptions.map((option) => ({ ...option, isActive: false }))
@@ -82,11 +82,11 @@ export const actionSubmitQuery = async (
 };
 
 export const actionQueryPage = async (isNext = true): Promise<boolean> => {
-  const collectionPath = await store.get(navigatorCollectionPathAtom);
+  const collectionPath = store.get(navigatorCollectionPathAtom);
   const lastQuery = queryHistory[queryHistory.length - 2];
   const currentQuery = queryHistory[queryHistory.length - 1];
 
-  const docs = await store.get(queryDocOrder(currentQuery.queryVersion));
+  const docs = store.get(queryDocOrder(currentQuery.queryVersion));
 
   if (
     docs.length === 0 &&
@@ -179,11 +179,9 @@ export const actionExportCollectionCSV = async (collectionPath: string) => {
     .catch(notifyErrorPromise);
 };
 
-export const actionExportViewJSON = async (
-  allFields = true
-): Promise<boolean> => {
-  const collectionPath = await store.get(navigatorCollectionPathAtom);
-  const docs = await store.get(collectionWithQueryAtom(collectionPath));
+export const actionExportViewJSON = async (): Promise<boolean> => {
+  const collectionPath = store.get(navigatorCollectionPathAtom);
+  const docs = store.get(collectionWithQueryAtom(collectionPath));
 
   const docsAsString = removeFirebaseSerializeMetaData(
     encodeSpecialValues(
@@ -203,11 +201,9 @@ export const actionExportViewJSON = async (
   return true;
 };
 
-export const actionExportViewCSV = async (
-  allFields = true
-): Promise<boolean> => {
-  const collectionPath = await store.get(navigatorCollectionPathAtom);
-  const docs = await store.get(collectionWithQueryAtom(collectionPath));
+export const actionExportViewCSV = async (): Promise<boolean> => {
+  const collectionPath = store.get(navigatorCollectionPathAtom);
+  const docs = store.get(collectionWithQueryAtom(collectionPath));
 
   const docsAsString = removeFirebaseSerializeMetaData(
     encodeSpecialValues(
@@ -230,7 +226,7 @@ export const actionExportViewCSV = async (
 export const actionExportDocJSON = async (
   docPath: string
 ): Promise<boolean> => {
-  const doc = await store.get(docAtom(docPath));
+  const doc = store.get(docAtom(docPath));
 
   if (!doc) {
     // TODO: Get doc local memory not found
@@ -254,7 +250,7 @@ export const actionExportDocJSON = async (
 };
 
 export const actionExportDocCSV = async (docPath: string): Promise<boolean> => {
-  const doc = await store.get(docAtom(docPath));
+  const doc = store.get(docAtom(docPath));
 
   if (!doc) {
     // TODO: Throw error not found

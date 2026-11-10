@@ -47,17 +47,6 @@ export const isParsingLargeDataAtom = atom<IParsingLargeDataAtom>({
   totalDocs: 0,
 });
 
-export const largeDataAtom = atom((get) => {
-  const { totalDocs } = get(isParsingLargeDataAtom);
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      requestAnimationFrame(() => {
-        resolve(true);
-      });
-    }, 100);
-  });
-});
-
 export const isCommittableAtom = atom<boolean>((get) => {
   const changedDocs = get(changedDocAtom);
   const newDocs = get(newDocsAtom);
@@ -66,11 +55,11 @@ export const isCommittableAtom = atom<boolean>((get) => {
   return changedDocs.length > 0 || newDocs.length > 0 || deletedDocs.length > 0;
 });
 
-export const newFieldAtom = atomFamily((path: string) => atom(""));
+export const newFieldAtom = atomFamily((_path: string) => atom(""));
 
 export const viewModePathInputAtom = atom(true);
 
-export const monacoDataErrorAtom = atomFamily((path: string) => atom(""));
+export const monacoDataErrorAtom = atomFamily((_path: string) => atom(""));
 
 export const importCollectionPathAtom = atom<string>("");
 

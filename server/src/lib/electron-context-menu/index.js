@@ -46,11 +46,7 @@ class ContextMenu {
         if (args.template !== null) {
           for (let i = 0; i < generatedContextMenu.length; i++) {
             if (typeof generatedContextMenu[i]["click"] === "undefined") {
-              generatedContextMenu[i].click = function (
-                event,
-                window,
-                webContents
-              ) {
+              generatedContextMenu[i].click = function () {
                 view.webContents.send(contextMenuClicked, {
                   id: `${idPrepend}${generatedContextMenu[i].id || generatedContextMenu[i].label}`,
                 });

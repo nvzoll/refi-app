@@ -152,7 +152,7 @@ const SorterList = () => {
       <div className="mt-2">
         <DragDropContext onDragEnd={handleDropEnd}>
           <Droppable droppableId="droppableSorterList">
-            {(provided, snapshot) => (
+            {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {sorterList.map((sorter, index) => (
                   <Draggable

@@ -133,7 +133,7 @@ export interface ISorterEntity {
   sort: "asc" | "desc";
 }
 
-export const sorterAtom = atomFamily((path: string) =>
+export const sorterAtom = atomFamily((_path: string) =>
   atom<ISorterEntity[]>([])
 );
 
@@ -168,7 +168,7 @@ export interface IQueryResult {
   collectionPath: string;
 }
 
-export const queryResultAtom = atomFamily((queryVersion: number) =>
+export const queryResultAtom = atomFamily((_queryVersion: number) =>
   atomWithDefault<IQueryResult>((get) => ({
     collectionPath: get(navigatorCollectionPathAtom),
   }))

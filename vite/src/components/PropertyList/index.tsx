@@ -172,7 +172,7 @@ const PropertyList = () => {
       <div className="mt-2 overflow-y-auto max-h-60">
         <DragDropContext onDragEnd={handleDropEnd}>
           <Droppable droppableId="droppablePropertyList">
-            {(provided, snapshot) => (
+            {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {propertyList.map((property, index) => (
                   <Draggable

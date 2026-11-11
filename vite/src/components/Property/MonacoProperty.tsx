@@ -10,7 +10,7 @@ import {
   decodeSpecialValues,
   encodeSpecialValues,
 } from "@/utils/legacySpecialValues";
-import Editor, { Monaco, OnValidate, useMonaco } from "@monaco-editor/react";
+import Editor, { OnValidate, useMonaco } from "@monaco-editor/react";
 import { diff } from "deep-diff";
 import {
   deserializeDocumentSnapshot,
@@ -122,7 +122,7 @@ const MonacoProperty = ({ doc }: IMonacoPropertyProps) => {
 
         try {
           JSON.parse(docStr);
-        } catch (error) {
+        } catch {
           setError((current) => current || "Can not parse data from JSON");
           return;
         }

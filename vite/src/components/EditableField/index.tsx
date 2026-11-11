@@ -1,5 +1,4 @@
 import React, { ReactElement, useState } from "react";
-import { Textarea } from "@zendeskgarden/react-forms";
 
 interface IEditableFieldProps {
   editValue: string | number;

@@ -116,8 +116,8 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys(""),
     handler: async () => {
-      const collectionPath = await store.get(navigatorCollectionPathAtom);
-      const data = await store.get(collectionWithQueryAtom(collectionPath));
+      const collectionPath = store.get(navigatorCollectionPathAtom);
+      const data = store.get(collectionWithQueryAtom(collectionPath));
 
       actionSetProperty(collectionPath, getSampleColumn(data));
     },
@@ -143,7 +143,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys(""),
     handler: async () => {
-      const docPath = await store.get(navigatorPathAtom);
+      const docPath = store.get(navigatorPathAtom);
       if (isCollection(docPath)) {
         // TODO: Show error
         return;
@@ -157,7 +157,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys(""),
     handler: async () => {
-      const docPath = await store.get(navigatorPathAtom);
+      const docPath = store.get(navigatorPathAtom);
       if (isCollection(docPath)) {
         // TODO: Show error
         return;
@@ -171,7 +171,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys("command+d"),
     handler: async () => {
-      const docPath = await store.get(navigatorPathAtom);
+      const docPath = store.get(navigatorPathAtom);
 
       if (isCollection(docPath)) {
         // TODO: Show error
@@ -186,7 +186,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys("command+i"),
     handler: async () => {
-      const collectionPath = await store.get(navigatorCollectionPathAtom);
+      const collectionPath = store.get(navigatorCollectionPathAtom);
       actionToggleImportModal(collectionPath);
     },
   },
@@ -195,7 +195,7 @@ export const globalHotKeys: IGlobalHotKeys = {
     group: "action",
     sequences: mapHotKeys("command+n"),
     handler: async () => {
-      const collectionPath = await store.get(navigatorCollectionPathAtom);
+      const collectionPath = store.get(navigatorCollectionPathAtom);
       actionNewDocument(collectionPath);
     },
   },

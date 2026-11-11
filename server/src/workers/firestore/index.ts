@@ -29,7 +29,6 @@ import { getDocMetaData } from "../../utils/converter";
 import { v4 as uuidv4 } from "uuid";
 import {
   deserializeDocumentSnapshotArray,
-  DocumentSnapshot,
   serializeDocumentSnapshot,
   serializeQuerySnapshot,
 } from "firestore-serializers";
@@ -54,7 +53,7 @@ export default class FireStoreService {
     doc.metadata = {
       hasPendingWrites: false,
       fromCache: false,
-      isEqual(arg: any) {
+      isEqual() {
         return true;
       },
     };
@@ -107,7 +106,7 @@ export default class FireStoreService {
     const { host, port, projectId } = parseEmulatorConnection(connection);
     try {
       await axios.get(`http://${host}:${port}`);
-    } catch (error) {
+    } catch {
       throw new Error("Can not connect. Please check the config to emulator");
     }
     process.env.FIRESTORE_EMULATOR_HOST = `${host}:${port}`;
@@ -150,7 +149,7 @@ export default class FireStoreService {
             }))
           );
         },
-        (error) => {
+        () => {
           // TODO: Handle errors here.
           // Ref: https://firebase.google.com/docs/firestore/query-data/queries#compound_queries
         }
@@ -306,7 +305,7 @@ export default class FireStoreService {
 
           this.ctx.ipc.send(topic, data, { firestore: true });
         },
-        (error) => {
+        () => {
           // TODO: Handle error
         }
       );
@@ -511,7 +510,7 @@ export default class FireStoreService {
             const field = docData[key];
             try {
               docData[key] = JSON.parse(field);
-            } catch (error) {
+            } catch {
               console.warn(
                 `Can not parse json for field ${key}. Use the original value`
               );
@@ -588,7 +587,7 @@ export default class FireStoreService {
         ok: true,
         data: response.data,
       };
-    } catch (error) {
+    } catch {
       return {
         ok: false,
       };

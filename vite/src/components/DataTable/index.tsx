@@ -22,7 +22,6 @@ import {
   actionSubmitQuery,
 } from "@/atoms/navigator.action";
 import { store } from "@/atoms/store";
-import { largeDataAtom } from "@/atoms/ui";
 import { actionToggleModalPickProperty } from "@/atoms/ui.action";
 import { useContextMenu } from "@/hooks/contextMenu";
 import { ClientDocumentSnapshot } from "@/types/ClientDocumentSnapshot";
@@ -31,7 +30,6 @@ import {
   getSampleColumn,
   ignoreBackdropEvent,
 } from "@/utils/common";
-import { Cell } from "@zendeskgarden/react-tables";
 import classNames from "classnames";
 import { get, sumBy, throttle, uniqueId } from "es-toolkit/compat";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
@@ -343,7 +341,7 @@ interface IColumnHeaderProps {
   collectionPath: string;
   isSorted: boolean;
   isSortedDesc: boolean;
-  hidable: boolean;
+  hidable?: boolean;
   toggleSortBy: (descending: boolean, isMulti: boolean) => void;
   isIdColumn?: boolean;
 }
@@ -467,9 +465,7 @@ function DataTable() {
 
   useAsync(async () => {
     // Auto set property if it haven't set
-    const propertiesCore = await store.get(
-      propertyListCoreAtom(collectionPath)
-    );
+    const propertiesCore = store.get(propertyListCoreAtom(collectionPath));
     if (!propertiesCore && properties.length === 0 && data.length > 0) {
       actionSetProperty(collectionPath, getSampleColumn(data));
     }
@@ -712,15 +708,5 @@ function DataTable() {
     </div>
   );
 }
-
-const DataTableLoader = () => {
-  const isLoaded = useAtomValue(largeDataAtom); // Make parent suspense
-
-  if (isLoaded) {
-    return <DataTable />;
-  }
-
-  return null;
-};
 
 export default DataTable;

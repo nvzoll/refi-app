@@ -1,7 +1,6 @@
 import { buildFSUrl, fieldAtom, fieldChangedAtom } from "@/atoms/firestore";
 import { navigatorPathAtom } from "@/atoms/navigator";
 import { actionGoTo } from "@/atoms/navigator.action";
-import { useContextMenu } from "@/hooks/contextMenu";
 import {
   ClientDocumentSnapshot,
   IFieldValue,

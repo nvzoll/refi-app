@@ -11,9 +11,6 @@ export async function convertDocumentRef(docRef: any) {
 
 export function getDocMetaData(snapshot: any) {
   const objData = snapshot.data();
-  if (typeof objData === undefined) {
-    return objData;
-  }
 
   const docTypes = Object.keys(objData).reduce(
     (prev, key) => ({
@@ -39,9 +36,6 @@ export function getDocMetaData(snapshot: any) {
 
 export function convertSnapshotToDoc(snapshot: any) {
   const objData = snapshot.data();
-  if (typeof objData === undefined) {
-    return objData;
-  }
 
   const docTypes: Record<string, any> = Object.keys(objData).reduce(
     (prev, key) => ({

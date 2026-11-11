@@ -24,8 +24,6 @@ import {
   Menu,
   dialog,
   WebContentsView,
-  globalShortcut,
-  MenuItem,
   shell,
   utilityProcess,
   MessageChannelMain,
@@ -76,11 +74,6 @@ if (require("electron-squirrel-startup")) {
 }
 
 if (!isDev) {
-  const server = "https://refi-updater.vercel.app";
-  const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
-
-  // autoUpdater.setFeedURL({ url: feed, serverType: "json" })
-
   setInterval(() => {
     autoUpdater.checkForUpdates();
   }, 60000);
@@ -160,7 +153,7 @@ const createMainWindow = async () => {
   setTab(await createWindow());
 };
 
-const createWindow = async (href?: string) => {
+const createWindow = async (_href?: string) => {
   const view = new WebContentsView({
     webPreferences: {
       devTools: isDev,
@@ -366,12 +359,12 @@ ipcMain.handle("open-url", async (event, url: string) => {
   }
 });
 
-ipcMain.handle("new-tab", async (event, href: string) => {
+ipcMain.handle("new-tab", async () => {
   // Create new tab
   await newTab();
 });
 
-ipcMain.handle("get-tabs", async (event, href: string) => {
+ipcMain.handle("get-tabs", async () => {
   return getTabData();
 });
 
@@ -427,20 +420,20 @@ ipcMain.handle("close-tab", async (event, tabName: string) => {
   closeTab(tabName);
 });
 
-ipcMain.handle("close-window", async (event, tabName: string) => {
+ipcMain.handle("close-window", async () => {
   if (mainWindow) {
     mainWindow.close();
     mainWindow = null;
   }
 });
 
-ipcMain.handle("minimum-window", async (event, tabName: string) => {
+ipcMain.handle("minimum-window", async () => {
   if (mainWindow) {
     mainWindow.minimize();
   }
 });
 
-ipcMain.handle("toggle-maximum-window", async (event, tabName: string) => {
+ipcMain.handle("toggle-maximum-window", async () => {
   if (mainWindow) {
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize();

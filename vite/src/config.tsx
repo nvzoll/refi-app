@@ -99,7 +99,7 @@ monaco.languages.registerDocumentSemanticTokensProvider("json", {
   getLegend: function () {
     return legend;
   },
-  provideDocumentSemanticTokens: function (model, lastResultId, token) {
+  provideDocumentSemanticTokens: function (model) {
     const lines = model.getLinesContent();
 
     /** @type {number[]} */
@@ -141,7 +141,7 @@ monaco.languages.registerDocumentSemanticTokensProvider("json", {
       resultId: undefined,
     };
   },
-  releaseDocumentSemanticTokens: function (resultId) {
+  releaseDocumentSemanticTokens: function () {
     return;
   },
 });

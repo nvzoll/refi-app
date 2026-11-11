@@ -1,6 +1,6 @@
 import { certs, certsQueryID } from "@/atoms/cert";
 import { emulatorConnection, emulatorProjectId } from "@/atoms/ui";
-import { ignoreBackdropEvent, toBase64 } from "@/utils/common";
+import { toBase64 } from "@/utils/common";
 import { Anchor, Button } from "@zendeskgarden/react-buttons";
 import { FileUpload, Input } from "@zendeskgarden/react-forms";
 import {

@@ -3,12 +3,7 @@ import { serialItemIsSpecial } from "./firestore-identifiers";
 import { mapDeepWithArrays } from "./map-deep-with-arrays";
 import { omit } from "es-toolkit/compat";
 import { DocRef } from "./DocRef";
-import {
-  DocumentSnapshot,
-  GeoPointClass,
-  QuerySnapshot,
-  TimestampClass,
-} from "./index.d";
+import { DocumentSnapshot, GeoPointClass, TimestampClass } from "./index.d";
 
 function objectifyDocumentProperty(
   item: any,

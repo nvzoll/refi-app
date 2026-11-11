@@ -75,9 +75,9 @@ function PathInput() {
         onClick={() => toggleViewMode(false)}
         key={getCollectionPath(path)}
       >
-        {entities.map((entity, index) =>
+        {entities.map((entity) =>
           entity === "..." ? (
-            <Span>{entity}</Span>
+            <Span key={entity}>{entity}</Span>
           ) : (
             <Anchor
               key={entity}

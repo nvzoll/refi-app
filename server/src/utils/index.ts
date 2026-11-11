@@ -1,6 +1,4 @@
-import log from "electron-log";
 import { Timestamp } from "firebase-admin/firestore";
-import { itemIsTimestamp } from "firestore-serializers";
 
 export const prettifyPath = (path: string): string => {
   // A Good path is: Start with `/` and end without `/`

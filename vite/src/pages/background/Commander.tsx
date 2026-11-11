@@ -14,7 +14,7 @@ import React, {
   useState,
 } from "react";
 import { getApplicationKeyMap } from "react-hotkeys";
-import { useAtom, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 
 interface ICommand {
   name: string;

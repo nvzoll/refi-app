@@ -9,7 +9,7 @@ export const isCollection = (path = ""): boolean => {
   if (path === "/") {
     return false;
   }
-  return !Boolean(path.split("/").length % 2);
+  return !(path.split("/").length % 2);
 };
 
 export const prettifyPath = (path: string): string => {
@@ -122,7 +122,7 @@ export const transformFSDoc = (doc: ClientDocumentSnapshot) => {
 
 interface ITableSubRow {
   field: string;
-  value: any | { type: RefiFS.IFieldType };
+  value: any;
   subRows?: any[];
 }
 
@@ -174,7 +174,7 @@ export const removeFirebaseSerializeMetaData = (
   metaDataField: string[] = ["__id__", "__path__"]
 ): string => {
   try {
-    const docData: any | any[] = JSON.parse(docStr);
+    const docData: any = JSON.parse(docStr);
     if (Array.isArray(docData)) {
       docData.forEach((doc) => {
         metaDataField.forEach((field) => {
@@ -235,7 +235,7 @@ export const ignoreBackdropEvent = (
 };
 
 export function readerFilePromise(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const fr = new FileReader();
     fr.onload = () => resolve(fr.result as string);
     fr.readAsText(file);
@@ -295,14 +295,14 @@ export function linkify(inputText: string) {
   let replacedText: string;
   //URLs starting with http://, https://, or ftp://
   const replacePattern1 =
-    /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+    /(\b(https?|ftp):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gim;
   replacedText = inputText.replace(
     replacePattern1,
     '<a href="$1" target="_blank">$1</a>'
   );
 
   //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-  const replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+  const replacePattern2 = /(^|[^/])(www\.[\S]+(\b|$))/gim;
   replacedText = replacedText.replace(
     replacePattern2,
     '$1<a href="http://$2" target="_blank">$2</a>'
@@ -310,7 +310,7 @@ export function linkify(inputText: string) {
 
   //Change email addresses to mailto:: links.
   const replacePattern3 =
-    /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+    /(([a-zA-Z0-9\-_.])+@[a-zA-Z_]+?(\.[a-zA-Z]{2,6})+)/gim;
   replacedText = replacedText.replace(
     replacePattern3,
     '<a href="mailto:$1">$1</a>'

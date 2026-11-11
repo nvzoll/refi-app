@@ -9,7 +9,7 @@ interface IDropImportZoneProps {
   isOver: boolean;
 }
 
-const DropImportZone = ({ isOver }: IDropImportZoneProps) => {
+const DropImportZone = (_props: IDropImportZoneProps) => {
   const setFile = useSetAtom(importFileAtom);
   const handleOnFileDrop = (files: File[]) => {
     setFile(files[0]);

@@ -20,7 +20,7 @@ const Property = () => {
   const currentPath = useAtomValue(navigatorPathAtom);
   const doc = useAtomValue(docAtom(currentPath));
   const [searchInput, setSearchInput] = useState("");
-  const [editorType, setEditorType] = useAtom(defaultEditorAtom);
+  const [editorType] = useAtom(defaultEditorAtom);
   const idInputRef = useRef<HTMLInputElement>(null);
 
   const handleCreateDocument = useCallback(() => {

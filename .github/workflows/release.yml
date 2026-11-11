@@ -8,8 +8,8 @@ jobs:
   build-vite:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - uses: oven-sh/setup-bun@v2
@@ -22,7 +22,7 @@ jobs:
       - name: Build Vite
         run: bun run --cwd vite build
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vite
           path: vite/dist
@@ -37,8 +37,8 @@ jobs:
       APPLEID: ${{ secrets.APPLEID }}
       APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - uses: oven-sh/setup-bun@v2
@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Download built Vite files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vite
           path: server/build
@@ -58,8 +58,8 @@ jobs:
     needs: build-vite
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - uses: oven-sh/setup-bun@v2
@@ -68,7 +68,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Download built Vite files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vite
           path: server/build
@@ -79,8 +79,8 @@ jobs:
     needs: build-vite
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - uses: oven-sh/setup-bun@v2
@@ -89,7 +89,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Download built Vite files
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vite
           path: server/build

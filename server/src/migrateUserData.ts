@@ -15,7 +15,11 @@ const rewriteKeyPaths = (
   oldDir: string,
   newDir: string
 ): void => {
-  const data = JSON.parse(fs.readFileSync(dbFile, "utf8"));
+  const text = fs.readFileSync(dbFile, "utf8").trim();
+  if (!text) {
+    return;
+  }
+  const data = JSON.parse(text);
   if (Array.isArray(data.keys)) {
     for (const key of data.keys) {
       if (typeof key?.keyPath === "string" && isInside(oldDir, key.keyPath)) {
@@ -24,7 +28,7 @@ const rewriteKeyPaths = (
     }
   }
   const tmpFile = `${dbFile}.tmp`;
-  fs.writeFileSync(tmpFile, JSON.stringify(data));
+  fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2));
   fs.renameSync(tmpFile, dbFile);
 };
 

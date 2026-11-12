@@ -73,6 +73,16 @@ describe("migrateUserData", () => {
     ]);
   });
 
+  test("migrates when the old DB file is empty", () => {
+    write(path.join(oldDir, "Keys", "a.json"), "key");
+    write(path.join(oldDir, "DB", "db.json"), "\n");
+
+    migrateUserData(oldDir, newDir);
+
+    expect(fs.existsSync(path.join(newDir, "Keys", "a.json"))).toBe(true);
+    expect(fs.existsSync(path.join(newDir, "DB", "db.json"))).toBe(true);
+  });
+
   test("skips LOCK files", () => {
     write(path.join(oldDir, "Local Storage", "leveldb", "LOCK"), "");
     write(path.join(oldDir, "Local Storage", "leveldb", "CURRENT"), "x");

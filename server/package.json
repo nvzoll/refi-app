@@ -1,12 +1,12 @@
 {
   "name": "refi-app",
-  "productName": "RefiApp",
-  "homepage": "https://refiapp.io",
+  "productName": "refi2",
+  "homepage": "https://github.com/nvzoll/refi-app",
   "authors": "mihthanh27@gmail.com",
   "version": "0.0.19",
   "description": "A tool to make developer less pain when developing application with Firestore indeed they will save move time to focus on building application instead of playing with poor DX product",
   "main": "server/index.js",
-  "repository": "github:thanhlmm/refi-app",
+  "repository": "github:nvzoll/refi-app",
   "scripts": {
     "clean": "rm -fr dist",
     "watch": "tsc -w",
@@ -20,7 +20,8 @@
     "prepare": "bun run --cwd ../firestore-serializers build && bun run build-ts",
     "package": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder",
     "release": "electron-builder",
-    "release-wl": "electron-builder -wl"
+    "release-wl": "electron-builder -wl",
+    "test": "bun test"
   },
   "keywords": [],
   "author": {
@@ -29,6 +30,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/bun": "^1.4.2",
     "electron": "45.2.3",
     "electron-builder": "^23.0.3",
     "electron-devtools-installer": "^4.0.0",
@@ -52,8 +54,8 @@
     "uuid": "^14.0.3"
   },
   "build": {
-    "appId": "iOS.RefiApp.desktop",
-    "productName": "Refi App",
+    "appId": "com.nvzoll.refi2",
+    "productName": "refi2",
     "asar": false,
     "npmRebuild": false,
     "afterSign": "notarize.js",
@@ -85,7 +87,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "thanhlmm",
+        "owner": "nvzoll",
         "private": false,
         "releaseType": "draft"
       }

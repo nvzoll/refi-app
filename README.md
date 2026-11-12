@@ -1,6 +1,6 @@
 Disclaimer: this is a detached fork. See the original repo here: https://github.com/thanhlmm/refi-app
 
-## Refi App
+## refi2
 
 It's a tool to give developers lesser pain when developing applications with Firestore. Save more time to focus on building applications instead of playing with Firebase's poor UI
 
@@ -39,12 +39,12 @@ We never collect your data. Your data is yours and always will be.
 
 ## Download
 
-https://github.com/thanhlmm/refi-app/releases
+https://github.com/nvzoll/refi-app/releases
 
 ## Development
 
-https://github.com/thanhlmm/refi-app/blob/main/DEVELOPMENT.md
+https://github.com/nvzoll/refi-app/blob/main/DEVELOPMENT.md
 
 ## Issues
 
-https://github.com/thanhlmm/refi-app/issues
+https://github.com/nvzoll/refi-app/issues

@@ -25,7 +25,7 @@
     "dev:server": "bun run build:serializers && bun run --cwd server dev",
     "build": "bun run build:serializers && bun run --cwd vite build && bun run --cwd server copy-fe && bun run --cwd server build-ts",
     "test:serializers": "bun run --cwd firestore-serializers test:emulator",
-    "test": "bun run build:serializers && bun run --cwd firestore-serializers test && bun run --cwd vite test",
+    "test": "bun run build:serializers && bun run --cwd firestore-serializers test && bun run --cwd vite test && bun run --cwd server test",
     "test:e2e": "bun run build && bun run --cwd e2e test",
     "lint": "bun run build:serializers && oxlint",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,cjs,css}\"",

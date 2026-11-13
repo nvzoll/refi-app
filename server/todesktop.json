@@ -1,6 +1,6 @@
 {
   "id": "211201njqikvxkx",
-  "appId": "iOS.RefiApp.desktop",
+  "appId": "com.nvzoll.refi2",
   "icon": "./assets/icon.png",
   "appPath": ".",
   "schemaVersion": 1,

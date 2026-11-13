@@ -27,7 +27,7 @@ const URLSynchronizer = () => {
     window.projectId = projectId;
     const urlPath = location.hash.replace("#", "");
     setPath(urlPath || "/");
-    document.title = `${getProjectId()} - Refi app`;
+    document.title = `${getProjectId()} - refi2`;
   }, []);
 
   return null;

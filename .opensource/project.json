@@ -1,5 +1,5 @@
 {
-  "name": "Refi App",
+  "name": "refi2",
   "platforms": ["Node", "Admin", "Web", "Desktop"],
   "content": "README.md",
   "pages": ["DEVELOPMENT.md"]

@@ -35,8 +35,21 @@ import db from "./client/db";
 import ContextMenu from "./lib/electron-context-menu";
 import { contextConfig } from "./contextMenu";
 import serve from "electron-serve";
+import { migrateUserData } from "./migrateUserData";
 import { uniqueId } from "es-toolkit/compat";
 // import { needConfirm, setConfirmReload, shouldConfirm } from "./lib/confirmReload";
+
+if (!app.commandLine.hasSwitch("user-data-dir")) {
+  const legacyUserDataDir = path.join(app.getPath("appData"), "RefiApp");
+  const userDataDir = app.getPath("userData");
+  if (path.resolve(legacyUserDataDir) !== path.resolve(userDataDir)) {
+    try {
+      migrateUserData(legacyUserDataDir, userDataDir);
+    } catch (error) {
+      log.error("Failed to migrate user data", error);
+    }
+  }
+}
 
 serve({ directory: "build" });
 app.disableHardwareAcceleration();
@@ -616,7 +629,7 @@ const template = [
         label: "Learn More",
         click: async () => {
           const { shell } = require("electron");
-          await shell.openExternal("https://refiapp.io");
+          await shell.openExternal("https://github.com/nvzoll/refi-app");
         },
       },
     ],

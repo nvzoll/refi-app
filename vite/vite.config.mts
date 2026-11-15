@@ -15,6 +15,7 @@ export default defineConfig({
   optimizeDeps: {
     entries: ["index.html", "tabs.html"],
     include: ["firestore-serializers"],
+    force: true,
   },
   build: {
     minify: false,

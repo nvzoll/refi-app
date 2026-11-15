@@ -70,6 +70,7 @@ let mainWindow: BrowserWindow;
 let activeInstance: IWindowInstance | null = null;
 
 const isMacOS = process.platform === "darwin";
+const rendererUrl = process.env.ELECTRON_RENDERER_URL;
 // const isMacOS = false;
 
 const canOpenExternally = (url: string) => {
@@ -153,8 +154,8 @@ const createMainWindow = async () => {
 
   window.on("resize", layoutActiveView);
 
-  if (process.env.ELECTRON_RENDERER_URL) {
-    window.loadURL(`${process.env.ELECTRON_RENDERER_URL}/tabs.html`);
+  if (rendererUrl) {
+    window.loadURL(`${rendererUrl}/tabs.html`);
   } else {
     // TODO: What if I need to load the tabs.html file
     window.loadURL("app://-/tabs.html");
@@ -206,8 +207,8 @@ const createWindow = async (_href?: string) => {
   //   }
   // }
 
-  if (process.env.ELECTRON_RENDERER_URL) {
-    view.webContents.loadURL(process.env.ELECTRON_RENDERER_URL);
+  if (rendererUrl) {
+    view.webContents.loadURL(rendererUrl);
   } else {
     view.webContents.loadURL("app://-");
   }

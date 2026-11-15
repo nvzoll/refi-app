@@ -51,7 +51,7 @@ if (!app.commandLine.hasSwitch("user-data-dir")) {
   }
 }
 
-serve({ directory: "build" });
+serve({ directory: path.join(__dirname, "../renderer") });
 app.disableHardwareAcceleration();
 
 interface IWindowInstance {
@@ -70,6 +70,7 @@ let mainWindow: BrowserWindow;
 let activeInstance: IWindowInstance | null = null;
 
 const isMacOS = process.platform === "darwin";
+const rendererUrl = process.env.ELECTRON_RENDERER_URL;
 // const isMacOS = false;
 
 const canOpenExternally = (url: string) => {
@@ -122,7 +123,7 @@ const createMainWindow = async () => {
     width: 1000,
     height: 1000,
     backgroundColor: isMacOS ? "#D1D5DB" : "#6B7280",
-    icon: path.join(__dirname, "../assets/icon.icns"),
+    icon: path.join(__dirname, "../../assets/icon.icns"),
     titleBarStyle: isMacOS ? "hiddenInset" : "default",
     frame: isMacOS,
     webPreferences: {
@@ -131,7 +132,7 @@ const createMainWindow = async () => {
       contextIsolation: true,
       sandbox: true,
       nodeIntegration: false,
-      preload: __dirname + "/tab-preload.js",
+      preload: path.join(__dirname, "../preload/tab-preload.js"),
       disableDialogs: false,
       safeDialogs: true,
       enableWebSQL: false,
@@ -153,8 +154,8 @@ const createMainWindow = async () => {
 
   window.on("resize", layoutActiveView);
 
-  if (isDev) {
-    window.loadURL("http://localhost:3000/tabs.html");
+  if (rendererUrl) {
+    window.loadURL(`${rendererUrl}/tabs.html`);
   } else {
     // TODO: What if I need to load the tabs.html file
     window.loadURL("app://-/tabs.html");
@@ -174,7 +175,7 @@ const createWindow = async (_href?: string) => {
       contextIsolation: true,
       sandbox: true,
       nodeIntegration: false,
-      preload: __dirname + "/client-preload.js",
+      preload: path.join(__dirname, "../preload/client-preload.js"),
       disableDialogs: false,
       safeDialogs: true,
       enableWebSQL: false,
@@ -206,8 +207,8 @@ const createWindow = async (_href?: string) => {
   //   }
   // }
 
-  if (isDev) {
-    view.webContents.loadURL("http://localhost:3000");
+  if (rendererUrl) {
+    view.webContents.loadURL(rendererUrl);
   } else {
     view.webContents.loadURL("app://-");
   }

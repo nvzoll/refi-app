@@ -77,10 +77,3 @@ export const postConverter = {
     return convertSnapshotToDoc(snapshot);
   },
 };
-
-module.exports = {
-  convertDocumentRef,
-  convertSnapshotToDoc,
-  postConverter,
-  getDocMetaData,
-};

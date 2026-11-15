@@ -1,6 +1,4 @@
-server/server
-server/build
+server/out
 server/dist
 firestore-serializers/dist
-vite/dist
 e2e/test-results

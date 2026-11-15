@@ -19,28 +19,20 @@ Requirements:
 - Node 22 (see `.nvmrc`)
 - Bun 1.4.2 (see `packageManager` in `package.json`)
 
-The repo is a Bun workspace (`vite`, `server`, `firestore-serializers`) with a single `bun.lock`. Install everything from the root:
+The repo is a Bun workspace (`vite`, `server`, `firestore-serializers`, `ipc`, `e2e`) with a single `bun.lock`. Install everything from the root:
 
 ```
 bun install
 ```
 
-`firestore-serializers` is a workspace package that `vite` and `server` consume from its built `dist/`. The root `dev:*`, `build` and `test` scripts build it first; after editing it during `dev:*`, run `bun run build:serializers`.
+`firestore-serializers` is a workspace package that `vite` and `server` consume from its built `dist/`. The root `dev`, `build`, `test`, `lint` and `typecheck` scripts build it first; after editing it during `dev`, run `bun run build:serializers`.
 
 ## Start development
 
-Run each in its own terminal, from the root.
-
-### Start client
+Run from the root:
 
 ```
-bun run dev:client
-```
-
-### Start server & electron
-
-```
-bun run dev:server
+bun run dev
 ```
 
 ## Build app
@@ -51,7 +43,7 @@ bun run dev:server
 bun run build
 ```
 
-This runs the Vite build, copies `vite/dist` into `server/build`, and compiles the server TypeScript.
+This builds the main process, preloads, worker and renderer into `server/out`.
 
 ### Package electron app
 

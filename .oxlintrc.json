@@ -4,8 +4,7 @@
   "categories": { "correctness": "error" },
   "options": { "typeAware": true },
   "ignorePatterns": [
-    "server/server/**",
-    "server/build/**",
+    "server/out/**",
     "**/dist/**",
     "e2e/test-results/**"
   ],

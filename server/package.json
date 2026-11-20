@@ -8,14 +8,11 @@
   "main": "out/main/index.js",
   "repository": "github:nvzoll/refi-app",
   "scripts": {
-    "clean": "rm -fr dist",
+    "clean": "rm -fr dist out",
     "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
-    "quick-build": "todesktop build . --code-sign=false",
-    "release-todesktop": "todesktop build && todesktop release --latest --force",
     "package": "CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder",
     "release": "electron-builder",
-    "release-wl": "electron-builder -wl",
     "test": "bun test"
   },
   "keywords": [],
@@ -27,22 +24,19 @@
   "devDependencies": {
     "@types/bun": "^1.4.2",
     "electron": "45.2.3",
-    "electron-builder": "^23.0.3",
+    "electron-builder": "^26.18.0",
     "electron-devtools-installer": "^4.0.0",
-    "electron-notarize": "^1.0.0",
     "electron-vite": "^6.0.0",
     "refi-ipc": "workspace:*",
     "source-map-support": "^0.5.19",
-    "terser": "^5.6.1",
     "typescript": "~7.0.2"
   },
   "dependencies": {
-    "@todesktop/runtime": "^0.6.5",
     "axios": "^1.21.0",
     "electron-is-dev": "^1.2.0",
     "electron-log": "^5.4.4",
     "electron-serve": "^3.0.1",
-    "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^6.8.11",
     "es-toolkit": "^1.53.1",
     "firebase-admin": "^14.5.0",
     "firestore-serializers": "workspace:*",
@@ -53,10 +47,12 @@
     "productName": "refi2",
     "asar": false,
     "npmRebuild": false,
-    "afterSign": "notarize.js",
     "mac": {
       "icon": "./assets/icon.icns",
+      "identity": "-",
+      "hardenedRuntime": true,
       "entitlements": "entitlements.plist",
+      "entitlementsInherit": "entitlements.plist",
       "target": {
         "target": "default",
         "arch": [
@@ -69,18 +65,23 @@
       "icon": "./assets/icon.ico"
     },
     "linux": {
-      "target": "deb",
-      "icon": "./assets/icon.png"
+      "executableName": "refi2",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "./assets/icon.png",
+      "category": "Development"
     },
     "files": [
-      "**/*",
       "out/**/*",
-      "!key/**"
+      "assets/**/*"
     ],
     "publish": [
       {
         "provider": "github",
         "owner": "nvzoll",
+        "repo": "refi-app",
         "private": false,
         "releaseType": "draft"
       }

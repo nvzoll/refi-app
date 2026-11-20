@@ -41,7 +41,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION=$(node -p "require('./server/package.json').version")
-          gh release view "v$VERSION" || gh release create "v$VERSION" --draft --title "$VERSION" --target "$GITHUB_SHA"
+          if DRAFT=$(gh release view "v$VERSION" --json isDraft -q .isDraft); then
+            if [ "$DRAFT" != "true" ]; then
+              echo "Release v$VERSION is already published; bump server/package.json version first"
+              exit 1
+            fi
+          else
+            gh release create "v$VERSION" --draft --title "$VERSION" --target "$GITHUB_SHA"
+          fi
 
   release:
     needs: verify

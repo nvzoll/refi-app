@@ -84,9 +84,12 @@ const setupAutoUpdater = () => {
   autoUpdater.autoDownload = canSelfUpdate;
 
   const checkForUpdates = () => {
-    autoUpdater.checkForUpdates().catch((error) => {
-      log.error("Failed to check for updates", error);
-    });
+    autoUpdater
+      .checkForUpdates()
+      .then((result) => result?.downloadPromise)
+      .catch((error) => {
+        log.error("Failed to check for updates", error);
+      });
   };
 
   const updateCheckTimer = setInterval(
@@ -107,6 +110,8 @@ const setupAutoUpdater = () => {
       .showMessageBox({
         type: "info",
         buttons: [acceptButton, "Later"],
+        defaultId: 0,
+        cancelId: 1,
         title: "Application Update",
         message: info.releaseName || `Version ${info.version}`,
         detail,

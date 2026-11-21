@@ -1,11 +1,14 @@
 name: Build
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
 
-env:
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+permissions:
+  contents: write
 
 jobs:
-  build-vite:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -15,27 +18,51 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
+      - name: Check the tag matches the app version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          VERSION=$(node -p "require('./server/package.json').version")
+          if [ "${GITHUB_REF_NAME#v}" != "$VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match server/package.json version $VERSION"
+            exit 1
+          fi
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Test
         run: bun run test
-      - name: Build Vite
-        run: bun run --cwd vite build
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: vite
-          path: vite/dist
-          retention-days: 1
+      - name: Lint
+        run: bun run lint
+      - name: Format
+        run: bun run format:check
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Create the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "require('./server/package.json').version")
+          if DRAFT=$(gh release view "v$VERSION" --json isDraft -q .isDraft); then
+            if [ "$DRAFT" != "true" ]; then
+              echo "Release v$VERSION is already published; bump server/package.json version first"
+              exit 1
+            fi
+          else
+            gh release create "v$VERSION" --draft --title "$VERSION" --target "$GITHUB_SHA"
+          fi
 
-  release-macos:
-    needs: build-vite
-    runs-on: macos-latest
-    env:
-      CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-      CSC_LINK: ${{ secrets.CSC_LINK }}
-      APPLEID: ${{ secrets.APPLEID }}
-      APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
+  release:
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: --mac
+          - os: windows-latest
+            target: --win
+          - os: ubuntu-latest
+            target: --linux
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -46,52 +73,10 @@ jobs:
           bun-version-file: package.json
       - name: Install dependencies
         run: bun install --frozen-lockfile
-      - name: Download built Vite files
-        uses: actions/download-artifact@v8
-        with:
-          name: vite
-          path: server/build
-      - name: Build app
-        run: bun run --cwd server release -p always
-
-  release-windows:
-    needs: build-vite
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: package.json
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Download built Vite files
-        uses: actions/download-artifact@v8
-        with:
-          name: vite
-          path: server/build
-      - name: Build app
-        run: bun run --cwd server release --win -p always
-
-  release-linux:
-    needs: build-vite
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: package.json
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Download built Vite files
-        uses: actions/download-artifact@v8
-        with:
-          name: vite
-          path: server/build
-      - name: Build app
-        run: bun run --cwd server release --linux -p always
+      - name: Build
+        run: bun run build
+      - name: Package and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: bun run --cwd server release ${{ matrix.target }} --publish always

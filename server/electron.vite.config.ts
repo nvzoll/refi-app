@@ -10,11 +10,7 @@ export default defineConfig(({ command }) => {
       build: {
         sourcemap,
         externalizeDeps: {
-          include: [
-            "electron-updater",
-            "electron-devtools-installer",
-            "source-map-support",
-          ],
+          include: ["electron-devtools-installer", "source-map-support"],
         },
         rolldownOptions: {
           input: {

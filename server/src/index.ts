@@ -1,15 +1,9 @@
 import isDev from "electron-is-dev";
 import log from "electron-log";
-import { autoUpdater } from "electron-updater";
-// import todesktop from "@todesktop/runtime";
+import { autoUpdater, type UpdateInfo } from "electron-updater";
 if (isDev) {
   require("source-map-support").install();
 }
-
-// todesktop.init({
-//   customLogger: log,
-//   autoUpdater: true
-// });
 
 if (!isDev) {
   log.transports.file.level = "verbose";
@@ -71,6 +65,8 @@ let activeInstance: IWindowInstance | null = null;
 
 const isMacOS = process.platform === "darwin";
 const rendererUrl = process.env.ELECTRON_RENDERER_URL;
+const REPO_URL = "https://github.com/nvzoll/refi-app";
+const UPDATE_CHECK_INTERVAL_MS = 4 * 60 * 60 * 1000;
 // const isMacOS = false;
 
 const canOpenExternally = (url: string) => {
@@ -81,38 +77,80 @@ const canOpenExternally = (url: string) => {
   }
 };
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require("electron-squirrel-startup")) {
-  // eslint-disable-line global-require
-  app.quit();
-}
+const setupAutoUpdater = () => {
+  autoUpdater.logger = log;
+  const canSelfUpdate =
+    !isMacOS && (process.platform !== "linux" || Boolean(process.env.APPIMAGE));
+  autoUpdater.autoDownload = canSelfUpdate;
 
-if (!isDev) {
-  setInterval(() => {
-    autoUpdater.checkForUpdates();
-  }, 60000);
+  const checkForUpdates = () => {
+    autoUpdater
+      .checkForUpdates()
+      .then((result) => result?.downloadPromise)
+      .catch((error) => {
+        log.error("Failed to check for updates", error);
+      });
+  };
 
-  autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
-    log.debug("Downloaded new update");
-    const dialogOpts = {
-      type: "info" as const,
-      buttons: ["Restart", "Later"],
-      title: "Application Update",
-      message: process.platform === "win32" ? releaseNotes : releaseName,
-      detail:
+  const updateCheckTimer = setInterval(
+    checkForUpdates,
+    UPDATE_CHECK_INTERVAL_MS
+  );
+  updateCheckTimer.unref();
+  app.on("before-quit", () => clearInterval(updateCheckTimer));
+
+  const promptUpdate = (
+    info: UpdateInfo,
+    detail: string,
+    acceptButton: string,
+    accept: () => unknown
+  ) => {
+    clearInterval(updateCheckTimer);
+    dialog
+      .showMessageBox({
+        type: "info",
+        buttons: [acceptButton, "Later"],
+        defaultId: 0,
+        cancelId: 1,
+        title: "Application Update",
+        message: info.releaseName || `Version ${info.version}`,
+        detail,
+      })
+      .then(async ({ response }) => {
+        if (response === 0) await accept();
+      })
+      .catch((error) => {
+        log.error("Failed to apply the update", error);
+      });
+  };
+
+  if (canSelfUpdate) {
+    autoUpdater.on("update-downloaded", (info) =>
+      promptUpdate(
+        info,
         "A new version has been downloaded. Restart the application to apply the updates.",
-    };
+        "Restart",
+        () => autoUpdater.quitAndInstall()
+      )
+    );
+  } else {
+    autoUpdater.on("update-available", (info) =>
+      promptUpdate(
+        info,
+        "A new version is available on GitHub Releases.",
+        "Open Releases",
+        () => shell.openExternal(`${REPO_URL}/releases/latest`)
+      )
+    );
+  }
 
-    dialog.showMessageBox(dialogOpts).then((returnValue) => {
-      if (returnValue.response === 0) autoUpdater.quitAndInstall();
-    });
-  });
-
-  autoUpdater.on("error", (message) => {
+  autoUpdater.on("error", (error) => {
     log.error("There was a problem updating the application");
-    log.error(message);
+    log.error(error);
   });
-}
+
+  checkForUpdates();
+};
 
 const createMainWindow = async () => {
   if (mainWindow) {
@@ -471,6 +509,10 @@ app.whenReady().then(async () => {
   bootstrap();
   createMainWindow();
 
+  if (app.isPackaged) {
+    setupAutoUpdater();
+  }
+
   if (isDev) {
     const {
       default: installExtension,
@@ -629,8 +671,7 @@ const template = [
       {
         label: "Learn More",
         click: async () => {
-          const { shell } = require("electron");
-          await shell.openExternal("https://github.com/nvzoll/refi-app");
+          await shell.openExternal(REPO_URL);
         },
       },
     ],

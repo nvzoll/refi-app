@@ -98,9 +98,9 @@ const SelectComboBox = ({
       <ul
         {...getMenuProps({ ref: menuRef, style: { minWidth: "100px" } })}
         className={classNames(
-          "absolute z-20 opacity-0 pointer-events-none max-w-md w-auto overflow-y-auto bg-white border border-gray-300 shadow-md max-h-64 top-8",
+          "absolute z-20 max-w-md w-auto overflow-y-auto bg-white border border-gray-300 shadow-md max-h-64 top-8",
           {
-            "opacity-100 pointer-events-auto": isOpen,
+            "opacity-0 pointer-events-none": !isOpen,
           }
         )}
       >

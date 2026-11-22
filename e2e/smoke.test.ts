@@ -126,6 +126,27 @@ test("edits, sorts, filters, imports and deletes documents on the emulator", asy
     await expect(page.getByRole("cell", { name: "after" })).toBeVisible();
     await expect(page.getByRole("cell", { name: "zebra" })).toBeVisible();
 
+    const autoImportPath = join(tempDir, "import-auto.json");
+    writeFileSync(
+      autoImportPath,
+      JSON.stringify([{ __id__: "auto1", name: "auto-imported" }])
+    );
+
+    await page.keyboard.press("Control+i");
+    await page
+      .getByRole("dialog")
+      .locator("input[type=file]")
+      .setInputFiles(autoImportPath);
+    await page.getByRole("button", { name: /Import 1 doc/ }).click();
+
+    const autoImported = firestore
+      .collection("smoke")
+      .where("name", "==", "auto-imported");
+    await expect.poll(async () => (await autoImported.get()).size).toBe(1);
+    const autoId = (await autoImported.get()).docs[0].id;
+    expect(autoId).not.toBe("auto1");
+    await expect(page.getByRole("dialog")).toBeHidden();
+
     const importFilePath = join(tempDir, "import.json");
     writeFileSync(
       importFilePath,
@@ -136,8 +157,12 @@ test("edits, sorts, filters, imports and deletes documents on the emulator", asy
     );
 
     await page.keyboard.press("Control+i");
-    const fileInput = page.getByRole("dialog").locator("input[type=file]");
-    await fileInput.setInputFiles(importFilePath);
+    const dialog = page.getByRole("dialog");
+    await dialog.locator("input[type=file]").setInputFiles(importFilePath);
+    await dialog.getByText("Auto generate ID").click();
+    await expect(
+      dialog.getByRole("checkbox", { name: "Auto generate ID" })
+    ).not.toBeChecked();
     await page.getByRole("button", { name: /Import 2 doc/ }).click();
 
     await expect
@@ -147,17 +172,21 @@ test("edits, sorts, filters, imports and deletes documents on the emulator", asy
       .poll(async () => (await firestore.doc("smoke/imp2").get()).data())
       .toEqual({ name: "imported2", count: 200 });
 
-    await page.evaluate(async () => {
+    const autoDocPath = `/smoke/${autoId}`;
+    await page.evaluate(async (path) => {
       await (window as any).send("fs.deleteDocs", {
-        docs: ["/smoke/imp1", "/smoke/imp2"],
+        docs: ["/smoke/imp1", "/smoke/imp2", path],
       });
-    });
+    }, autoDocPath);
 
     await expect
       .poll(async () => (await firestore.doc("smoke/imp1").get()).exists)
       .toBe(false);
     await expect
       .poll(async () => (await firestore.doc("smoke/imp2").get()).exists)
+      .toBe(false);
+    await expect
+      .poll(async () => (await firestore.doc(autoDocPath).get()).exists)
       .toBe(false);
   } finally {
     await electronApp.close();

@@ -3,6 +3,7 @@ import {
   IFieldValue,
 } from "@/types/ClientDocumentSnapshot";
 import { getParentPath } from "@/utils/common";
+import { getFirestoreType } from "@/utils/simplifr";
 import { difference, isObject } from "es-toolkit/compat";
 import * as immutable from "object-path-immutable";
 import { atom, SetStateAction } from "jotai";
@@ -136,8 +137,11 @@ export const fieldAtom = atomFamily((url: string) => {
       if (doc) {
         const newDoc = doc.clone().setField(field, newValue);
         const oldValue = immutable.get(doc.data(), field);
-        if (newValue && isObject(oldValue)) {
-          // Add changes if the object inside changed
+        if (
+          isObject(newValue) &&
+          ["map", "array"].includes(getFirestoreType(newValue)) &&
+          isObject(oldValue)
+        ) {
           // TODO: Use immer to store field patch
           newDoc.addChange(
             difference(Object.keys(newValue), Object.keys(oldValue)).map(

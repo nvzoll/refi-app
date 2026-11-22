@@ -74,10 +74,10 @@ const ImportModal = () => {
 
   const setShowImportModal = useSetAtom(isImportModalAtom);
 
-  const onSubmit = (value: any) => {
+  const onSubmit = (value: ImportFormValues) => {
     // TODO: If there is really large list, we should show loading somewhere
     actionImportDocs(value.path, docs, {
-      idField: value.isAutoId ? null : value.idField,
+      idField: value.autoId ? undefined : value.idField,
       autoParseJSON: fileType === "csv" && value.autoParseJSON,
     })
       .then(() => {
